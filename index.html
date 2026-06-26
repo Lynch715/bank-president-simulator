@@ -588,7 +588,7 @@
       inset: 0;
       z-index: 50;
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: center;
       padding: 12px;
       background: rgba(12, 20, 32, 0.48);
@@ -897,6 +897,20 @@
     .sb-label em { color: var(--muted); font-style: normal; font-size: 11px; margin-left: 2px; }
     .sb-tip { font-size: 12.5px; color: var(--ink); margin: 6px 0 0; line-height: 1.5; }
 
+    .result-narr {
+      font-size: 13.5px;
+      color: var(--ink);
+      line-height: 1.65;
+      margin: 0 0 6px;
+    }
+
+    .result-deltas {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
     .flash-chip.good { background: #e8f5ef; color: #11624f; }
     .flash-chip.bad { background: #fff0ed; color: #8d2d24; }
     .flash-chip.flat { background: #eef3f8; color: #51607a; }
@@ -1002,6 +1016,10 @@
         "个人调整",
         "权谋手腕"
       ];
+
+      // 这些"掩盖/作弊/权斗"型灰色操作没有日常主动动机，改为只在压力事件里作为选项出现，不在行动列表里平白可点。
+      // 送礼/请客/利益输送等"经营关系"的灰色操作仍是日常主动行动。
+      const EVENT_ONLY_ACTIONS = ["illegal_lending", "fake_deposit", "hide_npl", "special_channel", "package_report", "blame_deputy", "suppress_opponents", "win_core_staff", "control_information"];
 
       const TABS = [
         { id: "actions", label: "本周行动" },
@@ -1319,22 +1337,22 @@
 
       // ===== 竞争对手：主城九区一级支行 =====
       const COMPETITOR_DEFS = [
-        { id: "rival_yuzhong", name: "渝中区支行", director: "陈崇山", style: "稳健", score: 90, note: "老牌核心城区，体量最大，常年榜首" },
-        { id: "rival_yubei", name: "渝北区支行", director: "马奔", style: "狼性", score: 80, note: "新区扩张，冲得最猛，贴身追赶" },
-        { id: "rival_nanan", name: "南岸区支行", director: "黄世海", style: "灰色", score: 73, note: "打法灰，专挖人抢客" },
-        { id: "rival_jiulongpo", name: "九龙坡区支行", director: "唐建国", style: "关系", score: 70, note: "工业老区，关系型" },
-        { id: "rival_shapingba", name: "沙坪坝区支行", director: "文卓然", style: "稳健", score: 65, note: "大学城，零售稳健" },
-        { id: "rival_beibei", name: "北碚区支行", director: "韦明德", style: "稳健", score: 54, note: "偏远，稳健慢热" },
-        { id: "rival_dadukou", name: "大渡口区支行", director: "石小川", style: "躺平", score: 50, note: "体量小，挣扎" },
-        { id: "rival_banan", name: "巴南区支行", director: "鲁达", style: "躺平", score: 45, note: "守成，垫底常客" }
+        { id: "rival_yuzhong", name: "渝中区支行", director: "陈崇山", style: "稳健", score: 165, note: "老牌核心城区，体量最大，常年榜首" },
+        { id: "rival_yubei", name: "渝北区支行", director: "马奔", style: "狼性", score: 145, note: "新区扩张，冲得最猛，贴身追赶" },
+        { id: "rival_nanan", name: "南岸区支行", director: "黄世海", style: "灰色", score: 125, note: "打法灰，专挖人抢客" },
+        { id: "rival_jiulongpo", name: "九龙坡区支行", director: "唐建国", style: "关系", score: 110, note: "工业老区，关系型" },
+        { id: "rival_shapingba", name: "沙坪坝区支行", director: "文卓然", style: "稳健", score: 98, note: "大学城，零售稳健" },
+        { id: "rival_beibei", name: "北碚区支行", director: "韦明德", style: "稳健", score: 86, note: "偏远，稳健慢热" },
+        { id: "rival_dadukou", name: "大渡口区支行", director: "石小川", style: "躺平", score: 70, note: "体量小，挣扎" },
+        { id: "rival_banan", name: "巴南区支行", director: "鲁达", style: "躺平", score: 58, note: "守成，垫底常客" }
       ];
 
       const COMPETITOR_STYLE = {
-        "稳健": { growth: 1.45, vol: 0.06, crash: 0.10 },
-        "狼性": { growth: 2.5, vol: 0.40, crash: 0.34 },
-        "灰色": { growth: 2.3, vol: 0.44, crash: 0.34 },
+        "稳健": { growth: 1.6, vol: 0.06, crash: 0.10 },
+        "狼性": { growth: 2.4, vol: 0.40, crash: 0.32 },
+        "灰色": { growth: 2.2, vol: 0.44, crash: 0.32 },
         "关系": { growth: 1.8, vol: 0.14, crash: 0.12 },
-        "躺平": { growth: 0.55, vol: 0.05, crash: 0.18 }
+        "躺平": { growth: 0.6, vol: 0.05, crash: 0.18 }
       };
 
       function createCompetitors() {
@@ -1398,33 +1416,42 @@
         return labels[key] || "未定";
       }
 
+      // 每周：对手持续成长（不再是月度才动一下，是个一直在跑的移动靶）
+      function driftCompetitorsWeekly(state) {
+        if (!Array.isArray(state.competitors)) return;
+        state.competitors.forEach((c) => {
+          const cfg = COMPETITOR_STYLE[c.style] || COMPETITOR_STYLE["稳健"];
+          c.score = Math.max(20, round(c.score + cfg.growth * (0.3 + Math.random() * 0.15), 2));
+          if (!c.status || c.status === "正常") c.trend = 1;
+        });
+        updateRank(state);
+      }
+
+      // 每月：波动（爆雷/猛冲）+ 趋势 + 玩家名次升降
       function evolveCompetitors(state) {
         if (!Array.isArray(state.competitors)) state.competitors = createCompetitors();
         const prevRank = state.branch.rank;
         state.competitors.forEach((c) => {
           const cfg = COMPETITOR_STYLE[c.style] || COMPETITOR_STYLE["稳健"];
-          c.prevScore = c.score;
+          const monthBase = c.prevScore == null ? c.score : c.prevScore;
           c.status = "正常";
-          let delta = cfg.growth * (0.7 + Math.random() * 0.7);
           if (Math.random() < cfg.vol) {
             if (Math.random() < cfg.crash) {
-              // 爆雷崩盘：给玩家反超机会
               const loss = c.score * (0.08 + Math.random() * 0.12);
-              c.score -= loss;
+              c.score = Math.max(20, round(c.score - loss, 1));
               c.status = "爆雷";
-              delta = 0;
               if (Math.random() < 0.5) {
                 addLog(state, "对手爆雷", c.name + "（" + c.director + "）出了事，排名往下栽。江北这边，机会窗口开了一条缝。", "rival");
                 state.branch.customerOpportunities += 2;
                 state.branch.loanOpportunities += 1;
               }
             } else {
-              delta *= 1.6; // 大单落地，冲一波
+              c.score = round(c.score + cfg.growth * 1.5, 1);
               c.status = "猛冲";
             }
           }
-          c.score = Math.max(20, round(c.score + delta, 1));
-          c.trend = c.score > c.prevScore + 0.4 ? 1 : (c.score < c.prevScore - 0.4 ? -1 : 0);
+          c.trend = c.score > monthBase + 0.4 ? 1 : (c.score < monthBase - 0.4 ? -1 : 0);
+          c.prevScore = c.score;
         });
         updateRank(state);
         state.branch.rankTrend = prevRank > state.branch.rank ? 1 : (prevRank < state.branch.rank ? -1 : 0);
@@ -1436,10 +1463,10 @@
         buy_gifts: { groups: ["重点客户", "政府条线"], style: "送礼", baseGain: 6, bonus: "client" },
         business_dinner: { groups: ["政府条线", "重点客户"], style: "酒局", baseGain: 7, bonus: "relation" },
         report_leader: { groups: ["分行领导"], style: "正式", baseGain: 6, bonus: "leader" },
-        request_salary: { groups: ["分行领导"], style: "正式", baseGain: 4, bonus: "leader", preferred: "contact_branch_hr" },
-        request_marketing_budget: { groups: ["分行领导"], style: "正式", baseGain: 4, bonus: "leader", preferred: "contact_branch_president" },
-        request_credit: { groups: ["分行领导"], style: "正式", baseGain: 4, bonus: "leader", preferred: "contact_branch_credit" },
-        special_policy: { groups: ["分行领导"], style: "正式", baseGain: 4, bonus: "leader", preferred: "contact_branch_president" },
+        request_salary: { groups: ["分行领导"], style: "正式", baseGain: 4, bonus: "leader", preferred: "contact_branch_hr", lobby: true },
+        request_marketing_budget: { groups: ["分行领导"], style: "正式", baseGain: 4, bonus: "leader", preferred: "contact_branch_president", lobby: true },
+        request_credit: { groups: ["分行领导"], style: "正式", baseGain: 4, bonus: "leader", preferred: "contact_branch_credit", lobby: true },
+        special_policy: { groups: ["分行领导"], style: "正式", baseGain: 4, bonus: "leader", preferred: "contact_branch_president", lobby: true },
         visit_government: { groups: ["政府条线"], style: "务实", baseGain: 6, bonus: "relation" },
         visit_finance_bureau: { fixed: "contact_gov_finance", style: "务实", baseGain: 7, bonus: "relation" },
         visit_housing: { fixed: "contact_gov_housing", style: "务实", baseGain: 7, bonus: "relation" },
@@ -1492,11 +1519,20 @@
         return { mult: Math.max(0, mult), favorMult: favorMult, risk: risk, tag: tag };
       }
 
+      // 找领导要资源：成功后给的东西（按好感缩放）
+      function lobbyReward(actionId, scale) {
+        if (actionId === "request_salary") return { branch: { salaryPool: Math.round(55 * scale), morale: 4 }, player: { pressure: -2 } };
+        if (actionId === "request_marketing_budget") return { branch: { marketingBudget: Math.round(28 * scale) } };
+        if (actionId === "request_credit") return { branch: { loanOpportunities: Math.round(9 * scale) }, player: { leaderImpression: 1 } };
+        if (actionId === "special_policy") return { branch: { incomeRate: round(2.4 * scale, 1), customerOpportunities: Math.round(5 * scale), loanOpportunities: Math.round(4 * scale) } };
+        return {};
+      }
+
       function socialBonusDelta(bonus, power) {
-        if (bonus === "relation") return { branch: { deposit: round(0.55 * power, 2), localRelation: round(3.2 * power, 1), governmentProjects: power > 0.9 ? 1 : 0, customerOpportunities: Math.round(1.5 * power) } };
-        if (bonus === "client") return { branch: { deposit: round(0.42 * power, 2), loan: round(0.26 * power, 2), customerOpportunities: Math.round(2 * power), loanOpportunities: power > 0.8 ? 1 : 0 } };
+        if (bonus === "relation") return { branch: { deposit: round(0.4 * power, 2), localRelation: round(3.2 * power, 1), governmentProjects: power > 0.9 ? 1 : 0, customerOpportunities: Math.round(1.5 * power) } };
+        if (bonus === "client") return { branch: { deposit: round(0.3 * power, 2), loan: round(0.2 * power, 2), customerOpportunities: Math.round(2 * power), loanOpportunities: power > 0.8 ? 1 : 0 } };
         if (bonus === "leader") return { player: { leaderImpression: round(3.2 * power, 1), pressure: -1 }, hiddenRisks: { leaderAttention: -1 } };
-        if (bonus === "gray") return { branch: { deposit: round(0.8 * power, 2), loan: round(0.45 * power, 2), incomeRate: round(1.6 * power, 1), localRelation: round(2 * power, 1) } };
+        if (bonus === "gray") return { branch: { deposit: round(0.58 * power, 2), loan: round(0.34 * power, 2), incomeRate: round(1.6 * power, 1), localRelation: round(2 * power, 1) } };
         return {};
       }
 
@@ -1513,29 +1549,64 @@
         state.branch.marketingBudget -= action.budgetCost || 0;
         if (action.route) state.routeScores[action.route] = (state.routeScores[action.route] || 0) + 1;
         const favorBefore = contact.favor;
-        // 基础效果（沿用行动自身数值，但屏蔽其默认日志）
-        const base = effectFromObject(action.effect)(state);
-        if (base) base.log = null;
-        applyEffect(state, base, action.name);
-        // 一次次接触，才慢慢摸清这个人（要积累不少次才看得透）
         const pref = socialPrefMod(cfg.style, contact);
         if (!state.contactIntel) state.contactIntel = {};
         state.contactIntel[contact.id] = (state.contactIntel[contact.id] || 0) + 1;
-        let preferredBoost = 1;
-        if (cfg.preferred && cfg.preferred === contact.id) preferredBoost = 1.35;
-        const power = Math.max(0, (0.5 + contact.favor / 100) * pref.mult * preferredBoost);
+        const isPreferred = cfg.preferred && cfg.preferred === contact.id;
+        if (action.reveals) revealRisk(state, action.reveals);
+
+        // —— 找领导要资源：不一定成，看好感和印象，且求人耗关系、越要越难 ——
+        if (cfg.lobby) {
+          const fatigue = state.flags.lobbyFatigue || 0;
+          const succ = chance(state, 0.2, contact.favor / 100 * 0.55 + state.player.leaderImpression / 100 * 0.18 + (isPreferred ? 0.1 : 0) - fatigue * 0.14);
+          state.flags.lobbyFatigue = fatigue + 1;
+          adjustContactFavor(state, contact.id, -4);
+          let log;
+          if (succ) {
+            const scale = 0.7 + contact.favor / 100 * 0.6;
+            applyEffect(state, lobbyReward(actionId, scale), action.name);
+            applyEffect(state, { hiddenRisks: { leaderAttention: 2 } }, action.name);
+            log = "你找" + contact.name + "（" + contact.title + "）" + action.name + "，对方点了头" + (isPreferred ? "（找对了人）" : "") + "。好感-4（现" + contact.favor + "），求人是要还的。";
+          } else {
+            adjustContactFavor(state, contact.id, -2);
+            applyEffect(state, { player: { pressure: 4, leaderImpression: -1 }, hiddenRisks: { leaderAttention: 2 } }, action.name);
+            log = "你找" + contact.name + "要资源，被婉拒了：先把业绩拿回来再谈。好感-6（现" + contact.favor + "），越要越难张口。";
+          }
+          addLog(state, action.name + "·" + contact.name, log, "social");
+          maybeQueueActionEvent(state, action);
+          clampState(state);
+          saveGame(state, true);
+          return { ok: true, contact: contact, favorDelta: contact.favor - favorBefore, success: succ, lobby: true };
+        }
+
+        // —— 普通社交：好感越高、效果越强（100 远胜 40），并分档解锁 ——
+        const base = effectFromObject(action.effect)(state);
+        if (base) base.log = null;
+        applyEffect(state, base, action.name);
+        const favorScale = 0.35 + (contact.favor / 100) * 1.3;
+        const tier = contact.favor >= 85 ? 1.25 : (contact.favor >= 60 ? 1.1 : 1);
+        const preferredBoost = isPreferred ? 1.3 : 1;
+        const power = Math.max(0, favorScale * tier * pref.mult * preferredBoost);
         applyEffect(state, socialBonusDelta(cfg.bonus, power), action.name);
         if (pref.risk) addDelta(state.hiddenRisks, pref.risk);
         const favorDelta = Math.round(cfg.baseGain * pref.favorMult);
         adjustContactFavor(state, contact.id, favorDelta);
-        // 好感跨档解锁提示
         const crossed = favorBefore < 60 && contact.favor >= 60;
+        const crossedTop = favorBefore < 85 && contact.favor >= 85;
         const favorText = favorDelta >= 0 ? "好感+" + favorDelta : "好感" + favorDelta;
-        let log = "你对" + contact.name + "（" + contact.title + "）" + action.name + "，" + pref.tag + "，" + favorText + "（现" + contact.favor + "）。";
-        if (crossed) log += " 关系进入熟络，专属资源开始向你倾斜。";
-        if (cfg.preferred && cfg.preferred === contact.id) log += " 找对了人，事半功倍。";
+        const reactions = {
+          "投其所好": contact.name + "对你这一手很受用，觉得你太会来事了",
+          "对路子": contact.name + "觉得你这事办得地道，对你高看了一眼",
+          "如常": contact.name + "客气地领了你的情，关系又近了一些",
+          "踩到雷区": contact.name + "脸色有点不对——你大概是碰了他的忌讳",
+          "碰了硬钉子": contact.name + "明显不吃这套，话里带了刺",
+          "心照不宣": contact.name + "心领神会，有些话不必说破"
+        };
+        let log = "你" + action.name + "招待了" + contact.name + "（" + contact.title + "）。" + (reactions[pref.tag] || contact.name + "收下了你的心意") + "，" + favorText + "（现" + contact.favor + "）。";
+        if (crossedTop) log += " 关系铁了，他的资源几乎向你敞开。";
+        else if (crossed) log += " 关系进入熟络，专属资源开始向你倾斜。";
+        if (isPreferred) log += " 找对了人，事半功倍。";
         addLog(state, action.name + "·" + contact.name, log, "social");
-        if (action.reveals) revealRisk(state, action.reveals);
         maybeQueueActionEvent(state, action);
         clampState(state);
         saveGame(state, true);
@@ -1818,7 +1889,7 @@
         const locF = 0.55 + ((outlet.locationPotential || 0) / 100) * 0.55;
         const moraleF = 0.7 + ((outlet.morale || 0) / 100) * 0.5;
         const ramp = outlet.ramp == null ? 1 : outlet.ramp;
-        const dep = 0.3 * abilityF * custF * locF * mgrF * moraleF * ramp;
+        const dep = 0.24 * abilityF * custF * locF * mgrF * moraleF * ramp;
         return { deposit: round(dep, 3), loan: round(dep * 0.62, 3), income: round(dep * 1.5, 3), manager: manager };
       }
 
@@ -1978,6 +2049,7 @@
             coverUps: 0,
             staffDepartures: 0,
             annualSCount: 0,
+            lobbyFatigue: 0,
             ended: false
           },
           ending: null,
@@ -2045,7 +2117,7 @@
           effect(state) {
             const m = getTeamMultiplier(state);
             return makeEffect({
-              branch: { deposit: round(0.22 * m, 2), loan: 0.05, incomeRate: 1.1, customerOpportunities: 3 },
+              branch: { deposit: round(0.17 * m, 2), loan: 0.04, incomeRate: 0.9, customerOpportunities: 3 },
               player: { pressure: 2 },
               hiddenRisks: { leaderAttention: 1 },
               log: "你跑了两家沉默很久的客户。对方没有立刻表态，但至少愿意把茶续上。"
@@ -2064,7 +2136,7 @@
           effect(state) {
             const m = getRelationMultiplier(state);
             return makeEffect({
-              branch: { deposit: round(0.42 * m, 2), incomeRate: 2.4, localRelation: 3, customerOpportunities: 7 },
+              branch: { deposit: round(0.32 * m, 2), incomeRate: 1.9, localRelation: 3, customerOpportunities: 7 },
               hiddenRisks: { compliance: 3, publicOpinion: 1 },
               log: "联谊会结束时，有客户把名片塞回了西装内袋。那通常不是坏信号。"
             });
@@ -2082,7 +2154,7 @@
           effect(state) {
             const rush = getQuarterRushMultiplier(state);
             return makeEffect({
-              branch: { deposit: round(0.28 * rush, 2), incomeRate: 1.6, morale: -1, customerOpportunities: 4 },
+              branch: { deposit: round(0.22 * rush, 2), incomeRate: 1.3, morale: -1, customerOpportunities: 4 },
               player: { pressure: 1 },
               hiddenRisks: { employee: 1 },
               log: "活动当天人声鼎沸，客户经理的笑容保持到了下班后半小时。"
@@ -2136,7 +2208,7 @@
           effect(state) {
             const riskShield = state.branch.teamAbility > 62 ? -2 : 2;
             return makeEffect({
-              branch: { loan: 0.42, incomeRate: 2.8 },
+              branch: { loan: 0.34, incomeRate: 2.2 },
               player: { leaderImpression: 2, pressure: 2 },
               hiddenRisks: { npl: 6 + Math.max(0, riskShield), compliance: 1 },
               log: "信贷台账多了几笔漂亮数字。风控经理在旁边写下了三个问号。"
@@ -3610,6 +3682,220 @@
               }
             }
           ]
+        },
+        {
+          id: "quarter_deposit_pressure",
+          title: "季末时点缺口",
+          type: "gray",
+          repeatable: true,
+          weight: 16,
+          cooldownWeeks: 12,
+          condition(state) {
+            return (state.week % 13) >= 9 && state.branch.rank >= 3;
+          },
+          description: "离季末考核没几天，存款时点还差一截，分行的进度表催得紧。会计室有人小声提了一句：要不要‘想点办法’把数做上去？",
+          options: [
+            {
+              text: "虚增存款，先把时点冲漂亮",
+              hint: "数字立刻好看，合规/资金风险大涨。",
+              effect(state) {
+                state.flags.coverUps = (state.flags.coverUps || 0) + 1;
+                return makeEffect({ branch: { deposit: 2.6, incomeRate: 1.4 }, player: { morality: -4 }, hiddenRisks: { compliance: 14, fundStability: 16 }, routeScores: { gray: 1 }, log: "时点数字非常好看。好看到资金第二天就开始大规模搬家。" });
+              }
+            },
+            {
+              text: "发动全员正常营销冲一冲",
+              hint: "稳妥但有限，耗精力。",
+              effect: { branch: { deposit: 0.8, customerOpportunities: 4 }, player: { pressure: 4 }, routeScores: { reform: 1 }, log: "全行扑出去拉了一轮真实存款。涨得不多，但每一笔都站得住。" }
+            },
+            {
+              text: "认了这个季度，不做假",
+              hint: "考核难看，底子干净。",
+              effect: { player: { pressure: -1, leaderImpression: -2 }, hiddenRisks: { compliance: -3, fundStability: -3 }, log: "你没有动那个念头。季末通报会难看，但你晚上睡得着。" }
+            }
+          ]
+        },
+        {
+          id: "npl_surfacing_choice",
+          title: "一笔不良要露头",
+          type: "gray",
+          repeatable: true,
+          weight: 15,
+          cooldownWeeks: 12,
+          condition(state) {
+            return state.branch.nplRate > 3.3 || state.hiddenRisks.npl > 52;
+          },
+          description: "一户大额贷款实质上已经还不上了，按规矩该下调分类、计提不良。可这么一动，账面不良率立刻难看，季度考核也跟着塌。",
+          options: [
+            {
+              text: "隐瞒不良，调整五级分类",
+              hint: "账面立刻好看，不良/合规风险大涨。",
+              effect(state) {
+                state.flags.coverUps = (state.flags.coverUps || 0) + 1;
+                return makeEffect({ branch: { nplRate: -0.3, incomeRate: 0.6 }, player: { morality: -5, leaderImpression: 1 }, hiddenRisks: { npl: 16, compliance: 14 }, routeScores: { gray: 1 }, log: "报表上那户贷款还‘正常’。问题只是换了一件衣服，继续坐在那儿。" });
+              }
+            },
+            {
+              text: "如实下调分类，启动处置",
+              hint: "短期难看，风险真正下降。",
+              effect: { branch: { nplRate: 0.4 }, player: { leaderImpression: -3, pressure: 5 }, hiddenRisks: { npl: -14, compliance: -8 }, routeScores: { reform: 1 }, log: "你把这颗雷摆上了桌面。分行脸色不好，但材料终于开始接近真实。" }
+            },
+            {
+              text: "找关联企业过桥周转",
+              hint: "灰色，押后爆雷、风险累积。",
+              effect: { branch: { nplRate: -0.12 }, player: { morality: -2 }, hiddenRisks: { npl: 8, compliance: 6 }, routeScores: { gray: 1 }, log: "一笔过桥把窟窿暂时填上。利息在走，雷也在走，只是往后滚了一圈。" }
+            }
+          ]
+        },
+        {
+          id: "dodgy_big_loan",
+          title: "一笔来路不正的大单",
+          type: "gray",
+          repeatable: true,
+          weight: 14,
+          cooldownWeeks: 13,
+          condition(state) {
+            return state.branch.rank >= 3 && state.branch.loanOpportunities >= 4;
+          },
+          description: "有人介绍来一笔大额贷款，规模诱人、能立刻把贷款盘子和收入做上去——但材料经不起细看，担保也是凑的。",
+          options: [
+            {
+              text: "违规放贷，先把规模做出来",
+              hint: "贷款收入猛涨，不良/合规风险大涨。",
+              effect: { branch: { loan: 2.4, incomeRate: 3.2 }, player: { morality: -5 }, hiddenRisks: { npl: 16, compliance: 12 }, routeScores: { gray: 1, wolf: 1 }, log: "钱放出去了，规模和收入都漂亮。漂亮的代价，藏在那几页凑出来的材料里。" }
+            },
+            {
+              text: "按规矩审，缺的材料补齐再说",
+              hint: "稳，但这单很可能黄。",
+              effect(state) {
+                const ok = chance(state, 0.4, state.branch.teamAbility / 260);
+                return ok
+                  ? makeEffect({ branch: { loan: 0.8, incomeRate: 1 }, routeScores: { reform: 1 }, log: "你让客户把材料补到合规，留下了能做的那部分。" })
+                  : makeEffect({ branch: { loanOpportunities: -2 }, player: { pressure: 2 }, routeScores: { reform: 1 }, log: "材料补不齐，这单黄了。规矩守住了，规模也没了。" });
+              }
+            },
+            {
+              text: "直接回绝",
+              hint: "干净，但错过规模。",
+              effect: { player: { morality: 2 }, hiddenRisks: { compliance: -2 }, log: "你把这单推了出去。介绍人脸色不好看，你的账本好看。" }
+            }
+          ]
+        },
+        {
+          id: "inspection_coming",
+          title: "巡视检查组要来了",
+          type: "gray",
+          repeatable: true,
+          weight: 14,
+          cooldownWeeks: 14,
+          condition(state) {
+            return state.hiddenRisks.leaderAttention > 45 || state.hiddenRisks.compliance > 48;
+          },
+          description: "上面要派检查组下来。手里几笔业务和费用经不起太细的盘问，留给你准备的时间不多。",
+          options: [
+            {
+              text: "包装材料，把场面做圆",
+              hint: "印象保住，合规风险上升。",
+              effect: { player: { leaderImpression: 4 }, hiddenRisks: { compliance: 10, leaderAttention: 3 }, routeScores: { official: 1 }, log: "台账连夜补齐，路线图做得很顺。顺到经不起第二遍翻。" }
+            },
+            {
+              text: "走特殊渠道，提前打点关键人",
+              hint: "灰色，廉洁风险大涨。",
+              effect(state) {
+                state.flags.coverUps = (state.flags.coverUps || 0) + 1;
+                return makeEffect({ branch: { marketingBudget: -8 }, player: { morality: -5 }, hiddenRisks: { integrity: 16, leaderAttention: -4 }, routeScores: { gray: 1 }, log: "几通电话之后，检查变得温和了许多。温和是借来的，迟早要还。" });
+              }
+            },
+            {
+              text: "老老实实摊开，边查边改",
+              hint: "短痛，风险真正下降。",
+              effect: { player: { pressure: 5, leaderImpression: -1 }, hiddenRisks: { compliance: -12, integrity: -6 }, routeScores: { reform: 1 }, log: "你把问题摆出来配合查。检查组没笑，但笔记里少了些尖锐的词。" }
+            }
+          ]
+        },
+        {
+          id: "accountability_storm",
+          title: "出了纰漏要追责",
+          type: "official",
+          repeatable: true,
+          weight: 13,
+          cooldownWeeks: 14,
+          condition(state) {
+            return state.flags.riskExplosions > 0 || state.flags.consecutiveBlackQuarters > 0 || maxRisk(state) > 62;
+          },
+          description: "一件事捅了篓子，分行要追责。板子打下来，落在谁头上还没定。",
+          options: [
+            {
+              text: "把责任推给分管副行长",
+              hint: "保住自己，士气与队伍受伤。",
+              effect(state) {
+                const dep = state.employees.filter((e) => e.role === "副行长" && e.slotId)[0];
+                if (dep) dep.loyalty = clamp(dep.loyalty - 20, 0, 100);
+                return makeEffect({ player: { leaderImpression: 2, morality: -4 }, branch: { morale: -5 }, hiddenRisks: { employee: 10 }, routeScores: { official: 1 }, log: (dep ? dep.name : "副行长") + "替你背了这口锅。你的位子稳了，走廊里看你的眼神变了。" });
+              }
+            },
+            {
+              text: "自己扛下来",
+              hint: "印象受损，队伍买账。",
+              effect: { player: { leaderImpression: -5, pressure: 6 }, branch: { morale: 5 }, hiddenRisks: { employee: -6 }, routeScores: { reform: 1 }, log: "你在会上把责任揽了过来。分行记下了这一笔，队伍也记下了这一笔。" }
+            }
+          ]
+        },
+        {
+          id: "seat_contest",
+          title: "有人在盯你的位子",
+          type: "official",
+          repeatable: true,
+          weight: 12,
+          cooldownWeeks: 15,
+          condition(state) {
+            return state.branch.rank <= 3 || state.hiddenRisks.leaderAttention > 50;
+          },
+          description: "你冒头了，自然也成了别人眼里的台阶。分行里有人开始对你的位子有想法，暗里使着劲。",
+          options: [
+            {
+              text: "先下手打压竞争者",
+              hint: "官场操作，廉洁风险上升。",
+              effect: { player: { leaderImpression: 3, morality: -3 }, hiddenRisks: { integrity: 8, publicOpinion: 3 }, routeScores: { official: 1 }, log: "你不动声色地堵了对方几条路。台面上风平浪静，台面下水很深。" }
+            },
+            {
+              text: "拉拢核心骨干，巩固班底",
+              hint: "稳住基本盘，花工资池。",
+              effect(state) {
+                state.employees.slice(0, 4).forEach((e) => { if (e.slotId) e.loyalty = clamp(e.loyalty + 8, 0, 100); });
+                return makeEffect({ branch: { salaryPool: -12, morale: 3 }, hiddenRisks: { employee: -6 }, routeScores: { official: 1 }, log: "你把几个关键的人请到一起吃了顿饭。班底更齐了，账上也更薄了。" });
+              }
+            },
+            {
+              text: "不屑于搞这些，做好业绩",
+              hint: "清流，赌实绩说话。",
+              effect: { player: { morality: 3, pressure: 2 }, routeScores: { reform: 1 }, log: "你懒得卷进暗斗，把劲使回了业务。最硬的护身符，还是报表。" }
+            }
+          ]
+        },
+        {
+          id: "bad_news_spreading",
+          title: "一条对你不利的消息在传",
+          type: "gray",
+          repeatable: true,
+          weight: 12,
+          cooldownWeeks: 14,
+          condition(state) {
+            return state.hiddenRisks.publicOpinion > 40 || state.hiddenRisks.leaderAttention > 48;
+          },
+          description: "一条对你不太有利的消息正在分行和客户间流传，再发酵下去，会传到不该传的人耳朵里。",
+          options: [
+            {
+              text: "控制信息，把消息压下去",
+              hint: "暂时压住，廉洁/舆情暗里累积。",
+              effect: { hiddenRisks: { publicOpinion: -8, integrity: 8 }, player: { morality: -3 }, routeScores: { official: 1, gray: 1 }, log: "几个渠道一打招呼，声音小了下去。压住的东西不会消失，只是换个地方憋着。" }
+            },
+            {
+              text: "公开把话说清楚",
+              hint: "正面回应，耗精力。",
+              effect: { hiddenRisks: { publicOpinion: -12, leaderAttention: 2 }, player: { pressure: 4 }, routeScores: { reform: 1 }, log: "你把事情摊开讲了一遍。说清楚比捂着费劲，但捂着更贵。" }
+            }
+          ]
         }
       ];
 
@@ -3764,6 +4050,7 @@
       function applyAction(state, actionId) {
         const action = ACTIONS.find((item) => item.id === actionId);
         if (!action) return { ok: false, message: "行动不存在。" };
+        if (EVENT_ONLY_ACTIONS.indexOf(actionId) >= 0) return { ok: false, message: "这种操作只在被逼到墙角时才会出现。" };
         if (state.flags.ended || state.ending) return { ok: false, message: "任期已经结束。" };
         if (state.actionPoints < action.cost) return { ok: false, message: "行动点不足。" };
         if ((action.budgetCost || 0) > state.branch.marketingBudget) return { ok: false, message: "经营成本不足。" };
@@ -3903,8 +4190,8 @@
           if (state.cooldowns[event.id] > 0) return false;
           return !event.condition || event.condition(state);
         });
-        const riskBoost = maxRisk(state) / 420;
-        const chanceValue = clamp(0.16 + riskBoost, 0.12, 0.42);
+        const riskBoost = maxRisk(state) / 360;
+        const chanceValue = clamp(0.34 + riskBoost, 0.3, 0.62);
         if (eligible.length && Math.random() < chanceValue) {
           state.pendingEvents.push(weightedPick(eligible).id);
         }
@@ -3947,6 +4234,8 @@
 
       function weeklyDrift(state) {
         applyIdleStaffPressure(state);
+        // 对手每周都在涨，是个一直在跑的移动靶
+        driftCompetitorsWeekly(state);
         // 网点产出是自然增长的主引擎（占大头）
         processOutlets(state);
         // 总部直营/直接业务只占一小部分残余增长
@@ -3963,6 +4252,12 @@
         state.hiddenRisks.employee += state.branch.morale < 32 ? 2 : -1;
         state.hiddenRisks.fundStability -= 1;
         state.player.pressure += state.branch.rank > 6 ? 1 : -1;
+        // 关系会冷却：不维护，好感逐周回落（高好感掉得更快）
+        if (Array.isArray(state.contacts)) {
+          state.contacts.forEach((c) => { c.favor = clamp(round(c.favor - (c.favor - 22) * 0.045, 1), 0, 100); });
+        }
+        // 求人疲劳逐周恢复
+        if (state.flags.lobbyFatigue) state.flags.lobbyFatigue = Math.max(0, round(state.flags.lobbyFatigue - 0.34, 2));
         // 机会池转化：走访/营销/拜访攒下的机会，靠队伍逐周谈成存贷款；没跟进的线索会较快过期流失
         const closeRate = 0.006 + (state.branch.teamAbility / 100) * 0.008;
         const custConv = Math.min(0.18, round(state.branch.customerOpportunities * closeRate, 3));
@@ -4010,6 +4305,25 @@
         state.branch.lastRank = state.branch.rank;
         evolveCompetitors(state);
         processPayroll(state);
+        // 营业收入结转经营成本：业绩越好，自己就能挣出经营成本，不必只靠找领导要
+        const opBudget = round(state.branch.incomeRate * 0.16 + state.branch.deposit * 0.09, 0);
+        state.branch.marketingBudget += opBudget;
+        // 高好感的关系每月反哺：领导印象、存款、客户机会
+        if (Array.isArray(state.contacts)) {
+          let lead = 0, dep = 0, opp = 0;
+          state.contacts.forEach((c) => {
+            if (c.favor >= 60) {
+              const w = (c.favor - 50) / 50;
+              if (c.group === "分行领导") lead += 0.9 * w;
+              else if (c.group === "政府条线") { dep += 0.28 * w; opp += 1.1 * w; }
+              else { dep += 0.22 * w; opp += 0.9 * w; }
+            }
+          });
+          if (lead > 0) state.player.leaderImpression += round(lead, 1);
+          if (dep > 0) state.branch.deposit += round(dep, 2);
+          if (opp >= 1) state.branch.customerOpportunities += Math.round(opp);
+          if (lead + dep > 0.6) addLog(state, "关系反哺", "你长期经营的几位熟人这个月又帮你带来了存款、机会和好话——关系到位，盘子自己会长。", "social");
+        }
         // 网点月度租金（开得越多越重）
         const rent = outletMonthlyRent(state);
         if (rent > 0) {
@@ -4247,6 +4561,7 @@
         computeBranchScore,
         branchScoreBreakdown,
         evolveCompetitors,
+        driftCompetitorsWeekly,
         monthlyPayroll,
         monthlySalary,
         branchOutletOutput,
@@ -4336,13 +4651,20 @@
             toast("已手动保存");
           });
           $("endWeekBtn").addEventListener("click", () => {
+            const before = snapshotStats(state);
+            const topIdBefore = state.logs[0] ? state.logs[0].id : null;
             const result = endWeek(state);
             if (result && result.ended) {
               renderEnding();
               return;
             }
             renderGame();
-            showNextEventIfAny();
+            const newLogs = [];
+            for (const l of state.logs) {
+              if (l.id === topIdBefore) break;
+              if (l.type !== "system") newLogs.push(l.text);
+            }
+            showWeekSummary(before, snapshotStats(state), newLogs, () => showNextEventIfAny());
           });
           $("endingNewBtn").addEventListener("click", startNewGame);
           $("endingHomeBtn").addEventListener("click", () => {
@@ -4448,7 +4770,7 @@
         }
 
         function renderActions() {
-          const actions = ACTIONS.filter((action) => action.category === activeCategory);
+          const actions = ACTIONS.filter((action) => action.category === activeCategory && EVENT_ONLY_ACTIONS.indexOf(action.id) < 0);
           $("panelContent").innerHTML =
             '<div class="panel-title-row"><h2>本周行动</h2><div class="panel-meta">剩余 ' + state.actionPoints + ' 点</div></div>' +
             '<div class="action-layout"><div class="category-tabs">' +
@@ -4494,9 +4816,7 @@
                 hint: "本周剩余行动点会立即扣除。",
                 action: () => {
                   closeModal();
-                  const result = withFeedback(action.name, () => applyAction(state, action.id));
-                  renderGame();
-                  showNextEventIfAny();
+                  withFeedback(action.name, () => applyAction(state, action.id), showNextEventIfAny);
                 }
               },
               { text: "再想想", hint: "不消耗行动点。", action: closeModal }
@@ -4511,9 +4831,7 @@
           const runOn = (contactId) => {
             closeModal();
             const contact = state.contacts.find((c) => c.id === contactId);
-            const result = withFeedback(action.name + "·" + (contact ? contact.name : ""), () => applySocialAction(state, actionId, contactId));
-            renderGame();
-            if (result.ok) showNextEventIfAny();
+            withFeedback(action.name + "·" + (contact ? contact.name : ""), () => applySocialAction(state, actionId, contactId), showNextEventIfAny);
           };
           const costLine = action.cost + '行动点' + (action.budgetCost ? '，经营成本' + asMoney(action.budgetCost) : '');
           if (contacts.length === 1) {
@@ -5048,28 +5366,40 @@
           return chips;
         }
 
-        function flashResult(title, narrative, chips) {
-          let wrap = document.getElementById("flashWrap");
-          if (!wrap) { wrap = document.createElement("div"); wrap.id = "flashWrap"; wrap.className = "flash-wrap"; document.body.appendChild(wrap); }
-          const card = document.createElement("div");
-          card.className = "flash-card";
-          card.innerHTML = '<div class="flash-title">' + title + '</div>' +
-            (narrative ? '<div class="flash-narr">' + narrative + '</div>' : '') +
-            (chips.length ? '<div class="flash-deltas">' + chips.map((c) => '<span class="flash-chip ' + c.cls + '">' + c.text + '</span>').join("") + '</div>' : '<div class="flash-deltas"><span class="flash-chip flat">没有明显变化</span></div>');
-          const remove = () => { card.classList.add("fading"); setTimeout(() => { if (card.parentNode) card.parentNode.removeChild(card); }, 380); };
-          card.addEventListener("click", remove);
-          wrap.appendChild(card);
-          while (wrap.children.length > 3) wrap.removeChild(wrap.firstChild);
-          setTimeout(remove, 5200);
+        function chipsHtml(chips) {
+          return '<div class="result-deltas">' + (chips.length ? chips.map((c) => '<span class="flash-chip ' + c.cls + '">' + c.text + '</span>').join("") : '<span class="flash-chip flat">没有明显变化</span>') + '</div>';
         }
 
-        function withFeedback(title, fn) {
+        // 行动结果：画面中央弹窗，先叙事后数据，点"知道了"才关
+        function showActionResult(title, narrative, chips, onDone) {
+          openModal({
+            title: title,
+            body: (narrative ? '<p class="result-narr">' + narrative + '</p>' : '') + chipsHtml(chips),
+            options: [{ text: "知道了", hint: "", action: () => { closeModal(); if (typeof onDone === "function") onDone(); } }]
+          });
+        }
+
+        function withFeedback(title, fn, onDone) {
           const before = snapshotStats(state);
           const result = fn();
           if (result && result.ok === false) { toast(result.message); return result; }
+          renderGame();
           const narrative = state.logs && state.logs[0] ? state.logs[0].text : "";
-          flashResult(title, narrative, diffStats(before, snapshotStats(state)));
+          showActionResult(title, narrative, diffStats(before, snapshotStats(state)), onDone);
           return result;
+        }
+
+        // 本周结算弹窗：把这一周自然发生的变化（产出/发薪/对手/排名…）摊给玩家看
+        function showWeekSummary(before, after, logs, onDone) {
+          const chips = diffStats(before, after).filter((c) => c.text.indexOf("行动点") !== 0);
+          const narr = logs.length
+            ? logs.slice(0, 6).map((t) => '<p class="result-narr">· ' + t + '</p>').join("")
+            : '<p class="result-narr">这一周风平浪静，各项数字按部就班地走。</p>';
+          openModal({
+            title: "第" + state.week + "周 · 本周结算",
+            body: narr + chipsHtml(chips),
+            options: [{ text: "知道了", hint: "", action: () => { closeModal(); if (typeof onDone === "function") onDone(); } }]
+          });
         }
 
         return {
