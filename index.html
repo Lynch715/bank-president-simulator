@@ -1020,6 +1020,9 @@
       // 这些"掩盖/作弊/权斗"型灰色操作没有日常主动动机，改为只在压力事件里作为选项出现，不在行动列表里平白可点。
       // 送礼/请客/利益输送等"经营关系"的灰色操作仍是日常主动行动。
       const EVENT_ONLY_ACTIONS = ["illegal_lending", "fake_deposit", "hide_npl", "special_channel", "package_report", "blame_deputy", "suppress_opponents", "win_core_staff", "control_information"];
+      // 这些在"员工"面板有专门的操作界面，不在行动列表里重复出现
+      const PANEL_ONLY_ACTIONS = ["recruit", "promote_cadre", "demote_staff", "dismiss_staff"];
+      function isHiddenFromMenu(id) { return EVENT_ONLY_ACTIONS.indexOf(id) >= 0 || PANEL_ONLY_ACTIONS.indexOf(id) >= 0; }
 
       const TABS = [
         { id: "actions", label: "本周行动" },
@@ -4770,7 +4773,7 @@
         }
 
         function renderActions() {
-          const actions = ACTIONS.filter((action) => action.category === activeCategory && EVENT_ONLY_ACTIONS.indexOf(action.id) < 0);
+          const actions = ACTIONS.filter((action) => action.category === activeCategory && !isHiddenFromMenu(action.id));
           $("panelContent").innerHTML =
             '<div class="panel-title-row"><h2>本周行动</h2><div class="panel-meta">剩余 ' + state.actionPoints + ' 点</div></div>' +
             '<div class="action-layout"><div class="category-tabs">' +
@@ -4860,7 +4863,8 @@
           const positions = state.positionSlots.filter((slot) => slot.managed);
           const openSlots = positions.filter((slot) => !slot.employeeId);
           const idleEmployees = getIdleEmployees(state);
-          const visible = state.employees.filter((employee) => employee.assignmentStatus !== "待岗").slice(0, 18);
+          // 在岗名单只放没占管理岗位的普通员工（柜员/大堂/管理员等），避免和"岗位编制"重复
+          const visible = state.employees.filter((employee) => !employee.slotId && employee.assignmentStatus !== "待岗").slice(0, 20);
           const candidates = state.employeePool.slice(0, 8);
           const payroll = monthlyPayroll(state);
           const pool = state.branch.salaryPool;
@@ -4883,8 +4887,8 @@
               '<div class="panel-title-row"><h2>岗位编制</h2><div class="panel-meta">管理/骨干岗位有限编制</div></div>' +
               '<div class="list staff-list">' + positions.map(renderPositionCard).join("") + '</div>' +
               (idleEmployees.length ? '<div class="panel-title-row"><h2>待岗人员</h2><div class="panel-meta">持续消耗工资池并增加员工风险</div></div><div class="list staff-list">' + idleEmployees.map(renderEmployeeCard).join("") + '</div>' : '') +
-              '<div class="panel-title-row"><h2>在岗名单</h2><div class="panel-meta">显示前18人</div></div>' +
-              '<div class="list staff-list">' + visible.map(renderEmployeeCard).join("") + '</div>';
+              '<div class="panel-title-row"><h2>在岗员工</h2><div class="panel-meta">未占管理岗位的柜员/大堂/管理员等</div></div>' +
+              '<div class="list staff-list">' + (visible.length ? visible.map(renderEmployeeCard).join("") : '<div class="empty">没有其他在岗员工。</div>') + '</div>';
           }
           $("panelContent").innerHTML =
             '<div class="panel-title-row"><h2>员工管理</h2><div class="panel-meta">' + state.employees.length + '人 · 空缺' + openSlots.length + '个 · 待岗' + idleEmployees.length + '人</div></div>' +
@@ -4926,7 +4930,12 @@
             '<div class="item-head"><div><h3 class="item-title">' + slot.title + '</h3><p class="item-subtitle">' + slot.role + (slot.department ? ' · ' + slot.department : '') + (slot.outlet ? ' · ' + slot.outlet : '') + '</p></div><span class="badge ' + (employee ? "green" : "orange") + '">' + (employee ? "在编" : "空缺") + '</span></div>' +
             '<p class="item-body">' + body + '</p>' +
             '<div class="item-actions">' +
-            (employee ? '<button class="btn warning" data-demote-employee="' + employee.id + '">免职腾位</button>' : '<button class="btn" data-assign-slot="' + slot.id + '">任命人员</button>') +
+            (employee
+              ? '<button class="btn secondary" data-employee-id="' + employee.id + '" data-employee-op="talk">谈心</button>' +
+                '<button class="btn secondary" data-employee-id="' + employee.id + '" data-employee-op="train">培训</button>' +
+                '<button class="btn secondary" data-employee-id="' + employee.id + '" data-employee-op="raise">加薪</button>' +
+                '<button class="btn warning" data-demote-employee="' + employee.id + '">免职腾位</button>'
+              : '<button class="btn" data-assign-slot="' + slot.id + '">任命人员</button>') +
             '</div></article>';
         }
 
@@ -5297,10 +5306,12 @@
               text: option.text,
               hint: option.hint,
               action: () => {
+                const before = snapshotStats(state);
                 chooseEventOption(state, event.id, index);
                 closeModal();
                 renderGame();
-                showNextEventIfAny();
+                const narrative = state.logs && state.logs[0] ? state.logs[0].text : "";
+                showActionResult(event.title + "：" + option.text, narrative, diffStats(before, snapshotStats(state)), showNextEventIfAny);
               }
             }))
           });
