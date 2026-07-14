@@ -324,7 +324,8 @@ function newGame(){
 }
 function askName(){
   $("#mTitle").textContent = "上任报到";
-  $("#mBody").innerHTML = `分行人事处的干部翻开登记簿,抬头看你:『新来的行长,怎么称呼?』<br><br><input id="nameInput" maxlength="8" placeholder="写个名字" value="${(S.playerName==="无名行长"?"":S.playerName)}">`;
+  $("#mBody").innerHTML = `分行人事处的干部翻开登记簿,抬头看你:『新来的行长,怎么称呼?』<br><br><input id="nameInput" maxlength="8" placeholder="写个名字">`;
+  $("#nameInput").value = S.playerName==="无名行长" ? "" : S.playerName;
   const box = $("#mOpts"); box.innerHTML = "";
   const btn = document.createElement("button"); btn.className = "main"; btn.textContent = "就叫这个";
   btn.onclick = ()=>{
@@ -345,6 +346,7 @@ const fmt = n=>(+n).toFixed(1);
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const rnd=(a,b)=>a+Math.random()*(b-a);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
+const esc=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 function starTxt(n){ return "★".repeat(n)+"☆".repeat(5-n); }
 function yearOf(m){ return Math.ceil(m/12); }
 function monOf(m){ return ((m-1)%12)+1; }
@@ -1099,7 +1101,7 @@ function showEnd(title, txt, good){
     ["风险峰值", Math.round(t.maxRisk||0)],
   ];
   $("#endCard").innerHTML = `
-    <div class="ename">《江北支行》三年任期结算 · 行长 ${S.playerName}</div>
+    <div class="ename">《江北支行》三年任期结算 · 行长 ${esc(S.playerName)}</div>
     <div class="etitle">${good?"🏆":"🍂"} ${title}</div>
     <div class="etext">${txt}</div>
     <div class="egrid">${gr.map(([k,v])=>`<div class="eg"><div class="v">${v}</div><div class="k">${k}</div></div>`).join("")}</div>
@@ -1258,7 +1260,7 @@ function renderPanel(){
     rows.sort((a,b)=>b.dep-a.dep);
     let html = `<table><tr><th>#</th><th>支行</th><th>行长</th><th>打法</th><th>存款</th></tr>`;
     rows.forEach((r,i)=>{
-      html += `<tr class="${r.me?"me":""}"><td>${i+1}</td><td>${r.name}</td><td>${r.boss}</td><td>${r.style}</td><td>${fmt(r.dep)}亿</td></tr>`;
+      html += `<tr class="${r.me?"me":""}"><td>${i+1}</td><td>${r.name}</td><td>${esc(r.boss)}</td><td>${r.style}</td><td>${fmt(r.dep)}亿</td></tr>`;
     });
     html += `</table><div class="sub" style="margin-top:8px">狼性、灰色打法的对手冲得快,但有概率爆雷倒退——他们摔跟头时,客户会流到你这来。</div>`;
     el.innerHTML = html;
