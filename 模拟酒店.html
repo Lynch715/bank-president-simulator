@@ -312,9 +312,11 @@ function relationshipDemand(s){
   return v;
 }
 function orderTotals(s){
+  const bonus=(s.route&&ROUTES[s.route]&&ROUTES[s.route].orderBonus)||{};
   return s.orders.filter(o=>o.status==="accepted").reduce((a,o)=>{
-    a.roomNights+=o.roomNights||0;a.roomRevenue+=o.roomRevenue||0;a.eventRevenue+=o.eventRevenue||0;
-    a.fbRevenue+=o.fbRevenue||0;a.load+=o.load||0;a.delayed+=o.delayed||0;return a;
+    const m=bonus[o.type]||1;
+    a.roomNights+=o.roomNights||0;a.roomRevenue+=(o.roomRevenue||0)*m;a.eventRevenue+=(o.eventRevenue||0)*m;
+    a.fbRevenue+=(o.fbRevenue||0)*m;a.load+=o.load||0;a.delayed+=o.delayed||0;return a;
   },{roomNights:0,roomRevenue:0,eventRevenue:0,fbRevenue:0,load:0,delayed:0});
 }
 function calculateForecast(s){
@@ -708,7 +710,7 @@ function actMarket(){
   showModal("拓展客户","这个月准备从哪里找增量？",[
     eventOption("跑企业协议客户","花6万，商务需求提高",()=>{add(S,"cash",-6);S.marketBoost+=.09;add(S,"brand",2);spend()}),
     eventOption("联合旅行社做周末团","花4万，入住需求提高，但客房负荷上升",()=>{add(S,"cash",-4);S.marketBoost+=.12;risk(S,"hygiene",3);relation(S,"xu",2);spend()}),
-    eventOption("做一场婚宴品鉴会","花18万，提高婚宴订单和品牌",()=>{add(S,"cash",-18);add(S,"brand",5);relation(S,"liang",3);S.flags.weddingShow=S.month+3;spend()}),
+    (()=>{const c=S.flags.weddingRoute?10:18;return eventOption("做一场婚宴品鉴会",`花${c}万，提高婚宴订单和品牌`,()=>{add(S,"cash",-c);add(S,"brand",5);relation(S,"liang",3);S.flags.weddingShow=S.month+3;spend()});})(),
     eventOption("先不投市场","不花行动力",()=>{})]);
 }
 function actRelation(){switchTab("relations");if(S.energy<=0)needEnergy()}
