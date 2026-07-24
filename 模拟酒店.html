@@ -325,7 +325,7 @@ function calculateForecast(s){
     const r=ROOM_TYPES[key], price=s.prices[key], elastic=key==="suite"?.72:1.08;
     const supportedRate=r.base*(1+.045*Math.max(0,(s.facilities.rooms||1)-1));
     const priceFactor=Math.pow(supportedRate/price,elastic);
-    const typeBase=key==="standard"?.46:key==="business"?.39:.24;
+    const typeBase=key==="standard"?.52:key==="business"?.44:.28;
     let occ=typeBase*season.factor*priceFactor*(.72+s.brand/180)*(.76+s.rating/13)*(.72+sales*.30);
     occ*=1+s.marketBoost+relationshipDemand(s);
     occ=clamp(occ,.08,.94);
@@ -344,7 +344,7 @@ function calculateForecast(s){
   const adr=sold>0?roomRevenue*10000/sold:0;
   const payroll=totalPayroll(s), utilities=14+occupancy*16+eventRevenue*.045;
   const procurement=fbRevenue*.36, ota=roomRevenue*s.otaShare*.15;
-  const maintenance=5+s.facilityAge*1.2, debt=10, overtime=overload*38;
+  const maintenance=3.5+s.facilityAge*0.8, debt=(s.month<=12?2:4), overtime=overload*38;
   const revenue=roomRevenue+fbRevenue+eventRevenue;
   const expense=payroll+utilities+procurement+ota+maintenance+debt+overtime;
   const cashNet=revenue-expense-order.delayed;
@@ -383,7 +383,7 @@ function initialState(){
   const s={version:SAVE_VERSION,month:1,energy:4,over:false,playerName:"无名总经理",startCash:320,cash:320,rating:3.8,morale:46,brand:48,lastDelta:{},
     prices:{standard:318,business:468,suite:888},last:{occupancy:.48,adr:336,revpar:161,profit:-8,revenue:102},
     departments:{},employees:EMPLOYEE_SEEDS.map(e=>({...e})),empSeq:20,candidates:[],npcs:NPC_SEEDS.map(n=>({...n,lastMet:0,lastMethod:null,repeat:0,tried:{}})),
-    competitors:COMPETITOR_SEEDS.map(c=>({...c})),risks:{fire:32,hygiene:29,equipment:46,labor:24,finance:31},warnings:{fire:0,hygiene:0,equipment:0,labor:0,finance:0},warningMonth:{},
+    competitors:COMPETITOR_SEEDS.map(c=>({...c})),risks:{fire:32,hygiene:29,equipment:24,labor:24,finance:31},warnings:{fire:0,hygiene:0,equipment:0,labor:0,finance:0},warningMonth:{},
     facilityAge:3,facilities:{rooms:1,banquet:1,conference:1,safety:1},otaShare:.45,marketBoost:0,serviceBoost:0,orders:[],usedEvents:[],lastEvent:null,flags:{},chain:[],
     track:{profit:0,revenue:0,weddings:0,meetings:0,roomNights:0,maxOcc:.48,minCash:320,hires:0,promotions:0,demotions:0,fires:0,relations:0,repairs:0,gray:0,complaints:0},
     tab:"operate",teamFilter:"all",relationFilter:"all",log:[]};
@@ -601,11 +601,11 @@ function disasterCheck(){
 }
 function applyPassiveRisks(s,f){
   const eng=rolePower(s,"engineering"),rooms=rolePower(s,"rooms"),fb=rolePower(s,"fb"),admin=rolePower(s,"admin");
-  risk(s,"equipment",2.8+s.facilityAge*.5-eng*3.2+(f.occupancy>.9?3:0));
+  risk(s,"equipment",1.8+s.facilityAge*.5-eng*3.2+(f.occupancy>.9?3:0));
   risk(s,"fire",1.8+s.facilityAge*.35-eng*2.3+(f.eventRevenue>45?2:0));
   risk(s,"hygiene",2.2-rooms*1.4-fb*1.1+f.overload*8);
   const shortage=Object.entries(s.departments).reduce((n,[k,d])=>n+Math.max(0,DEPARTMENTS[k].need-d.staff),0);
-  risk(s,"labor",1+shortage*.18+standby(s).length*.7-s.morale/55);
+  risk(s,"labor",1+shortage*.12+standby(s).length*.7-s.morale/55);
   risk(s,"finance",s.cash<80?5:s.cash<0?12:-1.2);
 }
 function settleCore(s){
@@ -615,7 +615,7 @@ function settleCore(s){
   let ratingDelta=(service-.78)*.065-f.overload*.12;
   if(f.occupancy>.96)ratingDelta-=.035;
   add(s,"rating",ratingDelta);add(s,"brand",(s.rating-3.8)*.45+(f.cashNet>0?.3:-.2));
-  const idle=standby(s).length;add(s,"morale",-1.5+Object.values(s.departments).reduce((n,d)=>n+(d.staff?0:.2),0)-idle*.65+(f.cashNet>15?.6:0));
+  const idle=standby(s).length;add(s,"morale",-1.0+Object.values(s.departments).reduce((n,d)=>n+(d.staff?0:.2),0)-idle*.65+(f.cashNet>15?.6:0));
   applyPassiveRisks(s,f);
   for(const n of s.npcs){if(n.fav>35&&n.lastMet<s.month)n.fav=clamp(n.fav-1,0,100)}
   for(const c of s.competitors){c.score=clamp(c.score+c.growth+rand(-.4,.5),35,98);if(Math.random()<.035){c.score-=5;log(s,"good",`${c.name}在网上出了状况，排名分下降。`)}}
