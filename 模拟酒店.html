@@ -918,7 +918,19 @@ function renderAll(){if(typeof document==="undefined")return;$("#monthText").tex
 function save(){if(!S)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return false;const data=JSON.parse(raw);if(data.version!==SAVE_VERSION)return false;S=data;return true}catch(e){return false}}
 function askName(){
-  $("#modalTitle").textContent="集团任命";$("#modalBody").innerHTML=`程雪岚把任命文件推到你面前：『雾都宾馆交给你，两年。先在这里签字。』<br><br><input id="nameInput" maxlength="8" placeholder="写下你的名字">`;const box=$("#modalOptions");box.innerHTML="";const b=document.createElement("button");b.className="primary";b.textContent="签字上任";b.onclick=()=>{S.playerName=$("#nameInput").value.trim()||"无名总经理";$("#mask").classList.remove("show");showIntro()};box.appendChild(b);$("#mask").classList.add("show");setTimeout(()=>$("#nameInput")?.focus(),50);
+  $("#modalTitle").textContent="集团任命";$("#modalBody").innerHTML=`程雪岚把任命文件推到你面前：『雾都宾馆交给你，两年。先在这里签字。』<br><br><input id="nameInput" maxlength="8" placeholder="写下你的名字">`;const box=$("#modalOptions");box.innerHTML="";const b=document.createElement("button");b.className="primary";b.textContent="签字上任";b.onclick=()=>{S.playerName=$("#nameInput").value.trim()||"无名总经理";$("#mask").classList.remove("show");chooseRoute()};box.appendChild(b);$("#mask").classList.add("show");setTimeout(()=>$("#nameInput")?.focus(),50);
+}
+function chooseRoute(){
+  const box=$("#modalOptions"); $("#modalTitle").textContent="定个方向";
+  $("#modalBody").innerHTML="程雪岚问:『雾都宾馆你想做成什么样?这一步定了,就照它走两年。』";
+  box.innerHTML="";
+  for(const id of ["business","wedding","service","viral"]){
+    const r=ROUTES[id]; const b=document.createElement("button");
+    b.innerHTML=`${r.name} · <small>${r.tagline}</small><small style="opacity:.75">起步:${r.startPerk}</small><small style="opacity:.6">目标:${r.target.ending}</small>`;
+    b.onclick=()=>{ ROUTES[id].apply(S); S.route=id; log(S,"good",`你把雾都宾馆定位为「${r.name}」。`); $("#mask").classList.remove("show"); renderAll(); showIntro(); };
+    box.appendChild(b);
+  }
+  $("#mask").classList.add("show");
 }
 function showIntro(){showModal("空降第一天",`雾都宾馆，126间客房，两座宴会厅，四个会议室。\n\n你能看到现金、入住率、房价、评分、士气和排名；看不到的东西更多。老设备不会自己开口，员工的不满也不会变成数字挂在墙上。\n\n每月4点行动力。先定房价，再决定接哪些订单、见哪些人、把钱和时间花在哪里。月底，酒店会把答案写进账单和评论里。`,[{text:"开门营业"}])}
 function startHotelFromGuide(){$("#gameGuide").classList.remove("show");S=initialState();renderAll();askName()}
@@ -931,7 +943,7 @@ function init(){
 
 const API={initialState,calculateForecast,settleCore,hotelScore,myRank,endingFor,orderTotals,disasterCheck,riskWarning,chooseEvent,generateOrders,createOrder,RISK_WARNINGS,risk,ROUTES,getEventCount:()=>EVENTS.length,getRiskWarningCount:()=>Object.keys(RISK_WARNINGS).length,setState:s=>S=s,getState:()=>S};
 if(typeof window!=="undefined")window.HotelGame=API;else globalThis.HotelGame=API;
-Object.assign(globalThis,{adjustPrice,acceptOrder,rejectOrder,negotiateOrder,interactNpc,chooseAssignment,promoteEmployee,demoteEmployee,dismissEmployee,setTeamFilter,setRelationFilter,startHotelFromGuide,restartGame});
+Object.assign(globalThis,{adjustPrice,acceptOrder,rejectOrder,negotiateOrder,interactNpc,chooseAssignment,promoteEmployee,demoteEmployee,dismissEmployee,setTeamFilter,setRelationFilter,startHotelFromGuide,restartGame,chooseRoute});
 if(typeof document!=="undefined")init();
 </script>
 </body>
