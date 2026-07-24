@@ -151,6 +151,7 @@ button.small{padding:6px 9px;font-size:13px}
   .pricing.compact .price-grid{grid-template-columns:1fr}.pricing.compact .price-row{grid-template-columns:1fr auto}
   .brand{gap:6px}.stats{gap:4px}.stat{padding:5px 2px}.tabs button{font-size:12px}
 }
+.target-bar{font-size:12.5px;color:var(--gold,#c8a24a);padding:7px 14px;margin:0;letter-spacing:.2px;background:rgba(200,162,74,.07);border-top:1px solid rgba(200,162,74,.16);border-bottom:1px solid rgba(200,162,74,.16)}
 </style>
 </head>
 <body>
@@ -165,6 +166,7 @@ button.small{padding:6px 9px;font-size:13px}
   </header>
   <section class="stats" id="stats"></section>
   <section class="forecast" id="forecast"></section>
+  <section class="target-bar" id="targetBar" style="display:none"></section>
   <section class="pricing compact" id="pricing"></section>
   <section class="energy">
     <span class="energy-dots" id="energyDots">●●●●</span>
@@ -686,6 +688,7 @@ function myRank(s){return 1+s.competitors.filter(c=>c.score>hotelScore(s)).lengt
 function endingFor(s){
   const rank=myRank(s),profit=s.cash-(s.startCash||320);
   if(s.flags.fiveStarBid&&s.rating>=4.45&&s.brand>=78&&profit>0)return ["五星挂牌","评审组离店那天没有表态。一个月后，红头文件送到酒店。雾都宾馆门口重新搭起脚手架，旧四星被摘下，新的五星在阳光下亮得晃眼。",true];
+  if(s.route==="viral"&&s.brand>=80&&s.rating>=4.25&&s.track.maxOcc>=0.9&&profit>0)return ["顶流网红店","一条深夜探店视频冲上同城榜首，评论区都在问同款房型。雾都宾馆的老招牌被年轻人重新翻红，周末房一放出就被秒光，连大堂那缸鱼都成了打卡点。",true];
   if(s.track.weddings>=10&&s.track.weddings>s.track.meetings+2&&profit>80)return ["山城婚宴王","两年里，宴会厅见证了无数对新人。梁曼把下一年的黄金档期表推到你面前，已经排到十月。同行提起雾都宾馆，第一反应不再是老，而是难订。",true];
   if(s.track.meetings>=9&&s.last.adr>=430&&profit>70)return ["商务酒店之王","企业协议房和会展订单填满了工作日。大厅里永远有人拖着登机箱匆匆进出，雾都宾馆重新成了这座城市商务地图上的坐标。",true];
   if(s.rating>=4.6&&s.morale>=72)return ["服务传奇","你没有把所有钱都砸在大理石上，而是花在了人和流程上。两年后，平台评论里出现最多的一句话是：这家酒店的人，真的把客人当回事。",true];
@@ -919,7 +922,7 @@ function renderPanel(){if(S.tab==="operate")renderOperate();if(S.tab==="orders")
 function switchTab(tab){S.tab=tab;document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));renderPanel();save()}
 function setTeamFilter(v){S.teamFilter=v;renderTeam()}
 function setRelationFilter(v){S.relationFilter=v;renderRelations()}
-function renderAll(){if(typeof document==="undefined")return;$("#monthText").textContent=S.month;$("#leftText").textContent=Math.max(0,25-S.month);$("#energyDots").textContent="●".repeat(S.energy)+"○".repeat(4-S.energy);renderStats();renderForecast();renderPricing();renderActions();document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===S.tab));renderPanel();save()}
+function renderAll(){if(typeof document==="undefined")return;$("#monthText").textContent=S.month;$("#leftText").textContent=Math.max(0,25-S.month);$("#energyDots").textContent="●".repeat(S.energy)+"○".repeat(4-S.energy);const _tb=$("#targetBar");if(_tb){const _l=(S.route&&ROUTES[S.route])?ROUTES[S.route].target.label(S):"";_tb.textContent=_l;_tb.style.display=_l?"":"none";}renderStats();renderForecast();renderPricing();renderActions();document.querySelectorAll("#tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===S.tab));renderPanel();save()}
 function save(){if(!S)return;try{localStorage.setItem(SAVE_KEY,JSON.stringify(S))}catch(e){}}
 function load(){try{const raw=localStorage.getItem(SAVE_KEY);if(!raw)return false;const data=JSON.parse(raw);if(data.version!==SAVE_VERSION)return false;S=data;return true}catch(e){return false}}
 function askName(){
