@@ -624,6 +624,35 @@ const ROUTES = {
     target:{ ending:"顶流网红店", label:s=>`顶流网红店 · 品牌 ${Math.round(s.brand)}/80 · 峰值入住 ${Math.round(s.track.maxOcc*100)}%/90%` } },
 };
 
+const PATRON_ARCS = {
+  liang:[
+    { cond:s=>s.month>=2, title:"梁曼的第一场婚礼", body:"梁曼带来一对新人，场地不大，但她在看你怎么接。",
+      opts:()=>[
+        eventOption("按最高规格招待","花6万，把口碑做出去",()=>{add(S,"cash",-6);add(S,"brand",4);relation(S,"liang",4);const n=npcById(S,"liang");n.account=clamp(n.account+12,0,100);log(S,"good","梁曼在朋友圈发了九宫格，配文『雾都宾馆值得』。")}),
+        eventOption("常规接待","不额外花钱，稳妥",()=>{relation(S,"liang",1);const n=npcById(S,"liang");n.account=clamp(n.account+4,0,100)})]},
+    { cond:s=>s.month>=5, title:"一场硬仗：名人婚礼", body:"梁曼接了个话题度很高的婚礼，要求极高，偏偏那周客房也紧。做漂亮一战成名，砸了她脸上无光。",
+      opts:()=>[
+        eventOption("倾全店之力办","花12万，考验服务",()=>{add(S,"cash",-12);const p=(rolePower(S,"front")+rolePower(S,"rooms")+rolePower(S,"fb"))/3;if(p>.8){add(S,"brand",8);add(S,"rating",.06);relation(S,"liang",6);const n=npcById(S,"liang");n.account=clamp(n.account+20,0,100);log(S,"good","婚礼视频被转疯，梁曼说以后好单都优先给你。")}else{add(S,"rating",-.08);relation(S,"liang",-4);const n=npcById(S,"liang");n.account=clamp(n.account-8,0,100);log(S,"bad","细节掉了链子，梁曼当场没说话。")}}),
+        eventOption("劝她换个周末","保稳，但让她为难",()=>{relation(S,"liang",-3);add(S,"brand",-1)})]},
+    { cond:s=>s.month>=10, title:"金港来抢梁曼", body:"金港大饭店想和梁曼签独家。她把话摊开：『你给我个留下的理由。』",
+      opts:()=>[
+        eventOption("给她更好的档期分成","让利，现金-8万，留住她",()=>{add(S,"cash",-8);relation(S,"liang",5);const n=npcById(S,"liang");n.account=clamp(n.account+10,0,100)}),
+        eventOption("靠口碑和交情留人","赌你积累够硬",()=>{const n=npcById(S,"liang");if(S.brand>=62&&n.fav>=60){relation(S,"liang",8);n.account=clamp(n.account+12,0,100);log(S,"good","梁曼笑了：『冲这两年，我不走。』")}else{n.account=clamp(n.account-20,0,100);relation(S,"liang",-6);log(S,"bad","梁曼把下季度的单挪去了金港。")}})]},
+    { cond:s=>s.month>=16, title:"梁曼的年度黄金档", body:"年底，梁曼把明年的黄金婚期表推到你面前——如果你们的合作够深，这一整季的婚宴都可以是你的。",
+      opts:()=>[
+        eventOption("接下全季黄金档","宴会厅排满，冲婚宴王",()=>{const n=npcById(S,"liang");if(n.account>=55){add(S,"brand",6);S.flags.weddingShow=S.month+3;for(let i=0;i<2;i++)S.orders.push({id:`liang_gold_${S.month}_${i}`,type:"婚宴",title:"梁曼 · 黄金档婚宴",client:"liang",roomNights:20,roomRevenue:1,eventRevenue:46,fbRevenue:36,load:1.4,delayed:0,status:"open",month:S.month,desc:"梁曼独家给你的高价婚宴。"});log(S,"good","梁曼把黄金档交给你，宴会厅要忙翻了。")}else{add(S,"brand",2);log(S,"","合作还不够深，梁曼只给了你两场普通婚宴。")}}),
+        eventOption("量力而行","稳一点，不透支团队",()=>{add(S,"morale",3)})]},
+  ],
+};
+function patronBeatCheck(){
+  const rt=S.route&&ROUTES[S.route]; if(!rt)return null;
+  const pid=rt.patron, arc=PATRON_ARCS[pid], n=npcById(S,pid);
+  if(!arc||!n)return null;
+  const idx=n.arc||0; if(idx>=arc.length)return null;
+  const beat=arc[idx];
+  if(beat.cond(S)&&(S.month-(n.arcMonth||0))>=2){ return {pid,idx,beat}; }
+  return null;
+}
 function eventAvailable(e){return (!e.once||!S.usedEvents.includes(e.id))&&(!e.cond||e.cond())&&S.lastEvent!==e.id}
 function chooseEvent(){
   const chained=S.chain.shift();if(chained){const e=EVENTS.find(x=>x.id===chained);if(e&&eventAvailable(e))return e}
@@ -825,7 +854,10 @@ function doEndMonth(){
   const warning=riskWarning();
   if(warning){const w=RISK_WARNINGS[warning];S.warningMonth[warning]=S.month;S.warnings[warning]++;
     tasks.push(()=>showModal(w.title,w.body,[eventOption(w.fix,`花${w.fixCost}万`,()=>{add(S,"cash",-w.fixCost);risk(S,warning,w.fixDelta);S.track.repairs++;log(S,"good",`${RISK_NAMES[warning]}方面做了一次针对性整改。`)},S.cash<w.fixCost),eventOption(w.ignore,"暂时不影响经营",()=>{risk(S,warning,w.ignoreDelta);log(S,"bad",`${w.title}的问题被暂时搁置。`)})]));
-  }else{const e=chooseEvent();if(e){S.lastEvent=e.id;if(e.once)S.usedEvents.push(e.id);tasks.push(()=>showModal(`事件 · ${e.title}`,e.body,e.opts()))}}
+  }else{ const beat=patronBeatCheck();
+    if(beat){ const n=npcById(S,beat.pid); n.arc=beat.idx+1; n.arcMonth=S.month; tasks.push(()=>showModal(`招牌客人 · ${beat.beat.title}`,beat.beat.body,beat.beat.opts())); }
+    else { const e=chooseEvent();if(e){S.lastEvent=e.id;if(e.once)S.usedEvents.push(e.id);tasks.push(()=>showModal(`事件 · ${e.title}`,e.body,e.opts()))} }
+  }
   if(S.month%3===0)tasks.push(()=>quarterReview());
   if(S.flags.starTeam&&S.month>=11&&!S.flags.starDone)tasks.push(()=>starResult());
   if(S.flags.auditDanger&&S.risks.finance>=92)tasks.push(()=>showEnd("审计风暴","审计组没有离开。他们从异常合同继续追查，最终把采购返点和账外接待串在了一起。集团在通报发出前免去了你的职务。",false));
@@ -950,7 +982,7 @@ function init(){
   $("#endMonthBtn").onclick=endMonth;$("#resetBtn").onclick=requestRestart;document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));document.addEventListener("click",()=>document.querySelectorAll(".stat.tip-on").forEach(x=>x.classList.remove("tip-on")));
 }
 
-const API={initialState,calculateForecast,settleCore,hotelScore,myRank,endingFor,orderTotals,disasterCheck,riskWarning,chooseEvent,generateOrders,createOrder,RISK_WARNINGS,risk,ROUTES,getEventCount:()=>EVENTS.length,getRiskWarningCount:()=>Object.keys(RISK_WARNINGS).length,setState:s=>S=s,getState:()=>S};
+const API={initialState,calculateForecast,settleCore,hotelScore,myRank,endingFor,orderTotals,disasterCheck,riskWarning,chooseEvent,generateOrders,createOrder,RISK_WARNINGS,risk,ROUTES,PATRON_ARCS,patronBeatCheck,getEventCount:()=>EVENTS.length,getRiskWarningCount:()=>Object.keys(RISK_WARNINGS).length,setState:s=>S=s,getState:()=>S};
 if(typeof window!=="undefined")window.HotelGame=API;else globalThis.HotelGame=API;
 Object.assign(globalThis,{adjustPrice,acceptOrder,rejectOrder,negotiateOrder,interactNpc,chooseAssignment,promoteEmployee,demoteEmployee,dismissEmployee,setTeamFilter,setRelationFilter,startHotelFromGuide,restartGame,chooseRoute});
 if(typeof document!=="undefined")init();
