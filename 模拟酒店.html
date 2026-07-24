@@ -624,7 +624,10 @@ const ROUTES = {
 function eventAvailable(e){return (!e.once||!S.usedEvents.includes(e.id))&&(!e.cond||e.cond())&&S.lastEvent!==e.id}
 function chooseEvent(){
   const chained=S.chain.shift();if(chained){const e=EVENTS.find(x=>x.id===chained);if(e&&eventAvailable(e))return e}
-  const pool=EVENTS.filter(eventAvailable);return pool.length?pick(pool):null;
+  const pool=EVENTS.filter(eventAvailable);if(!pool.length)return null;
+  const wl=(S.route&&ROUTES[S.route]&&ROUTES[S.route].events)||[];
+  const weighted=pool.flatMap(e=>wl.includes(e.id)?[e,e,e,e]:[e]);   // 流派事件 4 倍权重(非硬锁,保留随机性)
+  return pick(weighted);
 }
 function riskWarning(){
   const candidates=Object.keys(S.risks).filter(k=>S.risks[k]>=52&&(S.warningMonth[k]||0)<S.month-2);
