@@ -245,6 +245,7 @@ const NPC_SEEDS = [
   {id:"fu",name:"傅闻洲",title:"山城会展总经理",group:"客户",fav:30,pref:"dinner",avoid:"gift",hint:"喜欢当场拍板，最烦设备掉链子。",perk:"大型会议订单"},
   {id:"zhao",name:"赵崇德",title:"酒店运营副总",group:"内部",fav:28,pref:"help",avoid:"gift",hint:"旧班底的主心骨。尊重他有用，但让得太多也会失去权威。",perk:"旧班底的人事阻力降低",empId:1},
   {id:"tang",name:"唐秋月",title:"客房部经理",group:"内部",fav:35,pref:"report",avoid:"dinner",hint:"认规矩也认本事，客房部的人都听她的。",perk:"客房服务更稳定",empId:3},
+  {id:"baitong",name:"白桐",title:"探店博主",group:"渠道",fav:34,pref:"dinner",avoid:"report",hint:"镜头随身，一条视频能带来一整周的散客，也能一夜翻车。",perk:"探店/直播曝光提高，散客需求波动放大"},
 ];
 const COMPETITOR_SEEDS = [
   {name:"云顶国际",manager:"顾闻达",style:"高端商务",score:72,adr:618,growth:.7},
@@ -366,7 +367,7 @@ function makeCandidates(s){
 }
 function createOrder(s,index){
   const id=`${s.month}_${index}_${Math.floor(Math.random()*9999)}`;
-  const relationBonus=id=>npcById(s,id)?.fav>=60?1.18:1;
+  const relationBonus=id=>{const n=npcById(s,id);if(!n)return 1;return (n.fav>=60?1.18:1)*(1+(n.account||0)/250);};
   const pool=[
     ()=>({type:"旅行团",title:"渝州商旅 · 三晚团队",client:"xu",roomNights:120,roomRevenue:3.1*relationBonus("xu"),eventRevenue:0,fbRevenue:5.8,load:1.0,delayed:1.8,desc:"40间标准间住三晚，团队价压得低，早餐必须六点开。"}),
     ()=>({type:"企业协议",title:"恒川科技 · 月度差旅",client:"zhou",roomNights:86,roomRevenue:3.8*relationBonus("zhou"),eventRevenue:0,fbRevenue:1.2,load:.45,delayed:2.2,desc:"入住零散但稳定，要求延迟退房和季度结算。"}),
@@ -386,7 +387,7 @@ function generateOrders(s){return [0,1,2].map(i=>createOrder(s,i))}
 function initialState(){
   const s={version:SAVE_VERSION,month:1,energy:4,over:false,playerName:"无名总经理",route:null,startCash:320,cash:320,rating:3.8,morale:46,brand:48,lastDelta:{},
     prices:{standard:318,business:468,suite:888},last:{occupancy:.48,adr:336,revpar:161,profit:-8,revenue:102},
-    departments:{},employees:EMPLOYEE_SEEDS.map(e=>({...e})),empSeq:20,candidates:[],npcs:NPC_SEEDS.map(n=>({...n,lastMet:0,lastMethod:null,repeat:0,tried:{}})),
+    departments:{},employees:EMPLOYEE_SEEDS.map(e=>({...e})),empSeq:20,candidates:[],npcs:NPC_SEEDS.map(n=>({...n,lastMet:0,lastMethod:null,repeat:0,tried:{},account:0,arc:0,arcMonth:0})),
     competitors:COMPETITOR_SEEDS.map(c=>({...c})),risks:{fire:32,hygiene:29,equipment:24,labor:24,finance:31},warnings:{fire:0,hygiene:0,equipment:0,labor:0,finance:0},warningMonth:{},
     facilityAge:3,facilities:{rooms:1,banquet:1,conference:1,safety:1},otaShare:.45,marketBoost:0,serviceBoost:0,orders:[],usedEvents:[],lastEvent:null,flags:{},chain:[],
     track:{profit:0,revenue:0,weddings:0,meetings:0,roomNights:0,maxOcc:.48,minCash:320,hires:0,promotions:0,demotions:0,fires:0,relations:0,repairs:0,gray:0,complaints:0},
@@ -672,7 +673,7 @@ function settleCore(s){
   applyPassiveRisks(s,f);
   for(const n of s.npcs){if(n.fav>35&&n.lastMet<s.month)n.fav=clamp(n.fav-1,0,100)}
   for(const c of s.competitors){c.score=clamp(c.score+c.growth+rand(-.4,.5),35,98);if(Math.random()<.035){c.score-=5;log(s,"good",`${c.name}在网上出了状况，排名分下降。`)}}
-  for(const o of s.orders.filter(x=>x.status==="accepted")){if(o.type==="婚宴")s.track.weddings++;if(["大型会议","年会","政府接待"].includes(o.type))s.track.meetings++;if(o.client)relation(s,o.client,2)}
+  for(const o of s.orders.filter(x=>x.status==="accepted")){if(o.type==="婚宴")s.track.weddings++;if(["大型会议","年会","政府接待"].includes(o.type))s.track.meetings++;if(o.client){relation(s,o.client,2);const n=npcById(s,o.client);if(n&&n.account!==undefined)n.account=clamp(n.account+8,0,100);}}
   s.track.profit+=f.cashNet;s.track.revenue+=f.revenue;s.track.roomNights+=f.sold;s.track.maxOcc=Math.max(s.track.maxOcc,f.occupancy);s.track.minCash=Math.min(s.track.minCash,s.cash);
   s.marketBoost=0;s.serviceBoost=Math.max(0,s.serviceBoost-.04);s.facilityAge+=.055;
   const promised=Object.keys(s.flags).filter(k=>k.startsWith("promise_")&&s.flags[k]===s.month);
