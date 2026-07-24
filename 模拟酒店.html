@@ -188,7 +188,7 @@ button.small{padding:6px 9px;font-size:13px}
 "use strict";
 
 const SAVE_KEY = "wudu_hotel_save_v1";
-const SAVE_VERSION = 1;
+const SAVE_VERSION = 2;
 const ROOM_TYPES = {
   standard:{name:"标准间",count:90,base:318,min:188,max:588,step:20},
   business:{name:"商务房",count:30,base:468,min:288,max:888,step:30},
@@ -380,7 +380,7 @@ function createOrder(s,index){
 }
 function generateOrders(s){return [0,1,2].map(i=>createOrder(s,i))}
 function initialState(){
-  const s={version:SAVE_VERSION,month:1,energy:4,over:false,playerName:"无名总经理",startCash:320,cash:320,rating:3.8,morale:46,brand:48,lastDelta:{},
+  const s={version:SAVE_VERSION,month:1,energy:4,over:false,playerName:"无名总经理",route:null,startCash:320,cash:320,rating:3.8,morale:46,brand:48,lastDelta:{},
     prices:{standard:318,business:468,suite:888},last:{occupancy:.48,adr:336,revpar:161,profit:-8,revenue:102},
     departments:{},employees:EMPLOYEE_SEEDS.map(e=>({...e})),empSeq:20,candidates:[],npcs:NPC_SEEDS.map(n=>({...n,lastMet:0,lastMethod:null,repeat:0,tried:{}})),
     competitors:COMPETITOR_SEEDS.map(c=>({...c})),risks:{fire:32,hygiene:29,equipment:24,labor:24,finance:31},warnings:{fire:0,hygiene:0,equipment:0,labor:0,finance:0},warningMonth:{},
@@ -572,6 +572,52 @@ const EVENTS = [
     eventOption("投入180万启动升级","设施、品牌和终局路线大幅提升",()=>{add(S,"cash",-180);S.facilities.rooms++;S.facilities.banquet++;S.facilities.safety++;add(S,"brand",10);S.flags.fiveStarBid=true},S.cash<200),
     eventOption("先把四星守稳","不冒现金风险",()=>{relation(S,"qin",-2)})]},
 ];
+
+const ROUTES = {
+  business:{ id:"business", name:"商务标杆", tagline:"协议房与会展撑满工作日",
+    startPerk:"会议室升级 · 恒川协议锚点 · 商务房定价更高",
+    desc:"会议设施起步升级,恒川科技开局即签协议;协议/会议/年会订单更值钱。设备掉链子对商务客更致命。",
+    apply(s){ s.facilities.conference=2; const z=npcById(s,"zhou"); if(z)z.fav=54;
+      s.prices.business=clamp(s.prices.business+30,ROOM_TYPES.business.min,ROOM_TYPES.business.max);
+      s.brand=clamp(s.brand+2,0,100);
+      s.orders.push({id:`anchor_${s.month}`,type:"企业协议",title:"恒川科技 · 年度差旅锚点",client:"zhou",
+        roomNights:90,roomRevenue:4.0,eventRevenue:0,fbRevenue:1.4,load:.5,delayed:2,status:"accepted",month:s.month,
+        desc:"开局既有的企业协议,稳定但要季度结算。"}); },
+    orderBonus:{ "企业协议":1.15, "大型会议":1.15, "年会":1.12 },
+    events:["budget_cut","arrears","meeting_refund","conference_power","ac_fail","poach_sales"],
+    patron:"zhou",
+    target:{ ending:"商务酒店之王", label:s=>`商务之王 · 会展/协议 ${s.track.meetings}/9 · ADR ¥${Math.round(s.last.adr)}/430` } },
+
+  wedding:{ id:"wedding", name:"婚宴喜庆", tagline:"宴会厅一场接一场",
+    startPerk:"宴会厅升级 · 梁曼相熟 · 品鉴会更便宜",
+    desc:"宴会厅起步升级,梁曼开局好感高;婚宴/年会订单更值钱,口碑滚雪球。满房时服务负荷/卫生更吃紧。",
+    apply(s){ s.facilities.banquet=2; const l=npcById(s,"liang"); if(l)l.fav=54; s.brand=clamp(s.brand+2,0,100);
+      s.flags.weddingRoute=true; },
+    orderBonus:{ "婚宴":1.18, "年会":1.10 },
+    events:["wedding_overtime","bride_room","lost_child","wedding_fight","deposit","employee_wedding"],
+    patron:"liang",
+    target:{ ending:"山城婚宴王", label:s=>`婚宴王 · 婚宴 ${s.track.weddings}/10 · ${s.cash>(s.startCash||320)+80?"盈利✓":"盈利"}` } },
+
+  service:{ id:"service", name:"服务口碑", tagline:"慢工细活冲五星",
+    startPerk:"士气更足 · 老班底缓和 · 抓服务更有效 · 冲五星更省",
+    desc:"士气/服务起步好,老班底阻力低;服务投入更有效、评分涨得快,冲五星设施打折。稳而慢,不靠爆单。",
+    apply(s){ s.morale=clamp(s.morale+12,0,100); for(const id of ["zhao","tang"]){const n=npcById(s,id); if(n)n.fav=clamp(n.fav+10,0,100);} s.startCash=300; s.cash=300; s.rating=clamp(s.rating+.05,1,5); },
+    orderBonus:{},
+    events:["inspection_room","review_reply","front_conflict","union","star_audit","five_star"],
+    patron:"qin",
+    target:{ ending:"服务传奇", label:s=>`服务传奇/五星 · 评分 ${s.rating.toFixed(2)}/4.55 · 士气 ${Math.round(s.morale)}/70` } },
+
+  viral:{ id:"viral", name:"网红打卡", tagline:"靠内容和话题引流",
+    startPerk:"品牌更高 · 苏晴相熟 · OTA/直播更强 · 现金更少",
+    desc:"品牌起步高、OTA 关系好;OTA/直播/探店收益高但波动大,翻车反噬狠。冲全新的「顶流网红店」结局。",
+    apply(s){ s.brand=clamp(s.brand+14,0,100); const su=npcById(s,"su"); if(su)su.fav=54; s.startCash=300; s.cash=300;
+      s.otaShare=clamp(s.otaShare+.05,.2,.8);
+      s.prices.standard=clamp(s.prices.standard-20,ROOM_TYPES.standard.min,ROOM_TYPES.standard.max); },
+    orderBonus:{ "OTA活动":1.2 },
+    events:["influencer","livestream","fake_review","camera_rumor","ota_sale","price_war"],
+    patron:"baitong",
+    target:{ ending:"顶流网红店", label:s=>`顶流网红店 · 品牌 ${Math.round(s.brand)}/80 · 峰值入住 ${Math.round(s.track.maxOcc*100)}%/90%` } },
+};
 
 function eventAvailable(e){return (!e.once||!S.usedEvents.includes(e.id))&&(!e.cond||e.cond())&&S.lastEvent!==e.id}
 function chooseEvent(){
@@ -883,7 +929,7 @@ function init(){
   $("#endMonthBtn").onclick=endMonth;$("#resetBtn").onclick=requestRestart;document.querySelectorAll("#tabs button").forEach(b=>b.onclick=()=>switchTab(b.dataset.tab));document.addEventListener("click",()=>document.querySelectorAll(".stat.tip-on").forEach(x=>x.classList.remove("tip-on")));
 }
 
-const API={initialState,calculateForecast,settleCore,hotelScore,myRank,endingFor,orderTotals,disasterCheck,riskWarning,chooseEvent,generateOrders,createOrder,RISK_WARNINGS,risk,getEventCount:()=>EVENTS.length,getRiskWarningCount:()=>Object.keys(RISK_WARNINGS).length,setState:s=>S=s,getState:()=>S};
+const API={initialState,calculateForecast,settleCore,hotelScore,myRank,endingFor,orderTotals,disasterCheck,riskWarning,chooseEvent,generateOrders,createOrder,RISK_WARNINGS,risk,ROUTES,getEventCount:()=>EVENTS.length,getRiskWarningCount:()=>Object.keys(RISK_WARNINGS).length,setState:s=>S=s,getState:()=>S};
 if(typeof window!=="undefined")window.HotelGame=API;else globalThis.HotelGame=API;
 Object.assign(globalThis,{adjustPrice,acceptOrder,rejectOrder,negotiateOrder,interactNpc,chooseAssignment,promoteEmployee,demoteEmployee,dismissEmployee,setTeamFilter,setRelationFilter,startHotelFromGuide,restartGame});
 if(typeof document!=="undefined")init();
