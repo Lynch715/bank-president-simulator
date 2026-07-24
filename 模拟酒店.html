@@ -643,6 +643,60 @@ const PATRON_ARCS = {
         eventOption("接下全季黄金档","宴会厅排满，冲婚宴王",()=>{const n=npcById(S,"liang");if(n.account>=55){add(S,"brand",6);S.flags.weddingShow=S.month+3;for(let i=0;i<2;i++)S.orders.push({id:`liang_gold_${S.month}_${i}`,type:"婚宴",title:"梁曼 · 黄金档婚宴",client:"liang",roomNights:20,roomRevenue:1,eventRevenue:46,fbRevenue:36,load:1.4,delayed:0,status:"open",month:S.month,desc:"梁曼独家给你的高价婚宴。"});log(S,"good","梁曼把黄金档交给你，宴会厅要忙翻了。")}else{add(S,"brand",2);log(S,"","合作还不够深，梁曼只给了你两场普通婚宴。")}}),
         eventOption("量力而行","稳一点，不透支团队",()=>{add(S,"morale",3)})]},
   ],
+  zhou:[
+    { cond:s=>s.month>=2, title:"恒川的试单", body:"周启明先给一张小差旅协议：『先合作一次，看你们靠不靠谱。』",
+      opts:()=>[
+        eventOption("压价接下，先立口碑","让点利，把客户攥住",()=>{add(S,"cash",-3);relation(S,"zhou",3);const n=npcById(S,"zhou");n.account=clamp(n.account+12,0,100);log(S,"good","恒川的第一单落地，周启明记下了你的名字。")}),
+        eventOption("按正常价报","不亏，也不惊艳",()=>{relation(S,"zhou",1);const n=npcById(S,"zhou");n.account=clamp(n.account+5,0,100)})]},
+    { cond:s=>s.month>=6, title:"恒川要扩协议", body:"恒川想把差旅和年会都放你这，但要求延长账期、锁一整层商务楼，撞上你的现金和房态。",
+      opts:()=>[
+        eventOption("全吃下来","大客户+，但账期压现金",()=>{const n=npcById(S,"zhou");n.account=clamp(n.account+18,0,100);risk(S,"finance",10);add(S,"brand",3);log(S,"good","恒川把整层商务楼包了下来。")}),
+        eventOption("谈个折中","稳一点，别透支",()=>{const n=npcById(S,"zhou");n.account=clamp(n.account+6,0,100)})]},
+    { cond:s=>s.month>=11, title:"两江来抢恒川", body:"两江商务酒店拿着更低的报价找上周启明。他把单子推到你面前：『你怎么留我？』",
+      opts:()=>[
+        eventOption("拿增值服务留客","看你的销售能力",()=>{const n=npcById(S,"zhou");if(rolePower(S,"sales")>.8){n.account=clamp(n.account+14,0,100);relation(S,"zhou",5);log(S,"good","你用一套专属方案把恒川稳住了。")}else{n.account=clamp(n.account-10,0,100);log(S,"bad","方案没打动人，恒川的心思活了。")}}),
+        eventOption("让利保住客户","现金-10，稳住关系",()=>{add(S,"cash",-10);const n=npcById(S,"zhou");n.account=clamp(n.account+6,0,100);relation(S,"zhou",4)})]},
+    { cond:s=>s.month>=16, title:"恒川的年度支柱合同", body:"年底，周启明问你敢不敢接下恒川全年的差旅和年会——如果这两年合作够扎实。",
+      opts:()=>[
+        eventOption("接下独家支柱","冲商务之王",()=>{const n=npcById(S,"zhou");if(n.account>=55){add(S,"brand",6);for(let i=0;i<2;i++)S.orders.push({id:`zhou_anchor_${S.month}_${i}`,type:"企业协议",title:"恒川科技 · 年度支柱协议",client:"zhou",roomNights:120,roomRevenue:6,eventRevenue:0,fbRevenue:2,load:.5,delayed:2,status:"open",month:S.month,desc:"恒川独家给你的全年差旅协议。"});log(S,"good","恒川把全年都交给你，工作日的房态稳了。")}else{add(S,"brand",2);log(S,"","合作还不够深，恒川只留了常规协议。")}}),
+        eventOption("量力而行","不透支团队",()=>{add(S,"morale",3)})]},
+  ],
+  qin:[
+    { cond:s=>s.month>=3, title:"四星复核要来了", body:"秦书礼提前打招呼：三个月内文旅要复核四星。『我只能提醒到这。』",
+      opts:()=>[
+        eventOption("成立专项组认真备","花10万，安全隐患下降",()=>{add(S,"cash",-10);risk(S,"fire",-8);risk(S,"hygiene",-8);const n=npcById(S,"qin");n.account=clamp(n.account+12,0,100);S.flags.starTeam=true;log(S,"good","专项组把台账和流程理了一遍。")}),
+        eventOption("按日常水平迎检","省钱，看平时积累",()=>{const n=npcById(S,"qin");n.account=clamp(n.account+3,0,100);S.flags.starReview=true})]},
+    { cond:s=>s.month>=7, title:"城市窗口示范点", body:"文旅想把雾都做成服务示范点，接待一批考察团，标准很高。",
+      opts:()=>[
+        eventOption("拿出最高标准","花8万，品牌士气都涨",()=>{add(S,"cash",-8);add(S,"brand",4);add(S,"morale",3);const n=npcById(S,"qin");n.account=clamp(n.account+14,0,100)}),
+        eventOption("按老样子应付","省事，但露怯",()=>{const n=npcById(S,"qin");n.account=clamp(n.account-8,0,100);add(S,"brand",-2)})]},
+    { cond:s=>s.month>=12, title:"五星名额的风声", body:"秦书礼透露明年有一批五星评定名额，雾都基础还差一口气：『要不要拼一把？』",
+      opts:()=>[
+        eventOption("投入180万冲刺","设施大升，锁定五星路线",()=>{add(S,"cash",-180);S.facilities.rooms++;S.facilities.banquet++;S.facilities.safety++;add(S,"brand",10);S.flags.fiveStarBid=true;const n=npcById(S,"qin");n.account=clamp(n.account+10,0,100);log(S,"good","雾都宾馆正式启动五星升级。")},S.cash<200),
+        eventOption("先把四星守稳","不冒现金风险",()=>{const n=npcById(S,"qin");n.account=clamp(n.account+2,0,100)})]},
+    { cond:s=>s.month>=18, title:"五星评审到店", body:"评审组住了进来。这两年在评分和口碑上的每一分积累，此刻都要接受检验。",
+      opts:()=>[
+        eventOption("全力迎评","看两年的底子",()=>{const n=npcById(S,"qin");if(S.rating>=4.4&&S.brand>=76){add(S,"brand",8);relation(S,"qin",8);n.account=clamp(n.account+16,0,100);log(S,"good","评审组频频点头，五星在望。")}else{add(S,"brand",-4);add(S,"rating",-.06);log(S,"bad","评审开出整改清单，五星要再等等。")}}),
+        eventOption("求稳不折腾","微调细节",()=>{add(S,"rating",.02)})]},
+  ],
+  baitong:[
+    { cond:s=>s.month>=2, title:"白桐突然来探店", body:"探店博主白桐没打招呼就举着相机开了直播，镜头从大堂扫到前台。",
+      opts:()=>[
+        eventOption("当普通客人，真诚服务","考验真实水平",()=>{const n=npcById(S,"baitong");if((rolePower(S,"front")+rolePower(S,"rooms"))/2>.8){add(S,"brand",6);n.account=clamp(n.account+12,0,100);S.marketBoost+=.06;log(S,"good","白桐的直播效果意外地好，评论区在问房价。")}else{add(S,"brand",-2);n.account=clamp(n.account-4,0,100);log(S,"bad","镜头拍到了不该拍的角落。")}}),
+        eventOption("婉拒镜头进客区","稳妥，但少了流量",()=>{const n=npcById(S,"baitong");n.account=clamp(n.account+2,0,100)})]},
+    { cond:s=>s.month>=5, title:"白桐要做深度测评", body:"白桐要住三天，逐项挑刺做一期深度测评。过硬能爆，翻车全网都看得见。",
+      opts:()=>[
+        eventOption("敞开让她住三天","赌你的底子",()=>{const n=npcById(S,"baitong");if(S.rating>=4.1&&S.brand>=60){add(S,"brand",12);n.account=clamp(n.account+18,0,100);S.track.maxOcc=Math.max(S.track.maxOcc,.9);log(S,"good","一期好评测评爆了，周末房被秒空。")}else{add(S,"rating",-.1);n.account=clamp(n.account-10,0,100);S.track.complaints++;log(S,"bad","测评里全是槽点，评论区跟着起哄。")}}),
+        eventOption("安排样板房和陪同","稳，但她心里有数",()=>{add(S,"brand",3);const n=npcById(S,"baitong");n.account=clamp(n.account+4,0,100)})]},
+    { cond:s=>s.month>=10, title:"一条负面冲上热搜", body:"一条模糊的负面爆料传开，白桐私信你：要不要她出面帮你澄清？",
+      opts:()=>[
+        eventOption("透明处理，请她见证","花8万，把事做干净",()=>{add(S,"cash",-8);risk(S,"finance",-4);const n=npcById(S,"baitong");n.account=clamp(n.account+10,0,100);add(S,"brand",2)}),
+        eventOption("冷处理，赌它过去","省事，可能反噬",()=>{const n=npcById(S,"baitong");if(Math.random()<.5){add(S,"brand",3)}else{add(S,"rating",-.12);add(S,"brand",-8);n.account=clamp(n.account-12,0,100);log(S,"bad","负面发酵，白桐也没再帮你说话。")}})]},
+    { cond:s=>s.month>=16, title:"白桐的顶流联动", body:"白桐想带一批全网大V来办一场打卡活动——前提是你们这一路的信任够厚。",
+      opts:()=>[
+        eventOption("办大V打卡活动","冲顶流网红店",()=>{const n=npcById(S,"baitong");if(n.account>=55){add(S,"brand",12);S.marketBoost+=.15;S.track.maxOcc=Math.max(S.track.maxOcc,.92);relation(S,"baitong",6);log(S,"good","一场打卡活动引爆全网，雾都彻底翻红。")}else{add(S,"brand",3);log(S,"","信任还不够，白桐只带了几个小博主。")}}),
+        eventOption("稳住调性不炒作","细水长流",()=>{add(S,"brand",4);add(S,"rating",.02)})]},
+  ],
 };
 function patronBeatCheck(){
   const rt=S.route&&ROUTES[S.route]; if(!rt)return null;
