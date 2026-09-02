@@ -37,6 +37,11 @@ body{background:var(--bg);color:var(--txt);font-family:"PingFang SC","Microsoft 
 .guide-point b{color:#f1ca70}
 .guide-start{width:100%;min-height:48px;background:#e8b84b;color:#151a16;border-color:#e8b84b;font-weight:800;font-size:16px}
 
+/* 顶栏下的工具行:游戏中也能开图鉴、也能重开 */
+.toolbar{display:flex;justify-content:flex-end;gap:6px;margin-top:8px}
+.toolbar button{padding:5px 12px;font-size:12px;color:var(--dim);background:transparent;border-color:var(--line)}
+.toolbar button:hover{color:var(--gold);border-color:var(--gold)}
+
 /* 数值条 */
 .stats{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin:8px 0}
 .stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 4px;text-align:center;cursor:help;position:relative}
@@ -202,6 +207,7 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
 
 /* 触屏设备的点按目标:按指针类型判断,不按宽度——平板宽度超过640也是手指点 */
 @media (pointer:coarse){
+  .toolbar button{min-height:40px}
   .cardbtns button{min-height:40px}
   .tabs button{min-height:40px}
   .energy button{min-height:40px}
@@ -258,6 +264,7 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
   .modal .body{font-size:14px}
   th,td{padding:5px 5px;font-size:13px}
   .cardbtns button{padding:7px 10px;min-height:40px}
+  .toolbar button{min-height:40px;padding:5px 14px}
   .tabs button{min-height:40px}
   .energy button{min-height:40px}
   .endcard button.main{min-height:44px}
@@ -305,6 +312,11 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
   <div class="hdr">
     <h1>江北支行</h1>
     <div class="date">第<b id="hYear">1</b>年<b id="hMonth">1</b>月 · 还剩<b id="hLeft">36</b>个月</div>
+  </div>
+
+  <div class="toolbar">
+    <button id="btnGallery" onclick="showGallery()">📖 图鉴</button>
+    <button id="btnRestart" onclick="askRestart()">🔄 重开一局</button>
   </div>
 
   <div class="stats" id="statBar"></div>
@@ -3167,6 +3179,22 @@ function restartGame(){
   $("#endScreen").classList.remove("show");
   newGame();
 }
+// 中途重开:存档会没,阅历点也不给(阅历只在走完一局时折算)
+function askRestart(){
+  if(!S || S.over) return;
+  const y = yearOf(S.month), m = monOf(S.month);
+  showModal("重开一局",
+`现在是第${y}年${m}月,存款${fmt(S.dep)}亿,全区第${myRank()}名。
+
+重开会把这一局抹掉,存档不留。没走完的任期不折算阅历点——图鉴和成就不受影响,那些是另存的。`, [
+    {t:"重开", s:"这一局作废,从第1年1月开始", fn:()=>{
+      try{ localStorage.removeItem("jbzh_save6"); localStorage.removeItem("jbzh_save5"); }catch(e){}
+      MQ.length = 0;
+      newGame();
+    }},
+    {t:"算了,接着打", fn:()=>{}},
+  ]);
+}
 
 /* ============ 图鉴与成就 ============ */
 // 局外数据(图鉴/成就/阅历/天赋)单独存,删档重开不清
@@ -4026,7 +4054,7 @@ const API = {
   BALANCE, ACHIEVEMENTS, ENDINGS, TALENTS, checkAch, recordEnding, endIdOf,
   makeCycle, cyclePhase, isTight, cycleNews, dirt, patrolBeat, factionBeat, factionEndText,
   CHALLENGES, RIVAL_SCRIPTS, makeRivalScripts, rivalScriptBeat, groupChat, applyLianzheng, greyOpt,
-  patrolMonths, setSeed, mulberry32, endM, newGame,
+  patrolMonths, setSeed, mulberry32, endM, newGame, askRestart, restartGame,
   bsBeat, fireEventById, BLACKSWANS, INSPECT_EVENTS,
   bioBeats, radarData, migrate, simRun, simBatch,
   getMeta:()=>META, setMeta:m=>{ META = Object.assign(defMeta(), m||{}); },
@@ -4068,7 +4096,7 @@ window.trainEmp = trainEmp; window.restartGame = restartGame; window.startBankFr
 window.actLoan = actLoan;
 window.showGallery = showGallery; window.galTab = galTab;
 window.unlockTalent = unlockTalent; window.makeBio = makeBio;
-window.startChallenge = startChallenge;
+window.startChallenge = startChallenge; window.askRestart = askRestart;
 
 loadMeta();
 if(META.runs>0){ const g=$("#guideGallery"); if(g) g.style.display="block"; }
