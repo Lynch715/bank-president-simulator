@@ -1723,9 +1723,64 @@ const EVENTS = [
    }},
   {id:"insurance", title:"上面摊派保险指标",
    body:"分行下了死命令:本月人均卖出3单保险。员工们哀声一片——这玩意提成低还挨骂。",
-   opts:()=>[
-     {t:"指标压下去,完成有奖", s:"现金+15万 · 士气-8", fn:()=>{gain("cash",15);gain("morale",-8);log("bad","指标完成了,奖励也拿了。员工背后骂声一片,士气-8。");}},
-     {t:"自己带头卖,行里贴补贴", s:"花10万 · 士气+5,口碑+2", fn:()=>{gain("cash",-10);gain("morale",5);gain("rep",2);log("good","你自己卖出了8单,员工们没话说了。士气+5。");}},
+   opts:()=>{
+     const o = [
+       {t:"指标压下去,完成有奖", s:"现金+15万 · 士气-8", fn:()=>{gain("cash",15);gain("morale",-8);log("bad","指标完成了,奖励也拿了。员工背后骂声一片,士气-8。");}},
+       {t:"自己带头卖,行里贴补贴", s:"花10万 · 士气+5,口碑+2", fn:()=>{gain("cash",-10);gain("morale",5);gain("rep",2);log("good","你自己卖出了8单,员工们没话说了。士气+5。");}},
+     ];
+     const s = empWithTrait("shezhu");
+     if(s) o.unshift({t:`指标交给${s.name}去冲(社牛)`, s:`现金+15万 · ${s.name}倦怠+12 · 士气-2`, fn:()=>{
+       gain("cash",15); s.fatigue=clamp((s.fatigue||0)+12,0,100); gain("morale",-2);
+       log("good",`${s.name}在大厅支了张桌子,一个月唠出了全行的指标。就是嗓子哑了半个月。现金+15万。`);
+     }});
+     return o;
+   }},
+  {id:"etctask", title:"ETC大会战",
+   body:"分行红头文件:ETC营销大会战,人均装机20台,每周通报排名。\n\n兄弟支行已经把桌子摆到了高速路口。马奔那边听说连加油站都包了。",
+   opts:()=>{
+     const l = empWithTrait("lengtouqing");
+     const o = [
+       {t:"全员下路口,大干一个月", s:"现金+10万 · 陆明远好感+4 · 全员倦怠+8 · 士气-4", fn:()=>{
+         gain("cash",10); arcFav("lu",4); gain("morale",-4);
+         for(const e of S.emps) e.fatigue=clamp((e.fatigue||0)+8,0,100);
+         log("","一个月,人均晒黑两个度。通报表上江北排第二,陆明远在会上念了名字。士气-4,全员倦怠+8。");
+       }},
+       {t:"报个虚数应付过去", s:"风险+4 · 留下案底", fn:()=>{
+         gain("risk",4); dirt(1);
+         log("bad","数字报上去了,漂亮得很。就是这批『已装机』的车,一上高速就得露馅。风险+4。");
+       }},
+       {t:"如实上报:做不完", s:"陆明远好感-4 · 士气+3", fn:()=>{
+         arcFav("lu",-4); gain("morale",3);
+         log("","你在报表备注栏写了实情。陆明远没说什么,通报表上江北垫了底。员工倒是松了口气。");
+       }},
+     ];
+     if(l) o.splice(1,0,{t:`让${l.name}包了这个活(愣头青)`, s:`完成指标 · 陆明远好感+3 · ${l.name}倦怠+18、营销+1`, fn:()=>{
+       arcFav("lu",3); l.fatigue=clamp((l.fatigue||0)+18,0,100); if(l.mk<5) l.mk++;
+       gain("morale",-1);
+       log("good",`${l.name}一个人跑了二十个小区,鞋磨破一双,指标真让他跑完了。人晒得没了形,嘴上功夫倒是练出来了——营销+1。`);
+     }});
+     return o;
+   }},
+  {id:"leave", title:"一张请假条", cond:()=>S.emps.length>0,
+   pre:()=>{
+     const e = pick(S.emps);
+     const reason = pick(["老家父亲摔了腿,兄弟姐妹轮不开班","孩子下个月中考,爱人常年在外地","腰椎间盘突出犯了,医生让卧床静养"]);
+     return {e, reason};
+   },
+   body:c=>`${c.e.name}在你桌上放了张请假条,想请一个月:${c.reason}。\n\n正是冲存款的节骨眼,走廊里他等你答复。`,
+   opts:c=>[
+     {t:"批,一个月", s:`${c.e.name}倦怠-40 · 士气+5 · 存款-0.08亿(人手紧)`, fn:()=>{
+       c.e.fatigue=clamp((c.e.fatigue||0)-40,0,100); gain("morale",5); gain("dep",-0.08);
+       log("good",`你在假条上签了字:『家里要紧。』这话当天传遍了全行。士气+5。`);
+     }},
+     {t:"批三天,尽快回来", s:`倦怠-10 · 士气+1`, fn:()=>{
+       c.e.fatigue=clamp((c.e.fatigue||0)-10,0,100); gain("morale",1);
+       log("",`${c.e.name}来回赶了两千公里,回来时眼里有血丝,没再提假的事。`);
+     }},
+     {t:"不批,关键时期", s:`士气-6 · ${c.e.name}倦怠+15`, fn:()=>{
+       gain("morale",-6); c.e.fatigue=clamp((c.e.fatigue||0)+15,0,100);
+       log("bad",`${c.e.name}把假条收了回去,轻轻带上了门。那天下午,他工位的灯亮到最晚。士气-6。`);
+     }},
    ]},
   {id:"fraud", title:"柜员拦下一笔汇款",
    body:"一位老人非要给『公安局安全账户』汇88万,柜员小姑娘死活拦住,最后确认是电信诈骗。老人家属送来锦旗。",
