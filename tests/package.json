@@ -1,0 +1,14 @@
+{
+  "name": "jiangbei-tests",
+  "private": true,
+  "version": "1.0.0",
+  "description": "《江北支行 · 行长的三年》回归测试。游戏本体 index.html 是单文件零依赖,这里的依赖只服务于测试。",
+  "scripts": {
+    "test": "bash run-all.sh",
+    "quick": "node 01-headless.js 100 && node 02-meta.js && node 03-p1.js && node 04-p2.js"
+  },
+  "devDependencies": {
+    "@napi-rs/canvas": "^0.1.0",
+    "jsdom": "^26.0.0"
+  }
+}
