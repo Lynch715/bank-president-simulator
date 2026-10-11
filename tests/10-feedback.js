@@ -1,0 +1,18 @@
+const fs=require('fs'),path=require('path'),{JSDOM}=require('jsdom'),{runner}=require('./lib');
+const {ok,done}=runner('决策即时反馈');
+const d=new JSDOM(fs.readFileSync(path.join(__dirname,'../index.html'),'utf8'),{url:'http://localhost/',runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.matchMedia=()=>({matches:false});}});
+const w=d.window,G=w.BankGame,$=s=>w.document.querySelector(s),errors=[];w.addEventListener('error',e=>errors.push(e.message));
+const init=()=>{const s=G.initialState();s.cash=3000;s.candidates=G.genCandidates();G.setState(s);$('#gameGuide').classList.remove('show');$('#app').inert=false;$('#mask').classList.remove('show');w.renderAll();return s;};
+const click=(i=0)=>$('#mOpts').children[i].click();const receipt=()=>$('.decision-receipt')?.textContent||'';
+let s=init();$('#actionBar button').click();ok('跑业务即时显示精力扣减',receipt().includes('精力 -1')&&s.energy===2);const dep=s.dep;click();ok('确认不重算',s.dep===dep&&!$('#mask').classList.contains('show'));
+s=init();s.morale=98;w.actManage();const old=$('#mOpts button');old.click();ok('士气封顶显示实际+2',receipt().includes('士气 +2')&&s.cash===2990);old.click();ok('重复点击不重扣不关闭结果',s.cash===2990&&$('#mask').classList.contains('show'));click();
+w.actHire();click();ok('招聘反馈人员和工资',receipt().includes('入职')&&s.emps.length===3);click();w.assignMgr(1);click();ok('派主任反馈岗位',receipt().includes('主任：'));click();w.recallMgr(1);ok('调回主任有结果',receipt().includes('主任：空缺'));click();w.trainEmp(s.emps[0].id);click();ok('培训反馈能力工资费用',receipt().includes('营销 +1')&&receipt().includes('月薪 +0.3')&&receipt().includes('现金 -100'));click();w.upgradeDeco(0);click();ok('装修反馈升级',receipt().includes('装修升至1级'));click();
+s=init();w.doSocial('wei','drink');ok('拜访原场景补充实际好感精力',$('#mTitle').textContent.includes('魏临川')&&receipt().includes('魏临川好感')&&receipt().includes('精力 -1'));click();ok('拜访仅一屏',!$('#mask').classList.contains('show'));w.startProject('payroll');ok('项目反馈费用工期',receipt().includes('现金 -120')&&receipt().includes('3个月后建成'));click();
+s=init();w.showModal('连续事件','',[{t:'作出选择',fn:()=>{G.gain('cash',-5);G.log('','办完了。');}}]);w.eval('MQ.push(()=>showModal("第二件事","",[{t:"继续"}]))');click();ok('队列先展示结果',$('#mTitle').textContent.startsWith('办理结果'));click();ok('确认才进入下件事',$('#mTitle').textContent==='第二件事');click();
+s=init();w.actManage();click(6);ok('取消不追加回执',!$('#mask').classList.contains('show'));
+s=init();w.actLoan();click();ok('批贷款回执显示实际派生存款',receipt().includes('存款 +')&&s.loans.length===1);click();
+s=init();w.actOpen();click();ok('开网点显示租金与开办费',receipt().includes('开业 · 月租')&&receipt().includes('现金 -'));click();w.fireEmp(s.emps[0].id);click();ok('解雇显示人员离开与岗位变化',receipt().includes('已离职')&&receipt().includes('主任：空缺'));click();
+s=init();s.month=48;G.careerBeat()();click();ok('年度经营选择有实际结果',receipt().includes('存款 +2')&&receipt().includes('现金 -100'));click();
+G.setMeta({exp:300});w.unlockTalent('shiren');ok('解锁天赋独立反馈费用', $('#mTitle').textContent==='天赋已解锁'&&$('#mBody').textContent.includes('剩余240'));click();ok('确认解锁返回图鉴',$('#mTitle').textContent.includes('图鉴'));click();
+for(const [type,touches,blocked] of [['gesturechange',null,true],['touchmove',[{},{}],true],['touchmove',[{}],false]]){const e=new w.Event(type,{cancelable:true});if(touches)Object.defineProperty(e,'touches',{value:touches});w.document.dispatchEvent(e);ok(type+' '+(touches?.length||'iOS')+'指处理',e.defaultPrevented===blocked);}
+setTimeout(()=>{ok('零运行错误',errors.length===0);done();process.exit(process.exitCode||0)},100);

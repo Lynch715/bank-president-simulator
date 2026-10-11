@@ -6,7 +6,7 @@
  --line:#d4cec1;--gold:#8b6434;--green:#35664f;--red:#a44335;--blue:#38657f;
  --accent:#a44335;--shadow:0 2px 8px #34342b08;--serif:"Songti SC","STSong","Noto Serif CJK SC","SimSun",serif;
  color-scheme:light;background:var(--paper);color:var(--txt);font-size:14px;line-height:1.65;
- font-variant-numeric:tabular-nums;touch-action:pan-x pan-y pinch-zoom;
+ font-variant-numeric:tabular-nums;touch-action:pan-x pan-y;
  background-image:radial-gradient(#8071530b .7px,transparent .7px);background-size:5px 5px;
 }
 .pm-ui #app{max-width:1200px;padding:26px 24px 50px}
@@ -176,3 +176,6 @@
 }
 
 .pm-ui #panel{scroll-margin-top:calc(12px + var(--safe-top))}
+
+.pm-ui .decision-receipt{margin-top:16px;padding:12px 14px;background:var(--paper2);border-left:3px solid var(--ink2);font-size:13px;line-height:1.9;white-space:normal}
+.pm-ui .decision-receipt h3{margin:0 0 6px;color:var(--ink);font-size:14px}

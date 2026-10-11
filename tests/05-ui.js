@@ -17,6 +17,7 @@ w.HTMLCanvasElement.prototype.getContext=function(){ const noop=()=>({addColorSt
     if(k==="createLinearGradient") return noop; if(k in t) return t[k]; return ()=>{}; },set:(t,k,v)=>{t[k]=v;return true}}); };
 w.HTMLCanvasElement.prototype.toBlob=function(cb){ cb(null); };
 const $=s=>w.document.querySelector(s);
+const ackSetup=()=>{while(/经营方向已确定|天赋已生效/.test($("#mTitle").textContent))$("#mOpts button").click();};
 const r=runner("UI 全流程"); const ok=r.ok;
 
 setTimeout(()=>{
@@ -30,7 +31,7 @@ setTimeout(()=>{
   $("#mOpts").querySelector("button").click();
   ok("进入选路线", $("#mTitle").textContent.indexOf("打法")>=0);
   const before=$("#mOpts").children.length;
-  $("#mOpts").children[0].click();     // 对公猛攻
+  $("#mOpts").children[0].click(); ackSetup();     // 对公猛攻
   ok("四条路线可选:"+before, before===4);
   ok("首周目直接进上任说明(跳过天赋)", $("#mTitle").textContent.indexOf("上任第一天")>=0);
   $("#mOpts").querySelector("button").click();
@@ -55,10 +56,10 @@ setTimeout(()=>{
     ok("选『算了』这一局原封不动", G0.getState().month===7 && G0.getState().dep===42.5);
     // 真重开
     $("#btnRestart").click();
-    $("#mOpts").children[0].click();
+    $("#mOpts").children[0].click(); ackSetup();
     $("#nameInput") && ($("#nameInput").value="李", $("#mOpts").querySelector("button").click());
-    $("#mOpts").children[0].click();
-    if(/开局天赋/.test($("#mTitle").textContent)) $("#mOpts").children[0].click();
+    $("#mOpts").children[0].click(); ackSetup();
+    if(/开局天赋/.test($("#mTitle").textContent)){ $("#mOpts").children[0].click(); ackSetup(); }
     $("#mOpts").querySelector("button").click();
     ok("重开后回到第1年1月、存款10亿", G0.getState().month===1 && G0.getState().dep===10);
   }
@@ -95,9 +96,9 @@ setTimeout(()=>{
   w.restartGame();
   w.startBankFromGuide();
   $("#nameInput").value="李维安"; $("#mOpts").querySelector("button").click();
-  $("#mOpts").children[0].click();
+  $("#mOpts").children[0].click(); ackSetup();
   ok("二周目出现天赋三选一", /开局天赋/.test($("#mTitle").textContent) && $("#mOpts").children.length===3);
-  $("#mOpts").children[0].click();
+  $("#mOpts").children[0].click(); ackSetup();
   ok("选完天赋进入上任说明", /上任第一天/.test($("#mTitle").textContent));
   ok("天赋记进存档", (G.getState().talents||[]).length===1);
   // 挑战模式入口(二周目起)
@@ -106,8 +107,8 @@ setTimeout(()=>{
   $("#seedInput").value = "观音桥";
   w.startChallenge("sutong");
   $("#nameInput").value="李"; $("#mOpts").querySelector("button").click();
-  $("#mOpts").children[0].click();
-  if(/开局天赋/.test($("#mTitle").textContent)) $("#mOpts").children[0].click();
+  $("#mOpts").children[0].click(); ackSetup();
+  if(/开局天赋/.test($("#mTitle").textContent)){ $("#mOpts").children[0].click(); ackSetup(); }
   ok("速通挑战开局:任期24个月 · 种子写进存档", G.getState().maxMonth===24 && G.getState().seed==="观音桥");
   ok("上任说明里写了挑战和种子", /2年/.test($("#mBody").textContent) && /观音桥/.test($("#mBody").textContent));
   $("#mOpts").querySelector("button").click();

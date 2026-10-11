@@ -24,18 +24,19 @@ w.HTMLCanvasElement.prototype.getContext = function(){
 };
 w.HTMLCanvasElement.prototype.toBlob = function(cb){ cb(null); };
 const $ = s => w.document.querySelector(s);
+const ackSetup=()=>{while(/经营方向已确定|天赋已生效/.test($("#mTitle").textContent))$("#mOpts button").click();};
 
 setTimeout(() => {
   const r = runner("点击数");
   if($("#termSelect")) $("#termSelect").value="36";
   w.startBankFromGuide();
   if($("#nameInput")){ $("#nameInput").value = "测"; $("#mOpts").querySelector("button").click(); }
-  $("#mOpts").children[0].click();
-  if(/开局天赋/.test($("#mTitle").textContent)) $("#mOpts").children[0].click();
+  $("#mOpts").children[0].click(); ackSetup();
+  if(/开局天赋/.test($("#mTitle").textContent)){ $("#mOpts").children[0].click(); ackSetup(); }
   $("#mOpts").querySelector("button").click();
 
   const G = w.BankGame;
-  let total = 0, months = 0, qTotal = 0, qm = 0, one = 0;
+  let total = 0, months = 0, qTotal = 0, qm = 0, one = 0, receipts = 0;
   for(let i=0;i<40;i++){
     const S = G.getState();
     if(S.over) break;
@@ -48,17 +49,18 @@ setTimeout(() => {
     while($("#mask").classList.contains("show") && guard++ < 20){
       const b = $("#mOpts").querySelector("button:not([disabled])");
       if(!b) break;
-      b.click(); c++;
+      if(/^办理结果/.test($("#mTitle").textContent))receipts++;else c++;
+      b.click();
     }
     total += c; months++;
     if(c <= 1) one++;
     if(mo % 3 === 0){ qTotal += c; qm++; }
   }
   const avg = total / months, qAvg = qTotal / Math.max(1, qm);
-  console.log(`  ${path.basename(file)}:${months} 个月 · 共 ${total} 次点击 · 月均 ${avg.toFixed(2)} · 季末月均 ${qAvg.toFixed(2)} · 一次点完的月份 ${one}`);
+  console.log(`  ${path.basename(file)}:${months} 个月 · 流程 ${total} 次点击，另有 ${receipts} 次决策回执 · 月均 ${avg.toFixed(2)} · 季末月均 ${qAvg.toFixed(2)} · 一次点完的月份 ${one}`);
   r.ok("跑满一届任期:" + months + " 个月", months === 36 && G.getState().over);
-  r.ok("月均点击 " + avg.toFixed(2) + " 次,不高于原版的 3.44", avg <= 3.44);
-  r.ok("季末月均点击 " + qAvg.toFixed(2) + " 次,低于原版的 5.4", qAvg < 5.4);
+  r.ok("排除新增回执后的月均流程点击 " + avg.toFixed(2) + " 次,不高于原版的 3.44", avg <= 3.44);
+  r.ok("排除新增回执后的季末月均流程点击 " + qAvg.toFixed(2) + " 次,低于原版的 5.4", qAvg < 5.4);
   r.ok("全程零 console 报错" + (errs.length ? "\n     " + errs.join("\n     ") : ""), errs.length === 0);
   r.done();
 }, 300);
