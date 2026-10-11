@@ -63,7 +63,7 @@ G.newGame("lianzheng","x");
 {
   G.newGame("lianzheng","x"); ok("廉政风暴巡视组每半年:"+G.patrolMonths().join(","), G.patrolMonths().length===6);
   G.newGame("sutong","x");    ok("速通巡视组压缩到两年:"+G.patrolMonths().join(","), G.patrolMonths().every(m=>m<=24));
-  G.newGame(null,"x");        ok("普通模式巡视组:"+G.patrolMonths().join(","), G.patrolMonths().join(",")==="10,22,34");
+  G.newGame(null,"x",36);        ok("普通模式巡视组:"+G.patrolMonths().join(","), G.patrolMonths().join(",")==="10,22,34");
 }
 
 // 4. 速通完整跑通并出结局

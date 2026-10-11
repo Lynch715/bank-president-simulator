@@ -27,6 +27,7 @@ const $ = s => w.document.querySelector(s);
 
 setTimeout(() => {
   const r = runner("点击数");
+  if($("#termSelect")) $("#termSelect").value="36";
   w.startBankFromGuide();
   if($("#nameInput")){ $("#nameInput").value = "测"; $("#mOpts").querySelector("button").click(); }
   $("#mOpts").children[0].click();
@@ -55,7 +56,7 @@ setTimeout(() => {
   }
   const avg = total / months, qAvg = qTotal / Math.max(1, qm);
   console.log(`  ${path.basename(file)}:${months} 个月 · 共 ${total} 次点击 · 月均 ${avg.toFixed(2)} · 季末月均 ${qAvg.toFixed(2)} · 一次点完的月份 ${one}`);
-  r.ok("跑满一届任期:" + months + " 个月", months >= 20);
+  r.ok("跑满一届任期:" + months + " 个月", months === 36 && G.getState().over);
   r.ok("月均点击 " + avg.toFixed(2) + " 次,不高于原版的 3.44", avg <= 3.44);
   r.ok("季末月均点击 " + qAvg.toFixed(2) + " 次,低于原版的 5.4", qAvg < 5.4);
   r.ok("全程零 console 报错" + (errs.length ? "\n     " + errs.join("\n     ") : ""), errs.length === 0);

@@ -25,7 +25,7 @@ function boot(file){
 // 统一策略:随机花精力,风险过 55 先去排查。事件选项由无头 showModal 随机选。
 function playOnce(env){
   const {G, newGame} = env;
-  newGame();
+  newGame(null,null,36);
   const S0 = G.getState();
   const rid = ["corp","retail","guanxi","compliance"][Math.floor(Math.random()*4)];
   S0.route = rid; G.ROUTES[rid].apply(S0);

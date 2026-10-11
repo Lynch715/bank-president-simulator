@@ -22,6 +22,7 @@ const r=runner("UI 全流程"); const ok=r.ok;
 setTimeout(()=>{
   ok("首屏是玩法说明页", $("#gameGuide").classList.contains("show"));
   ok("首周目不显示图鉴入口", $("#guideGallery").style.display==="none");
+  $("#termSelect").value="36";
   w.startBankFromGuide();
   // 取名 → 选路线
   ok("弹出取名框", !!$("#nameInput"));
@@ -92,6 +93,7 @@ setTimeout(()=>{
   // 二周目:图鉴入口出现 + 天赋三选一
   ok("META runs 已+1:"+G.getMeta().runs, G.getMeta().runs>=1);
   w.restartGame();
+  w.startBankFromGuide();
   $("#nameInput").value="李维安"; $("#mOpts").querySelector("button").click();
   $("#mOpts").children[0].click();
   ok("二周目出现天赋三选一", /开局天赋/.test($("#mTitle").textContent) && $("#mOpts").children.length===3);
@@ -107,7 +109,7 @@ setTimeout(()=>{
   $("#mOpts").children[0].click();
   if(/开局天赋/.test($("#mTitle").textContent)) $("#mOpts").children[0].click();
   ok("速通挑战开局:任期24个月 · 种子写进存档", G.getState().maxMonth===24 && G.getState().seed==="观音桥");
-  ok("上任说明里写了挑战和种子", /两年/.test($("#mBody").textContent) && /观音桥/.test($("#mBody").textContent));
+  ok("上任说明里写了挑战和种子", /2年/.test($("#mBody").textContent) && /观音桥/.test($("#mBody").textContent));
   $("#mOpts").querySelector("button").click();
   ok("头部剩余月数按24算:"+$("#hLeft").textContent, $("#hLeft").textContent==="24");
   setTimeout(()=>{

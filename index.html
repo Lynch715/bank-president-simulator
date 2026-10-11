@@ -2,18 +2,19 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="manifest" href="manifest.json">
-<link rel="icon" type="image/x-icon" href="favicon.ico">
-<link rel="icon" type="image/png" sizes="32x32" href="icons/icon-32.png">
-<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
-<link rel="apple-touch-icon" sizes="180x180" href="icons/icon-180.png">
-<meta name="theme-color" content="#1b1f27">
+
+
+
+<link rel="icon" type="image/svg+xml" href="icons/bank-mark.svg">
+
+<meta name="theme-color" content="#253e52">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="行长的三年">
-<title>江北支行 · 行长的三年</title>
+<meta name="apple-mobile-web-app-title" content="行长生涯">
+<title>江北支行 · 行长生涯</title>
 <style>
 :root{
   --bg:#1b1f27; --panel:#242a35; --panel2:#2c3442; --line:#3a4354;
@@ -22,7 +23,7 @@
 }
 *{margin:0;padding:0;box-sizing:border-box}
 /* 手机上禁掉缩放:pan-x pan-y 允许滚动,但不含 pinch-zoom,双击也不再放大 */
-html{touch-action:pan-x pan-y;-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html{touch-action:pan-x pan-y pinch-zoom;-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{touch-action:pan-x pan-y;overscroll-behavior-y:contain}
 body{background:var(--bg);color:var(--txt);font-family:"PingFang SC","Microsoft YaHei",sans-serif;font-size:15px;line-height:1.55}
 #app{max-width:960px;margin:0 auto;padding:12px 12px 80px}
@@ -104,7 +105,7 @@ button.main:hover{filter:brightness(1.1);color:#1b1f27}
 .card .num b{color:var(--txt)}
 .stars{color:var(--gold);font-size:13px}
 .tag{display:inline-block;font-size:11px;padding:1px 7px;border-radius:10px;margin-left:6px;vertical-align:1px}
-.tag.mk{background:#4a3320;color:#f0a860}.tag.mg{background:#20364a;color:#7db8e8}.tag.rk{background:#213d2a;color:#84cc90}
+.tag.mk{background:#f0e3ce;color:#f0a860}.tag.mg{background:#20364a;color:#7db8e8}.tag.rk{background:#e2ebe0;color:#356044}
 .bar{height:6px;background:#171b23;border-radius:3px;margin-top:5px;overflow:hidden}
 .bar i{display:block;height:100%;border-radius:3px;background:var(--blue)}
 .meter{display:flex;align-items:center;gap:7px;margin-top:6px}
@@ -240,8 +241,8 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
 .warnbar.on{display:flex}
 .warn{font-size:12px;border-radius:8px;padding:5px 10px;border:1px solid;line-height:1.4}
 .warn.red{background:#3a1e1e;border-color:#7a3a34;color:#f0a098}
-.warn.amber{background:#3a3320;border-color:#7a6a34;color:#e8c878}
-.warn.info{background:#20303a;border-color:#3a5a6a;color:#8fc4dc}
+.warn.amber{background:#ece6d5;border-color:#7a6a34;color:#e8c878}
+.warn.info{background:#20303a;border-color:#3a5a6a;color:#355e72}
 
 /* 预报 */
 .forecast{font-size:12px;color:var(--dim);background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 12px;margin-bottom:8px;display:flex;gap:14px;flex-wrap:wrap}
@@ -298,66 +299,229 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
   .guide-lead{font-size:14px;line-height:1.65}
   .guide-point{font-size:13px;padding:8px 0}
 }
+
+.term-choice{display:block;margin:18px 0;color:var(--gold)}select{background:#182622;color:#e8e3d6;border:1px solid #69735f;padding:10px;border-radius:6px;max-width:100%}.career-head{padding:20px;background:linear-gradient(130deg,#223b33,#18221f);border:1px solid #586750;border-radius:8px;margin-bottom:14px}.career-head p,.card p{color:var(--dim);line-height:1.7}.eyebrow{letter-spacing:.14em;color:var(--gold);font-size:11px}.bank-icon{width:1.15em;height:1.15em;display:inline-block;vertical-align:-.17em;flex-shrink:0;stroke:currentColor;fill:none;stroke-width:1.65;stroke-linecap:round;stroke-linejoin:round}.ic .bank-icon{width:28px;height:28px}.toolbar{flex-wrap:wrap}.tabs{overflow-x:auto}.tabs button{flex-shrink:0}
+</style>
+<style id="paperLedgerTheme">
+/* 纸墨经营 · 江北藏蓝账册。Adapted from paper-ink-management-ui.
+   Fixed light paper theme; every rule is scoped to .pm-ui. */
+.pm-ui{
+ --ink:#253e52;--ink2:#35566e;--paper:#f2eee5;--paper2:#eae5da;--card:#fffcf5;
+ --bg:var(--paper);--panel:var(--card);--panel2:#f6f2e9;--txt:#28343c;--dim:#626860;
+ --line:#d4cec1;--gold:#8b6434;--green:#35664f;--red:#a44335;--blue:#38657f;
+ --accent:#a44335;--shadow:0 2px 8px #34342b08;--serif:"Songti SC","STSong","Noto Serif CJK SC","SimSun",serif;
+ color-scheme:light;background:var(--paper);color:var(--txt);font-size:14px;line-height:1.65;
+ font-variant-numeric:tabular-nums;touch-action:pan-x pan-y pinch-zoom;
+ background-image:radial-gradient(#8071530b .7px,transparent .7px);background-size:5px 5px;
+}
+.pm-ui #app{max-width:1200px;padding:26px 24px 50px}
+.pm-ui h1,.pm-ui h2,.pm-ui .etitle{font-family:var(--serif);font-weight:700}
+.pm-ui .hdr{min-height:104px;background:var(--ink);background-image:none;border:0;border-radius:5px;color:#faf5e9;padding:22px 26px;align-items:center;box-shadow:var(--shadow);position:relative}
+.pm-ui .hdr:after{content:"";position:absolute;bottom:7px;left:26px;right:26px;border-bottom:1px solid #aebbca45}
+.pm-ui .hdr h1{font-size:30px;color:#faf5e9;letter-spacing:3px;line-height:1.2}
+.pm-ui .masthead-note{font-size:12px;color:#d3dbe0;margin-bottom:8px;letter-spacing:2px}
+.pm-ui .hdr .date{color:#d3dbe0;text-shadow:none;font-size:13px}
+.pm-ui .hdr .date b{color:#fff8e9;font-size:18px;margin:0 3px}
+.pm-ui .toolbar{margin:10px 0 18px;gap:8px;align-items:center}
+.pm-ui .toolbar:before{content:"江北支行 / 经营手记";font-family:var(--serif);color:var(--dim);margin-right:auto;font-size:14px}
+.pm-ui button,.pm-ui select{min-height:44px;border-radius:5px;font:inherit;padding:9px 14px;touch-action:manipulation}
+.pm-ui button{background:var(--card);color:var(--ink);border-color:var(--line)}
+.pm-ui button:hover:not(:disabled){background:var(--paper2);color:var(--ink);border-color:var(--ink2);filter:none}
+.pm-ui button.main,.pm-ui .guide-start{background:var(--ink);color:#fffaf0;border-color:var(--ink)}
+.pm-ui button.main:hover:not(:disabled),.pm-ui .guide-start:hover{background:var(--ink2);color:#fffaf0}
+.pm-ui button:disabled{opacity:1;background:#e9e5dc;color:#70736c;border-color:#d5d0c5;cursor:not-allowed}
+.pm-ui :focus-visible{outline:3px solid var(--blue);outline-offset:3px}
+.pm-ui .pm-desk{display:grid;grid-template-columns:290px minmax(0,1fr);gap:24px;align-items:start}
+.pm-ui .pm-desk>*{min-width:0}
+.pm-ui .pm-overview{display:flex;flex-direction:column;gap:12px}
+.pm-ui .section-caption{font-size:12px;font-weight:600;color:var(--dim);letter-spacing:2px;display:flex;align-items:center;gap:12px;margin:0 0 12px}
+.pm-ui .section-caption:after{content:"";height:1px;background:var(--line);flex:1}
+.pm-ui .pm-overview>.section-caption{margin:0}
+.pm-ui .stats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0}
+.pm-ui .stat{padding:12px 8px 8px;border:1px solid var(--line);background:var(--card);border-radius:5px;box-shadow:var(--shadow);min-width:0}
+.pm-ui .stat .v{font-family:var(--serif);font-size:27px;font-weight:700;line-height:1.5;overflow-wrap:anywhere}
+.pm-ui .stat .v small{font-family:inherit;font-size:12px;margin-left:3px}
+.pm-ui .stat .delta{font-size:12px;height:18px}
+.pm-ui .stat .tip{background:var(--ink);color:#faf5e9;border:0;box-shadow:0 5px 18px #253e5220;font-size:13px;z-index:35}
+.pm-ui .energy{flex-wrap:wrap;padding:14px;background:var(--paper2);margin:0;gap:10px}
+.pm-ui .energy .hint{display:block;font-size:12px;flex:1}
+.pm-ui .energy .dots{color:var(--accent)}
+.pm-ui .energy button{width:100%;margin:0}
+.pm-ui .goalbar{margin:0;padding:14px;border-left:3px solid var(--accent);border-radius:0 5px 5px 0;background:#ece7db}
+.pm-ui .goalbar .rname{color:var(--ink)}
+.pm-ui .goalbar .gbar,.pm-ui .bar{background:#dcd6c9}
+.pm-ui .goalbar .gbar i{background:var(--accent)}
+.pm-ui .goalbar.done .gbar i{background:var(--green)}
+.pm-ui .warnbar{margin:0}
+.pm-ui .warn{font-size:12px;border-radius:4px;padding:8px 10px}
+.pm-ui .warn.red{background:#f5e6df;color:#913b30;border-color:#dbb8ab}
+.pm-ui .warn.amber{background:#f0e7d5;color:#785623;border-color:#d5c4a2}
+.pm-ui .warn.info{background:#e5edf0;color:#36596c;border-color:#bdcdd4}
+.pm-ui .forecast{margin:0;padding:12px;background:transparent;border-style:dashed;gap:6px 12px;line-height:1.8}
+.pm-ui .actions{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:26px}
+.pm-ui .act{display:grid;grid-template-columns:28px minmax(0,1fr);column-gap:10px;align-items:center;text-align:left;padding:15px 13px;background:var(--card);border-radius:5px;min-height:98px;box-shadow:var(--shadow);position:relative}
+.pm-ui .act .ic{grid-row:1/4;color:var(--ink2)}
+.pm-ui .act .nm{font-size:14px;margin:0;line-height:1.5}
+.pm-ui .act .ds{font-size:12px;color:var(--dim);line-height:1.6}
+.pm-ui .act .action-cost{font-size:12px;color:var(--gold);line-height:1.6}
+.pm-ui .act.off{opacity:1;pointer-events:auto;background:var(--paper2);color:var(--dim)}
+.pm-ui .act.off .action-cost{color:var(--red)}
+.pm-ui .tabs{gap:0;margin-bottom:14px;border-bottom:1px solid var(--line);overflow:visible}
+.pm-ui .tabs button{min-width:0;border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;padding:9px 5px;font-size:14px;color:var(--dim)}
+.pm-ui .tabs button.on{background:var(--paper2);color:var(--ink);border-bottom-color:var(--accent);font-weight:700}
+.pm-ui .panel{background:transparent;border:0;border-radius:0;padding:0;min-height:280px;scroll-margin-top:16px;overflow-wrap:anywhere}
+.pm-ui .card{background:var(--card);border-color:var(--line);padding:16px 18px;margin-bottom:12px;border-radius:5px;box-shadow:var(--shadow)}
+.pm-ui .card h3{font-family:var(--serif);font-size:19px;color:var(--ink);line-height:1.65}
+.pm-ui .card .sub,.pm-ui .card .num{font-size:13px;line-height:1.85}
+.pm-ui .card .num{margin:8px 0}
+.pm-ui .cardbtns{margin-top:12px;gap:8px}
+.pm-ui .cardbtns button{min-height:44px;padding:8px 12px}
+.pm-ui .tag{font-size:12px;border-radius:3px;margin:3px 4px;padding:1px 6px}
+.pm-ui .tag.mk{background:#f0e2cd;color:#805a26}.pm-ui .tag.mg{background:#e3ebf0;color:#355d76}.pm-ui .tag.rk{background:#e3ebe2;color:#416442}
+.pm-ui .meter .mlb,.pm-ui .meter .mvl,.pm-ui .meter .mvl small{font-size:12px}
+.pm-ui .career-head{background:var(--paper2);border:1px solid var(--line);border-left:3px solid var(--ink2);border-radius:0 5px 5px 0;padding:20px;margin-bottom:16px}
+.pm-ui .career-head h2{font-size:26px;color:var(--ink);margin:7px 0}
+.pm-ui .career-head p{font-size:14px;margin:8px 0}
+.pm-ui .eyebrow{font-size:12px;color:var(--gold)}
+.pm-ui th,.pm-ui td{font-size:13px;padding:10px 6px}
+.pm-ui tr.me td{background:var(--paper2);color:var(--accent)}
+.pm-ui .log{max-height:none;font-size:14px}
+.pm-ui .log p{padding:10px 12px;border:0;border-left:2px solid var(--line);margin-bottom:8px;background:var(--card)}
+.pm-ui .log p.good{border-left-color:var(--green)}.pm-ui .log p.bad{border-left-color:var(--red)}
+.pm-ui .mask,.pm-ui #endScreen{background:#172b3bc4;backdrop-filter:none}
+.pm-ui .modal{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--ink);border-radius:6px;max-height:88dvh;padding:24px;box-shadow:0 16px 60px #16273240}
+.pm-ui .modal h2{color:var(--ink);font-size:24px;line-height:1.5;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
+.pm-ui .modal .body{font-size:15px;line-height:1.85}
+.pm-ui .modal .opts button{padding:13px 15px;border-radius:5px;line-height:1.65;background:var(--panel2)}
+.pm-ui .modal .opts button small{font-size:13px;line-height:1.65;margin-top:5px}
+.pm-ui .modal .opts button.main{background:var(--ink);color:#fffaf0}
+.pm-ui .modal .opts button:disabled,.pm-ui .modal .opts button:disabled small{background:var(--paper2);color:#70736c}
+.pm-ui .modal .scrollhint{background:linear-gradient(transparent,var(--card) 50%);color:var(--dim)}
+.pm-ui .report .li{border-color:var(--line);gap:16px;padding:8px 0;align-items:baseline}
+.pm-ui .report .li span:last-child{text-align:right}
+.pm-ui .trendbar,.pm-ui .egrid .eg{background:var(--paper2);border-radius:5px}
+.pm-ui .trendbar .tinfo{font-size:12px}
+.pm-ui .endcard{background:var(--card);border:1px solid var(--line);border-top:5px solid var(--accent);border-radius:5px;max-width:680px;color:var(--txt)}
+.pm-ui .endcard .etitle{color:var(--ink);font-size:32px}
+.pm-ui .egrid .eg .k,.pm-ui .expline small,.pm-ui .chalbar small,.pm-ui .gal .gt{font-size:12px}
+.pm-ui .toast{background:var(--card);border-color:var(--line);border-left:3px solid var(--accent);border-radius:5px;box-shadow:var(--shadow);color:var(--ink)}
+.pm-ui .gal{background:var(--panel2);opacity:1;border-radius:5px;align-items:flex-start}
+.pm-ui .gal.on{border-color:#b9ad96}
+.pm-ui .gal:not(.on) small{color:var(--dim)}
+.pm-ui .gal small{font-size:12px}
+.pm-ui .gal .gact button{min-height:44px}
+.pm-ui .galtabs{flex-wrap:wrap}.pm-ui .galtabs button{min-height:44px}
+.pm-ui .galtabs button.on{background:var(--ink);border-color:var(--ink);color:#fffaf0}
+.pm-ui input,.pm-ui #nameInput,.pm-ui #seedInput,.pm-ui select{background:var(--card);color:var(--txt);border:1px solid var(--line);border-radius:5px;font-size:16px;min-height:44px}
+.pm-ui #gameGuide{background:var(--paper);background-image:linear-gradient(90deg,transparent 49px,#b68b7730 50px,transparent 51px);color:var(--txt)}
+.pm-ui .guide-inner{max-width:840px;min-height:100%;padding:48px 28px;align-items:center}
+.pm-ui .guide-copy{width:100%;text-shadow:none;padding:32px 40px;background:var(--card);border:1px solid var(--line);border-top:6px solid var(--ink);box-shadow:0 8px 36px #253e520c}
+.pm-ui .guide-kicker{color:var(--accent);font-size:12px;letter-spacing:3px;margin-bottom:16px}
+.pm-ui .guide-copy h2{font-size:36px;line-height:1.4;color:var(--ink);margin:0 0 18px;max-width:520px}
+.pm-ui .guide-lead{color:var(--dim);font-size:14px;line-height:1.9}
+.pm-ui .guide-points{border-color:var(--line);margin:20px 0}
+.pm-ui .guide-point{border-color:var(--line);font-size:14px;padding:12px 0;color:var(--txt)}
+.pm-ui .guide-point b{color:var(--ink)}
+.pm-ui .guide-point>b{color:var(--accent);font-family:var(--serif);font-size:20px}
+.pm-ui .guide-gallery{background:transparent;color:var(--ink);border-color:var(--line)}
+.pm-ui .guide-start{font-size:16px;min-height:48px}
+.pm-ui .term-choice{font-size:14px;color:var(--ink);display:flex;align-items:center;gap:16px}
+.pm-ui .term-choice select{flex:1}
+@media(max-width:960px){.pm-ui .pm-desk{grid-template-columns:240px minmax(0,1fr);gap:16px}.pm-ui .actions{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:760px){
+ .pm-ui #app{padding:12px 12px calc(88px + env(safe-area-inset-bottom))}
+ .pm-ui .hdr{padding:18px 16px;min-height:96px;gap:14px;align-items:flex-start}
+ .pm-ui .hdr h1{font-size:25px;letter-spacing:2px}.pm-ui .masthead-note{font-size:12px;letter-spacing:1px}
+ .pm-ui .hdr .date{font-size:12px;max-width:150px;line-height:1.7}.pm-ui .hdr .date b{font-size:16px}
+ .pm-ui .hdr:after{left:16px;right:16px}
+ .pm-ui .toolbar{margin:8px 0 18px;gap:6px}.pm-ui .toolbar:before{display:none}.pm-ui .toolbar button{flex:1;padding:8px 6px;font-size:13px}
+ .pm-ui .pm-desk{display:block}.pm-ui .pm-overview{gap:10px;margin-bottom:24px}
+ .pm-ui .stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:7px}.pm-ui .stat{padding:8px 4px 6px}.pm-ui .stat .v{font-size:23px}
+ .pm-ui .energy{padding:10px 12px;flex-wrap:nowrap}.pm-ui .energy .hint{display:none}.pm-ui .energy button{width:auto;margin-left:auto}
+ .pm-ui .forecast{gap:4px 12px}.pm-ui .goalbar{padding:12px}
+ .pm-ui .actions{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin-bottom:22px}
+ .pm-ui .act{padding:12px;min-height:94px;column-gap:8px}
+ .pm-ui .tabs{position:fixed;bottom:0;left:0;right:0;z-index:20;background:var(--card);border-top:1px solid var(--line);border-bottom:0;margin:0;padding:0 4px env(safe-area-inset-bottom);min-height:64px;box-shadow:0 -3px 14px #253e5209}
+ .pm-ui .tabs button{min-height:64px;font-size:13px;border-bottom:0;border-top:3px solid transparent;padding:8px 1px;white-space:normal;min-width:0;flex:1}
+ .pm-ui .tabs button.on{border-top-color:var(--accent);border-bottom:0}
+ .pm-ui .card{padding:14px}.pm-ui .card h3{font-size:18px}.pm-ui .career-head{padding:16px}
+ .pm-ui .modal{padding:18px 16px;max-height:88dvh}.pm-ui .modal h2{font-size:22px}.pm-ui .modal .body{font-size:15px}
+ .pm-ui .mask{padding:12px}.pm-ui .modal .opts button{padding:12px}.pm-ui .modal .scrollhint{bottom:-18px}
+ .pm-ui .guide-inner{padding:24px 14px}.pm-ui .guide-copy{padding:24px 20px}.pm-ui .guide-copy h2{font-size:29px}
+ .pm-ui .stat .tip{bottom:calc(78px + env(safe-area-inset-bottom));left:12px;right:12px;top:auto;width:auto;position:fixed;transform:none}
+ .pm-ui .endbtns{flex-wrap:wrap}.pm-ui .endbtns button{min-width:120px}
+ .pm-ui .trendbar{flex-wrap:wrap}.pm-ui .trendbar canvas{max-width:100%}
+}
+@media(max-width:360px){.pm-ui #app{padding-left:10px;padding-right:10px}.pm-ui .hdr{flex-wrap:wrap}.pm-ui .hdr .date{max-width:none;text-align:left}.pm-ui .stat .v{font-size:21px}.pm-ui .act{column-gap:5px;padding:10px 8px}.pm-ui .act .ic{grid-row:1/4}.pm-ui .guide-copy{padding:22px 16px}}
+@media(prefers-reduced-motion:reduce){.pm-ui *{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+
+.pm-ui .modal h2:focus{outline:none}
+.pm-ui .toolbar button{flex:0 0 auto}
+@media(max-width:760px){.pm-ui .toolbar button{flex:1}}
+
 </style>
 </head>
-<body>
+<body class="pm-ui">
 <section id="gameGuide" aria-label="游戏玩法介绍">
   <div class="guide-inner"><div class="guide-copy">
     <div class="guide-kicker">上任前先看一眼</div>
-    <h2>这三年，你得把支行带起来</h2>
-    <p class="guide-lead">每个月只有3点精力。先看存款、现金和风险，再决定跑客户、批贷款、管团队、走关系还是开网点。</p>
+    <h2>从支行起步，经营你的十年</h2>
+    <p class="guide-lead">接手江北支行，带好手下的人，守住老客户，再把生意一点点做起来。</p>
     <div class="guide-points">
-      <div class="guide-point"><b>01</b><span>上任先定一条<b>打法</b>：对公猛攻、零售深耕、关系至上，还是合规稳健。它决定你会遇上什么事。</span></div>
-      <div class="guide-point"><b>02</b><span>存款靠网点和关系；<b>贷款</b>是第二条腿——给现金、给派生存款，也会变成不良。</span></div>
-      <div class="guide-point"><b>03</b><span>六个关系人各有一条<b>自己的故事线</b>，好感够了才往下走，选择都有代价。</span></div>
-      <div class="guide-point"><b>04</b><span>人是会<b>累</b>的。倦怠拉满的人会不辞而别，对手还会挖你的人、抢你的客户。</span></div>
-      <div class="guide-point"><b>05</b><span>有些账不会立刻结。这个月按下的事，几个月后会自己找上门。</span></div>
+      <div class="guide-point"><b>01</b><span>选定<b>经营方向</b>：做企业客户、扎根零售、拓展人脉，或是稳守合规。各有目标，也各有难处。</span></div>
+      <div class="guide-point"><b>02</b><span>每月有<b>3点精力</b>。跑客户、管团队、批贷款，先安排最要紧的事。</span></div>
+      <div class="guide-point"><b>03</b><span>熟悉分行领导和当地客户。他们能<b>帮忙</b>，也会有事找上门。</span></div>
+      <div class="guide-point"><b>04</b><span>留意员工的<b>倦怠</b>，及时安排轮休。同行随时可能挖人、抢客户。</span></div>
+      <div class="guide-point"><b>05</b><span>月底结算<b>收支</b>。有些事情还会有后续，记得留些现金应急。</span></div>
     </div>
-    <button class="guide-start" onclick="startBankFromGuide()">报到上任</button>
-    <button id="guideGallery" class="guide-gallery" style="display:none" onclick="showGallery()">📖 图鉴 · 结局 / 成就 / 天赋</button>
+    <label class="term-choice">任期 <select id="termSelect"><option value="120">十年 · 完整经营</option><option value="72">六年 · 进阶经营</option><option value="36">三年 · 经典任期</option></select></label><p class="guide-lead">任期越长，可办的项目越多。第四年可做供应链服务，第七年可建区域协同中心。</p><button class="guide-start" onclick="startBankFromGuide()">报到上任</button>
+    <button id="guideGallery" class="guide-gallery" style="display:none" onclick="showGallery()">[icon:book] 图鉴 · 结局 / 成就 / 天赋</button>
   </div></div>
 </section>
 <div id="app">
   <div class="hdr">
-    <h1>江北支行</h1>
-    <div class="date">第<b id="hYear">1</b>年<b id="hMonth">1</b>月 · 还剩<b id="hLeft">36</b>个月</div>
+    <div><div class="masthead-note">行长生涯 · 经营台账</div><h1>江北支行</h1></div>
+    <div class="date">第<b id="hYear">1</b>年<b id="hMonth">1</b>月 · 还剩<b id="hLeft">120</b>个月</div>
   </div>
 
   <div class="toolbar">
-    <button id="btnGallery" onclick="showGallery()">📖 图鉴</button>
-    <button id="btnRestart" onclick="askRestart()">🔄 重开一局</button>
+    <button id="btnGallery" onclick="showGallery()">[icon:book] 图鉴</button>
+    <button id="btnSettings" onclick="showSettings()">[icon:settings] 设置</button><button id="btnRestart" onclick="askRestart()">[icon:refresh] 重开一局</button>
   </div>
 
+  <div class="pm-desk"><aside class="pm-overview" aria-label="经营概览"><h2 class="section-caption">01 / 本期概览</h2>
   <div class="stats" id="statBar"></div>
 
   <div class="energy">
     <span class="dots" id="energyDots">●●●</span>
     <span class="hint">每件事花1点精力,用完就结算</span>
-    <button class="main" id="btnEnd">结束本月 ▶</button>
+    <button class="main" id="btnEnd">结束本月 [icon:play]</button>
   </div>
 
   <div class="goalbar" id="goalBar"></div>
   <div class="warnbar" id="warnBar"></div>
   <div class="forecast" id="forecast"></div>
 
+  </aside><main class="pm-work"><h2 class="section-caption">02 / 本月决策</h2>
   <div class="actions" id="actionBar"></div>
 
-  <div class="tabs" id="tabBar">
+  <h2 class="section-caption">03 / 经营账册</h2><nav class="tabs" id="tabBar" aria-label="经营账册导航">
     <button data-tab="outlets" class="on">网点</button>
     <button data-tab="team">团队</button>
     <button data-tab="npc">关系</button>
-    <button data-tab="loans">贷款</button>
+    <button data-tab="strategy">经营</button><button data-tab="loans">贷款</button>
     <button data-tab="rank">排行</button>
     <button data-tab="log">日志</button>
-  </div>
-  <div class="panel" id="panel"></div>
+  </nav>
+  <div class="panel" id="panel" tabindex="-1"></div>
+  </main></div>
 </div>
 
 <div id="endScreen"><div class="endcard" id="endCard"></div></div>
 
 <div class="mask" id="mask">
-  <div class="modal">
-    <h2 id="mTitle"></h2>
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle">
+    <h2 id="mTitle" tabindex="-1"></h2>
     <div class="body" id="mBody"></div>
     <div class="opts" id="mOpts"></div>
     <div class="scrollhint" id="mHint">↓ 下面还有</div>
@@ -422,9 +586,9 @@ const OUTLET_POOL = [
 /* ============ 流派路线 ============ */
 const ROUTES = {
   corp: {
-    id:"corp", name:"对公猛攻", icon:"🏢", patron:"han",
+    id:"corp", name:"对公猛攻", icon:"[icon:bank]", patron:"han",
     tag:"上量快 · 风险重",
-    desc:"盯项目、盯大户,一笔贷款换一笔存款。数字冲得最猛,晚上也最睡不着。",
+    desc:"争取大企业和大项目，靠贷款带动存款。业务做得快，也更要留意客户能不能还款。",
     detail:"开局现金+250万 · 贷款派生存款×1.4 · 贷款不良概率×1.3 · 对公类事件更常出现",
     goal:{ label:"累计投放贷款", need:10, unit:"亿", cur:s=>s.track.loanTotal||0 },
     endTitle:"对公之王",
@@ -433,7 +597,7 @@ const ROUTES = {
     events:["bigloan","devloan","npldump","govbid","factory","chain_bridge_a","supplychain","bondissue","guarantee"],
   },
   retail: {
-    id:"retail", name:"零售深耕", icon:"🏪", patron:"fan",
+    id:"retail", name:"零售深耕", icon:"[icon:shop]", patron:"fan",
     tag:"慢热 · 底盘稳",
     desc:"一个网点一个网点地做,一张卡一张卡地办。慢,但塌不下来。",
     detail:"网点开办费×0.75 · 网点产出×1.15 · 贷款派生×0.7 · 零售/口碑类事件更常出现",
@@ -444,9 +608,9 @@ const ROUTES = {
     events:["bbw","viral","livestream","netbank","fraud","complaint","seniors","chain_school_a","kidsday"],
   },
   guanxi: {
-    id:"guanxi", name:"关系至上", icon:"🍶", patron:"lu",
+    id:"guanxi", name:"关系至上", icon:"[icon:cup]", patron:"lu",
     tag:"人情 · 双刃",
-    desc:"数字是死的,人是活的。把六个人处明白,数字自己会来找你。",
+    desc:"多走动，多听听各方的难处。遇到业务机会时，争取有人愿意帮江北一把。",
     detail:"应酬花费减半 · 好感增益×1.5 · 不走动的衰减减半 · 口碑每月多掉1(外界说你只会跑关系)",
     goal:{ label:"好感≥80的关系人", need:4, unit:"位", cur:s=>s.npcs.filter(n=>n.fav>=80).length },
     endTitle:"江湖地位",
@@ -455,9 +619,9 @@ const ROUTES = {
     events:["wedding","football","npldump","govbid","broker","chain_yanhui_a","fishing","oldboss"],
   },
   compliance: {
-    id:"compliance", name:"合规稳健", icon:"🛡", patron:"gu",
+    id:"compliance", name:"合规稳健", icon:"[icon:shield]", patron:"gu",
     tag:"干净 · 吃亏",
-    desc:"不碰灰的,不做急的。别人半夜怕敲门,你睡得着。",
+    desc:"宁可少做几笔，也要把手续和风险查清楚。遇到业绩压力，得守住这个原则。",
     detail:"每月风险额外-3 · 开局送一名风控5星干将 · 网点产出×0.9 · 贷款派生×0.8 · 检查/合规类事件更常出现",
     goal:{ label:"风险峰值压在45以下 · 存款", need:30, unit:"亿", cur:s=>s.dep },
     endTitle:"干净的账本",
@@ -474,14 +638,14 @@ function MOD(k){ const m = S&&S.mods; return m && m[k]!==undefined ? m[k] : (k==
 
 /* ============ 员工特质 ============ */
 const TRAITS = {
-  juanwang:{nm:"卷王", ic:"🔥", desc:"产出+15%,但倦怠涨得比谁都快"},
-  laoyoutiao:{nm:"老油条", ic:"🍵", desc:"油盐不进,倦怠不涨;干活也提不起劲,产出-10%"},
-  shezhu:{nm:"社牛", ic:"🎤", desc:"你带他出去应酬,好感额外+3"},
-  laoshi:{nm:"老实人", ic:"🧱", desc:"风控效果+50%,踏实得让人放心"},
-  bigan:{nm:"笔杆子", ic:"✒️", desc:"材料、检查、汇报类事件里有奇效"},
-  xinyanduo:{nm:"心眼多", ic:"🎭", desc:"灰色操作带来的风险-40%,但每月士气-1"},
-  lengtouqing:{nm:"愣头青", ic:"🌱", desc:"培训费减半,涨得快;风控效果-30%"},
-  dingliang:{nm:"顶梁柱", ic:"🏛", desc:"在岗时全行士气每月+2"},
+  juanwang:{nm:"卷王", ic:"[icon:flame]", desc:"产出+15%,但倦怠涨得比谁都快"},
+  laoyoutiao:{nm:"老油条", ic:"[icon:cup]", desc:"油盐不进,倦怠不涨;干活也提不起劲,产出-10%"},
+  shezhu:{nm:"社牛", ic:"[icon:voice]", desc:"你带他出去应酬,好感额外+3"},
+  laoshi:{nm:"老实人", ic:"[icon:grid]", desc:"风控效果+50%,踏实得让人放心"},
+  bigan:{nm:"笔杆子", ic:"[icon:pen]", desc:"材料、检查、汇报类事件里有奇效"},
+  xinyanduo:{nm:"心眼多", ic:"[icon:mask]", desc:"灰色操作带来的风险-40%,但每月士气-1"},
+  lengtouqing:{nm:"愣头青", ic:"[icon:leaf]", desc:"培训费减半,涨得快;风控效果-30%"},
+  dingliang:{nm:"顶梁柱", ic:"[icon:bank]", desc:"在岗时全行士气每月+2"},
 };
 const TRAIT_IDS = Object.keys(TRAITS);
 function traitOf(e){ return e.trait ? TRAITS[e.trait] : null; }
@@ -500,7 +664,7 @@ const LOAN_POOL = [
   {nm:"个体户经营贷包", amt:0.3, rate:0.72, tier:1, story:"三百多户小商家凑成一个包,笔笔都不大。"},
   {nm:"民营医院设备贷", amt:0.7, rate:0.75, tier:3, story:"院长很热情,热情得让人心里发毛。"},
   {nm:"农产品冷链园", amt:0.55, rate:0.68, tier:2, story:"区里挂牌的重点项目,补贴到位就活,不到位就悬。"},
-  {nm:"老牌国企技改", amt:1.0, rate:0.52, tier:1, story:"利率压得低,但这种客户,十年不出事。"},
+  {nm:"老牌国企技改", amt:1.0, rate:0.52, tier:1, story:"客户把利率压得很低。经营多年，还款记录一直不错。"},
   {nm:"跨境电商备货贷", amt:0.45, rate:0.88, tier:3, story:"老板一口一个GMV,财务总监一句话不说。"},
 ];
 const TIER_TXT = ["", "低风险", "中风险", "高风险"];
@@ -511,7 +675,7 @@ const NPCS = [
    hint:"分行一把手,爱惜羽毛。听说他办公室的兰花都是下面人送的名品。",
    perk60:"每季度多批50万预算", perk80:"年终考核高看一档"},
   {id:"gu", name:"顾清越", title:"分行风险总监", line:"领导", fav:35, pref:"visit",
-   hint:"办公室挂着『慎独』二字,开会从不参加饭局,水杯自己带。",
+   hint:"办公室挂着『慎独』二字,从不参加饭局,水杯自己带。",
    perk60:"每月帮你压风险-3", perk80:"替你挡下一次大检查"},
   {id:"meng", name:"孟知微", title:"财政局副局长", line:"政府", fav:30, pref:"visit",
    hint:"局里出了名的严谨,材料错一个标点都要打回来重写。",
@@ -549,7 +713,7 @@ const NPC_ARCS = {
        ];
      }},
     {fav:60, month:12, title:"陆明远 · 一个电话",
-     body:"『有个孩子,我表姐家的,专科毕业,想找个稳当地方。』陆明远说得很轻,轻到你必须听得很重。\n\n『不用给什么好岗位,柜台就行。』",
+     body:"『有个孩子,我表姐家的,专科毕业,想找个稳当地方。』陆明远把一份简历递了过来。\n\n『不用给什么好岗位,柜台就行。』",
      opts:()=>[
       {t:"收下,安排在柜面", s:"编制占1人(能力平庸,不可解雇) · 好感+12", disabled:S.emps.length>=8, fn:()=>{
         const e = {id:S.empSeq++, name:"陆嘉禾", mk:1, mg:1, rk:1, flavor:"陆行长表姐家的孩子,人挺客气,就是一问三不知", salary:1.2, trait:"lengtouqing", fatigue:0, protectedEmp:true};
@@ -570,7 +734,7 @@ const NPC_ARCS = {
      opts:()=>[
       {t:"『放心,该在的都在,不该在的早没了。』", s:"好感+15 · 风险+18(销毁材料是重罪)", fn:()=>{
         arcFav("lu",15); gain("risk",18); dirt(2); S.flags.burned = true;
-        log("bad", "回办公室你把两份底稿放进了碎纸机。声音很响,响了很久。风险+18。");
+        log("bad", "回办公室你把两份底稿放进了碎纸机。你等碎纸机停了，才关上办公室的门。风险+18。");
       }},
       {t:"『我把材料交上去,该我担的我担。』", s:"陆明远好感-30 · 风险-20 · 顾清越好感+12", fn:()=>{
         arcFav("lu",-30); gain("risk",-20); arcFav("gu",12); S.flags.clean = true;
@@ -578,7 +742,7 @@ const NPC_ARCS = {
       }},
       {t:"装糊涂:『行长喝多了。』", s:"好感-6 · 风险+6(悬着)", fn:()=>{
         arcFav("lu",-6); gain("risk",6);
-        log("", "你扶他上了车。他在车窗后看了你一眼,那一眼你记了很久。");
+        log("", "你扶他上了车。他摇下车窗，嘱咐你到家后发个消息。");
       }},
      ]},
     {fav:80, month:28, title:"陆明远 · 上面的位置",
@@ -588,9 +752,9 @@ const NPC_ARCS = {
         S.flags.followLu = true; gain("morale",-8);
         log("good","你说了句『听领导安排』。消息第二天就传遍了江北,柜台后面的人看你的眼神变了。");
       }},
-      {t:"留在江北,把三年做完", s:"陆明远好感+5 · 士气+12 · 口碑+5", fn:()=>{
+      {t:"留在江北，把任期做完", s:"陆明远好感+5 · 士气+12 · 口碑+5", fn:()=>{
         arcFav("lu",5); gain("morale",12); gain("rep",5);
-        log("good","『我把江北做完。』陆明远愣了两秒,笑着骂了句脏话。当天下午全行都知道了,士气+12。");
+        log("good","『我想留在江北，把任期做完。』陆明远愣了两秒,笑着骂了句脏话。当天下午全行都知道了,士气+12。");
       }},
      ]},
   ],
@@ -616,7 +780,7 @@ const NPC_ARCS = {
      opts:()=>[
       {t:"举手:『顾总监当年是提过风险的,材料我这儿有。』", s:"口碑-3 · 好感+15 · 陆明远好感-4", fn:()=>{
         gain("rep",-3); arcFav("gu",15); arcFav("lu",-4);
-        log("good","你当场把三年前的会议纪要复印件递了上去。散会后她在走廊等你,只说了句『谢谢』——她从没跟人说过谢谢。");
+        log("good","你当场把三年前的会议纪要复印件递了上去。散会后她在走廊等你,说了句『谢谢』，又问你要不要留一份收件回执。");
       }},
       {t:"低头翻材料", s:"好感-8", fn:()=>{
         arcFav("gu",-8);
@@ -628,19 +792,19 @@ const NPC_ARCS = {
      opts:()=>[
       {t:"做。疼就疼", s:"风险-28 · 当月存款-0.8亿(几笔业务停摆) · 好感+12", fn:()=>{
         gain("risk",-28); gain("dep",-0.8); arcFav("gu",12); S.flags.checkup = true;
-        log("good","三个星期,江北像被翻了个底朝天。几笔业务停了,存款掉了0.8亿。但从那以后,你睡得着了。");
+        log("good","三个星期,江北像被翻了个底朝天。几笔业务停了,存款掉了0.8亿。查出的问题逐项补进了整改台账。");
       }},
       {t:"再等等,现在正冲业绩", s:"好感-10", fn:()=>{
         arcFav("gu",-10);
-        log("bad","『行。』她合上本子,『那我等你冲完。』语气里没有任何情绪,这最吓人。");
+        log("bad","『行。』她合上本子,『那我等你冲完。』她没有再劝，把检查安排往后挪了。");
       }},
      ]},
     {fav:80, month:30, title:"顾清越 · 白名单",
-     body:"她要去总行风险部了。走之前,她问你:\n\n『我可以把江北写进免检白名单。写了,你这两年清清爽爽;不写,你自己扛。』\n\n『但你得告诉我一句实话——你手上,还有没有我不知道的东西?』",
+     body:"她要去总行风险部了。走之前,她问你:\n\n『我可以把江北写进免检白名单。真查出问题，我能替你争取一次机会。再有下次，就得你自己负责。』\n\n『但你得告诉我一句实话——你手上,还有没有我不知道的东西?』",
      opts:()=>[
-      {t:"『没有了。』(如果真没有)", s:"风险<40时:永久免疫一次审计 + 风险-15;否则被她当场识破", fn:()=>{
+      {t:"『没有了。』(如果真没有)", s:"风险<40时:恢复一次审计保护 + 风险-15;否则被她当场识破", fn:()=>{
         if(S.risk<40){ S.guardUsed=false; S.flags.whitelist=true; gain("risk",-15); arcFav("gu",8);
-          log("good","她盯了你三秒,点头:『我信你。』江北进了白名单。风险-15,并且再挡一次审计。"); }
+          log("good","她核对了台账，点头:『我信你。』江北进了白名单。风险-15,并且再挡一次审计。"); }
         else { arcFav("gu",-15); gain("risk",8); dirt(1);
           log("bad","她把你的风险台账推过来,指着其中一行:『这个,算什么?』你答不上来。好感-15。"); }
       }},
@@ -676,7 +840,7 @@ const NPC_ARCS = {
      opts:()=>[
       {t:"实话实说:每一笔都合规,我签字担保", s:"好感+16 · 风险+6(把自己牵进去)", fn:()=>{
         arcFav("meng",16); gain("risk",6);
-        log("good","你签了字,盖了公章。三个月后她洗清了。此后江北的材料,她从不打回。");
+        log("good","你签了字,盖了公章。说明材料递了上去。她专门打来电话，谢你肯为这件事作证。");
       }},
       {t:"交『记不清了』那份", s:"好感-14", fn:()=>{
         arcFav("meng",-14);
@@ -742,7 +906,7 @@ const NPC_ARCS = {
       }},
       {t:"要,但只做联合牵头", s:"存款+2亿 · 风险+8 · 好感+4", fn:()=>{
         gain("dep",2); gain("risk",8); arcFav("han",4);
-        log("good","你拉了两家行做银团。吃得少,睡得香。存款+2亿。");
+        log("good","你拉了两家行做银团。额度分给三家，江北少赚一些，也少担一些风险。存款+2亿。");
       }},
       {t:"扛不住,推了", s:"好感-10 · 顾清越好感+8", fn:()=>{
         arcFav("han",-10); arcFav("gu",8);
@@ -816,7 +980,7 @@ const NPC_ARCS = {
      opts:()=>[
       {t:"批一笔知识产权质押贷", s:"风险+12 · 好感+18 · 后续存款回报大", fn:()=>{
         gain("risk",12); arcFav("fan",18); S.flags.fanSaved=true;
-        log("good","专利评估做了半个月,款批下来那天他在电话里沉默了很久。风险+12,但这个人情,是活的。");
+        log("good","专利评估做了半个月,款批下来那天，他打来电话道谢，说终于能给工人发工资了。风险+12。");
       }},
       {t:"帮他找投资人,不出钱", s:"好感+9 · 下月精力-1", fn:()=>{
         arcFav("fan",9); S.energyPenalty=(S.energyPenalty||0)+1;
@@ -865,7 +1029,7 @@ function pickArcBeat(){
     S.track.arcs = (S.track.arcs||0)+1;
     // 一条线走完:记进传记大事记
     if(!NPC_ARCS[r.n.id][r.i+1]) log("good", `${r.n.name}的那条线,走到了头。`, true);
-    showModal("🎬 "+r.beat.title, r.beat.body, r.beat.opts().concat([]));
+    showModal("[icon:film] "+r.beat.title, r.beat.body, r.beat.opts().concat([]));
   };
 }
 
@@ -894,7 +1058,7 @@ function rivalMove(){
     const cand = S.emps.filter(e=>!e.protectedEmp).sort((a,b)=>(b.mk+b.mg+b.rk)-(a.mk+a.mg+a.rk))[0];
     if(!cand) return null;
     const price = +(cand.salary*0.8).toFixed(1);
-    return ()=>showModal(`⚔ ${r.boss}来抢人`,
+    return ()=>showModal(`[icon:sword] ${r.boss}来抢人`,
       `${r.boss}直接把车开到了江北楼下,${cand.name}被请上去坐了四十分钟。\n\n下车时${cand.name}手里多了张纸——月薪比现在高${price}万。\n\n『${cand.name},我不逼你。』${r.boss}摇下车窗,『你自己想。』`,
       [
         {t:`加薪${price}万留人`, s:"工资涨上去 · 士气+4", fn:()=>{
@@ -917,7 +1081,7 @@ function rivalMove(){
   }
   if(r.move==="steal"){
     const amt = +(Math.min(1.2, S.dep*0.04)).toFixed(2);
-    return ()=>showModal(`⚔ ${r.name}挖你的客户`,
+    return ()=>showModal(`[icon:sword] ${r.name}挖你的客户`,
       `${r.boss}带着团队,把江北几个大户挨个上门拜访了一遍。条件开得实在:利率、额度、上门服务,样样比你强半档。\n\n你的客户经理拿着名单来问:跟不跟?`,
       [
         {t:"跟,守住客户", s:`花${Math.round(amt*40)}万 · 保住存款`, disabled:S.cash<amt*40, fn:()=>{
@@ -935,7 +1099,7 @@ function rivalMove(){
       ]);
   }
   if(r.move==="report"){
-    return ()=>showModal(`⚔ 有人在背后捅你`,
+    return ()=>showModal(`[icon:sword] 有人在背后捅你`,
       `${r.boss}那边的人,把江北几笔业务的材料复印件,送到了监管的窗口。\n\n『没造谣,』传话的人说,『就是把事实摆上去。』`,
       [
         {t:"主动说明,把材料补齐", s:"花25万 · 风险-10 · 口碑+2", disabled:S.cash<25, fn:()=>{
@@ -954,7 +1118,7 @@ function rivalMove(){
   }
   if(r.move==="court"){
     const target = pick(S.npcs.filter(n=>n.fav>=45)) || pick(S.npcs);
-    return ()=>showModal(`⚔ ${r.boss}在挖你的关系`,
+    return ()=>showModal(`[icon:sword] ${r.boss}在挖你的关系`,
       `${r.boss}这两个月往${target.name}那儿跑得很勤。听说上周还一起去了趟外地考察。\n\n『唐行长这个人,』有人跟你说,『别的本事没有,就是能陪。』`,
       [
         {t:"加倍投入,把人抢回来", s:"花30万 · 好感+10 · 下月精力-1", disabled:S.cash<30, fn:()=>{
@@ -1038,7 +1202,7 @@ function initialState(){
   return {
     month:1, energy:3, over:false, ver:6,
     playerName:"无名行长",
-    route:null, talents:[], failed:false, maxMonth:36, chal:null, seed:null, seedGiven:false,
+    route:null, talents:[], failed:false, maxMonth:120, career:{projects:{}, active:null, reviews:0}, chal:null, seed:null, seedGiven:false,
     dirt:0, cycle:null, depCostRate:0, depCostLeft:0,
     mods:{derive:1, npl:1, output:1, socialCost:1, favGain:1, riskDrift:0, openCost:1},
     cash:300, dep:10, rep:50, morale:50, risk:20,
@@ -1071,10 +1235,11 @@ function initialState(){
     tab:"outlets",
   };
 }
-function newGame(chalId, seed){
+function newGame(chalId, seed, term){
   // 每一局都有种子:结局页会亮出来,想复现同一局就把它填回去
   setSeed(seed || randomSeed());
   S = initialState();
+  S.maxMonth = chalId ? 36 : ([36,72,120].includes(term) ? term : 120);
   try{ S.playerName = localStorage.getItem("jbzh_name") || "无名行长"; }catch(e){}
   S.seed = SEED; S.seedGiven = !!seed;
   if(chalId && CHALLENGES.some(c=>c.id===chalId)){
@@ -1084,21 +1249,21 @@ function newGame(chalId, seed){
   S.cycle = makeCycle();
   S.rivalScripts = makeRivalScripts();
   S.candidates = genCandidates();
-  log("month","第1年1月 · 你接手江北支行。存款10亿,全区第7。行长陆明远只撂下一句:三年,我看结果。");
+  log("month","第1年1月 · 你接手江北支行。存款10亿,全区第7。陆明远交代：先把江北稳住，任期结束时再看成绩。");
   renderAll();
   if(typeof document!=="undefined") askName();
 }
 function chooseRoute(){
   $("#mTitle").textContent = "定个打法";
-  $("#mBody").innerHTML = `分行党委会上,陆明远问了最后一个问题:<br><br>『江北这三年,你打算怎么打?』<br><br><span style="color:var(--dim);font-size:13px">选定后不可更改。它决定你的开局、常遇到的事、以及三年后别人怎么评价你。</span>`;
+  $("#mBody").innerHTML = `分行党委会上,陆明远问了最后一个问题:<br><br>『江北这届任期,你打算怎么打?』<br><br><span style="color:var(--dim);font-size:13px">选定后不可更改。它决定你的开局、常遇到的事、以及任期结束时别人怎么评价你。</span>`;
   const box = $("#mOpts"); box.innerHTML = "";
   Object.keys(ROUTES).forEach(id=>{
     const r = ROUTES[id];
     const b = document.createElement("button");
-    b.innerHTML = `${r.icon} <b>${r.name}</b> <span style="color:var(--gold);font-size:12px">${r.tag}</span><small>${r.desc}<br><span style="color:var(--blue)">${r.detail}</span><br>路线目标:${r.goal.label} ≥ ${r.goal.need}${r.goal.unit}</small>`;
+    b.innerHTML = `${r.icon} <b>${r.name}</b> <span style="color:var(--gold);font-size:12px">${r.tag}</span><small>${r.desc}<br><span style="color:var(--blue)">${r.detail}</span><br>路线目标:${r.goal.label} ≥ ${routeGoalNeed(id)}${r.goal.unit}</small>`;
     b.onclick = ()=>{
       S.route = id; r.apply(S);
-      log("good", `你把江北的三年定成了「${r.name}」。`, true);
+      log("good", `你把江北的经营方向定成了「${r.name}」。`, true);
       $("#mask").classList.remove("show");
       chooseTalent(()=>showIntro());
     };
@@ -1134,7 +1299,7 @@ const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
 const rnd=(a,b)=>a+RNG()*(b-a);
 const pick=a=>a[Math.floor(RNG()*a.length)];
 const esc=v=>String(v).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function starTxt(n){ return "★".repeat(n)+"☆".repeat(5-n); }
+function starTxt(n){ return `<span aria-label="${n}星">`+"[icon:star]".repeat(n)+`<span style="opacity:.25">`+"[icon:star]".repeat(5-n)+"</span></span>"; }
 function yearOf(m){ return Math.ceil(m/12); }
 function endM(){ return (S && S.maxMonth) || 36; }   // 任期总月数,速通挑战是24
 function monOf(m){ return ((m-1)%12)+1; }
@@ -1222,9 +1387,9 @@ function rkPower(e){
 }
 function fatigueTag(e){
   const f = e.fatigue||0;
-  if(f>=85) return `<span class="tag" style="background:#4a2020;color:#e08080">🥵 快垮了 ${Math.round(f)}</span>`;
-  if(f>=70) return `<span class="tag" style="background:#4a3320;color:#e0a860">😪 疲惫 ${Math.round(f)}</span>`;
-  if(f>=50) return `<span class="tag" style="background:#3a3320;color:#c0b070">😐 有点累 ${Math.round(f)}</span>`;
+  if(f>=85) return `<span class="tag" style="background:#f4e1db;color:#933d32">[icon:people] 快垮了 ${Math.round(f)}</span>`;
+  if(f>=70) return `<span class="tag" style="background:#f0e3ce;color:#805921">[icon:people] 疲惫 ${Math.round(f)}</span>`;
+  if(f>=50) return `<span class="tag" style="background:#ece6d5;color:#706026">[icon:people] 有点累 ${Math.round(f)}</span>`;
   return "";
 }
 function mgrCoef(o){
@@ -1234,8 +1399,8 @@ function mgrCoef(o){
 }
 function seasonInfo(){
   const m = monOf(S.month);
-  if(m===1) return {f:1.25, txt:"🧧 开门红,产出×1.25"};
-  if(m===8) return {f:0.85, txt:"🥵 酷暑淡季,产出×0.85"};
+  if(m===1) return {f:1.25, txt:"[icon:cash] 开门红,产出×1.25"};
+  if(m===8) return {f:0.85, txt:"[icon:people] 酷暑淡季,产出×0.85"};
   return {f:1, txt:""};
 }
 function outletOutput(o){
@@ -1317,7 +1482,7 @@ function actLoan(){
       }
     };
   });
-  showModal("批贷款", `敞口上限 ${cap.toFixed(2)}亿,已用 ${used.toFixed(2)}亿。\n贷款每月带来利息现金,并派生一笔存款;但会变不良——不良一出,存款回吐、风险飙升、现金见血。\n评级只是纸面的,真实的底,得靠风控专才看。`,
+  showModal("批贷款", `敞口上限 ${cap.toFixed(2)}亿,已用 ${used.toFixed(2)}亿。\n贷款按月收息，并带来派生存款。客户违约后，存款会减少、风险会上升，每月还要支付拨备费用。\n有风控4星以上的员工，可以查到客户的真实评级。`,
     opts.concat([{t:"这几户都不碰", s:"不花精力", fn:()=>{}}]));
 }
 function settleLoans(lines){
@@ -1435,7 +1600,7 @@ function actManage(){
     {t:"批假轮休", s:`花20万 · 全员倦怠-30,士气+6 · 本月网点产出-25%`, disabled:S.cash<20, fn:()=>{
       gain("cash",-20); S.emps.forEach(e=>{ e.fatigue = Math.max(0,(e.fatigue||0)-30); });
       gain("morale",6); S.restMonth = true; S.track.rest=(S.track.rest||0)+1;
-      log("good","你把排班表推倒重排,让所有人轮着歇了几天。人回来的时候,眼睛是亮的。倦怠-30,本月产出打个折。"); spend(1);
+      log("good","你把排班表推倒重排,让所有人轮着歇了几天。回来后，大家按新排班接着上班。倦怠-30,本月产出打个折。"); spend(1);
     }},
     {t:"高息揽储", s:`存款+${fmt(Math.max(0.5, S.dep*0.045))}亿 · 口碑-2 · 之后${BALANCE.nim.hiCostMonths}个月每亿多付${BALANCE.nim.hiCostAdd}万利息`, fn:()=>{
       const add = +Math.max(0.5, S.dep*0.045).toFixed(2);
@@ -1463,7 +1628,7 @@ function actHire(){
   }
   showModal("本月人才市场","这几份简历一个月就换一批,看准了下手。签一个花1点精力。",
     cands.map(c=>({
-      t:`${c.name} · 营${c.mk} 管${c.mg} 风${c.rk}${c.mk+c.mg+c.rk>=15?" 🌟":""}`,
+      t:`${c.name} · 营${c.mk} 管${c.mg} 风${c.rk}${c.mk+c.mg+c.rk>=15?" [icon:star]":""}`,
       s:`月薪${c.salary}万 · ${c.flavor}`,
       fn:()=>{
         c.id = S.empSeq++;
@@ -1540,7 +1705,7 @@ function doSocial(npcId, method){
   }
   const cost = Math.round((method==="drink"?5 : method==="gift"?15 : 0) * MOD("socialCost"));
   if(S.cash<cost){
-    showModal("钱不够","现金不够,先想办法回血吧。",[{t:"好"}]);
+    showModal("钱不够","账上现金不够支付这笔费用。",[{t:"好"}]);
     return;
   }
   const bad = {gu:"drink", fan:"drink", meng:"gift", lu:"drink"}[npcId];
@@ -1558,8 +1723,9 @@ function doSocial(npcId, method){
   const before = n.fav;
   n.fav = clamp(n.fav+d, 0, 100);
   S.socialed[npcId]=1;
-  const mtxt = {visit:"正式拜访", drink:"约了顿酒", gift:"备了份礼"}[method];
-  log(d>0?"good":"bad", `${mtxt}<b>${n.name}</b>。${txt}${cost?`,花${cost}万`:""}。`);
+  const who = `<b>${esc(n.name)}</b>`;
+  const mtxt = {visit:`拜访了${who}`, drink:`约${who}喝了顿酒`, gift:`给${who}备了份礼`}[method];
+  log(d>0?"good":"bad", `${mtxt}。${txt}${cost?`,花${cost}万`:""}。`);
   const notes = [];
   if(before<60 && n.fav>=60) notes.push(`【好感到60】解锁:${n.perk60}`);
   if(before<80 && n.fav>=80 && !n.used80){
@@ -1585,7 +1751,7 @@ function assignMgr(oi){
     showModal("没人可派","员工都派出去了或者没招人。先去招聘。",[{t:"好"}]);
     return;
   }
-  showModal(`给${o.name}派主任`,"主任的营销星直接决定网点产出,挑营销星最高的准没错。",
+  showModal(`给${o.name}派主任`,"主任的营销能力影响网点产出，也要看看他的特质和倦怠。",
     free.map(e=>({
       t:`${e.name} · 营${e.mk} 管${e.mg} 风${e.rk}`,
       s:e.flavor,
@@ -1612,7 +1778,7 @@ function trainEmp(id){
       fn:()=>{
         gain("cash",-c); e[k]++; e.salary=+(e.salary+0.3).toFixed(1); S.track.train++;
         e.fatigue = Math.max(0,(e.fatigue||0)-15);
-        log("good", `<b>${e.name}</b>培训归来,${NM[k]}${e[k]}星,走路都带风。`);
+        log("good", `<b>${e.name}</b>完成培训，${NM[k]}提升至${e[k]}星。`);
       }
     })).concat([{t:"算了", fn:()=>{}}])
   );
@@ -1620,7 +1786,7 @@ function trainEmp(id){
 function fireEmp(id){
   const e = empById(id);
   if(e.protectedEmp){
-    showModal("动不了", `${e.name}是陆行长打过招呼的人。你要是把他退回去,等于当面驳陆明远的面子。\n\n(这个人,只能留着。)`, [
+    showModal("要辞退他吗", `${e.name}是陆行长打过招呼的人。你要是把他退回去,等于当面驳陆明远的面子。\n\n辞退他，会得罪陆明远。`, [
       {t:"忍了", fn:()=>{}},
       {t:"我不管,就是要清人", s:"陆明远好感-20 · 士气+3", fn:()=>{
         S.outlets.forEach(o=>{ if(o.mgr===id) o.mgr=null; });
@@ -1695,7 +1861,7 @@ const EVENTS = [
   {id:"bigloan", title:"存贷挂钩的买卖",
    body:"北岸建工的杜老板拍着胸脯:『批我5000万贷款,我给你存1个亿。』这生意做不做?",
    opts:()=>[
-     {t:"做!业绩要紧", s:"存款+1亿 · 风险+10", fn:()=>{gain("dep",1);gain("risk",10);dirt(1);log("bad","存款+1亿,报表好看了。但建工的贷款,懂的都懂,风险+10。");}},
+     {t:"做!业绩要紧", s:"存款+1亿 · 风险+10", fn:()=>{gain("dep",1);gain("risk",10);dirt(1);log("bad","存款+1亿,报表好看了。这笔业务也增加了风险，风险+10。");}},
      {t:"婉拒,按流程来", s:"口碑+2", fn:()=>{gain("rep",2);log("","杜老板悻悻走了。圈子里倒传开了:江北这个行长,规矩。口碑+2。");}},
    ]},
   {id:"flood", title:"暴雨灌进营业厅", cond:()=>S.outlets.length>0,
@@ -1800,8 +1966,8 @@ const EVENTS = [
   {id:"broker", title:"掮客上门", once:true,
    body:"一个自称『资金中介』的男人递上名片:『行长,一笔过桥资金,走一下你们的账,80万好处费,神不知鬼不觉。』",
    opts:()=>[
-     {t:"接了", s:"现金+80万 · 风险+18", fn:()=>{gain("cash",80);gain("risk",18);dirt(2);log("bad","钱到账了。你半夜总梦见有人敲门。风险+18。");}},
-     {t:"送客,顺手报备", s:"风险-3 · 口碑+1", fn:()=>{gain("risk",-3);gain("rep",1);log("good","你把名片复印了一份交给保卫部。晚上睡得很香。");}},
+     {t:"接了", s:"现金+80万 · 风险+18", fn:()=>{gain("cash",80);gain("risk",18);dirt(2);log("bad","80万到账了，这笔资金的来路却没核清。风险+18。");}},
+     {t:"送客,顺手报备", s:"风险-3 · 口碑+1", fn:()=>{gain("risk",-3);gain("rep",1);log("good","你把名片复印了一份，连同对方的来意交给保卫部。");}},
    ]},
   {id:"livestream", title:"小年轻要搞直播",
    body:"新来的员工提议开抖音号直播讲理财:『行长,隔壁券商都百万粉了!』方案写了满满三页。",
@@ -1829,7 +1995,7 @@ const EVENTS = [
    body:"陆明远亲自打电话:兄弟行出了事,有笔5000万的问题贷款要找下家平移。『帮个忙,我记着。』电话那头顿了顿,『当然,你也可以说不。』",
    opts:()=>[
      {t:"接下来", s:"陆明远好感+8 · 风险+12", fn:()=>{const l=S.npcs.find(n=>n.id==="lu");l.fav=clamp(l.fav+8,0,100);gain("risk",12);dirt(1);log("bad","贷款平移过来了。陆明远在电话里笑了:『够意思。』这笔账,以后慢慢消化吧。好感+8,风险+12。");}},
-     {t:"婉拒", s:"陆明远好感-6", fn:()=>{const l=S.npcs.find(n=>n.id==="lu");l.fav=clamp(l.fav-6,0,100);log("","你说了句『行里风险指标实在扛不住』。电话那头沉默了三秒:『行,我知道了。』好感-6。");}},
+     {t:"婉拒", s:"陆明远好感-6", fn:()=>{const l=S.npcs.find(n=>n.id==="lu");l.fav=clamp(l.fav-6,0,100);log("","你说了句『行里风险指标实在扛不住』。陆明远打断了你的解释:『行,我知道了。』好感-6。");}},
    ]},
   {id:"devloan", title:"手续差一环的大盘",
    body:"城南大盘的开发商上门:预售证下周才批,但资金今天就要。放款,存款回报丰厚;不放,渝北的马奔明天就放。",
@@ -1896,7 +2062,7 @@ const EVENTS = [
    body:"一家上市公司想把上游两百家供应商的应收账款做成线上融资,让江北当核心承接行。量大、分散、利薄,系统还要改。",
    opts:()=>[
      {t:"接,砸系统", s:"花90万 · 存款+1.6亿 · 风险+6", disabled:S.cash<90, fn:()=>{gain("cash",-90);gain("dep",1.6);gain("risk",6);log("good","供应链平台上线,两百家小供应商全成了江北的户。存款+1.6亿。");}},
-     {t:"只做头部20家", s:"花20万 · 存款+0.5亿", disabled:S.cash<20, fn:()=>{gain("cash",-20);gain("dep",0.5);log("","你挑了肥的做。轻松,也就这样了。");}},
+     {t:"只做头部20家", s:"花20万 · 存款+0.5亿", disabled:S.cash<20, fn:()=>{gain("cash",-20);gain("dep",0.5);log("","江北只接下了其中几家经营较稳的企业。");}},
      {t:"推掉", s:"—", fn:()=>{log("","方案退了回去。三个月后你在同业群里看到渝北做成了。");}},
    ]},
   {id:"bondissue", title:"一单债券承销",
@@ -1906,7 +2072,7 @@ const EVENTS = [
        if(RNG()<0.55+S.rep/400){ gain("dep",2); gain("rep",6); log("good","债券三天售罄,分行发文表扬。存款+2亿,口碑+6。"); }
        else { gain("risk",16); gain("cash",-60); log("bad","还剩一亿多没卖出去,只能自己吃下。风险+16,现金-60万。"); }
      }},
-     {t:"只做联席,分一小杯", s:"存款+0.4亿", fn:()=>{gain("dep",0.4);log("","分了两成份额,吃相不难看,也不好看。");}},
+     {t:"只做联席,分一小杯", s:"存款+0.4亿", fn:()=>{gain("dep",0.4);log("","江北拿到了两成份额。");}},
      {t:"不碰", s:"陆明远好感-3", fn:()=>{arcFav("lu",-3);log("","陆明远在电话里『哦』了一声。");}},
    ]},
   {id:"guarantee", title:"担保圈的第一环", cond:()=>S.loans.length>0,
@@ -1915,12 +2081,12 @@ const EVENTS = [
      const o = [
        {t:"提前抽贷,断链", s:"存款-0.5亿 · 风险-10 · 口碑-3", fn:()=>{gain("dep",-0.5);gain("risk",-10);gain("rep",-3);log("bad","你抽了贷。企业主在大厅里坐了一下午。风险降了,名声也有点难听。");}},
        {t:"续贷观望,赌他扛得住", s:"六成没事 · 四成风险+18", fn:()=>{
-         if(RNG()<0.6) log("good","半年后那两家缓过来了,你的户毫发无伤。");
+         if(RNG()<0.6) log("good","核查后发现，那两家的资金还能周转，江北的客户暂时不受影响。");
          else { gain("risk",18); log("bad","担保代偿了。江北被拖下水,风险+18。"); }
        }},
      ];
      const pro = bestEmp("rk",4);
-     if(pro) o.unshift({t:`让${pro.name}做重组方案(风控${pro.rk}星)`, s:"花20万 · 风险-14,存款不掉", disabled:S.cash<20, fn:()=>{gain("cash",-20);gain("risk",-14);log("good",`${pro.name}拆了担保链,置换了抵押物。刀口很小,血止住了。`);}});
+     if(pro) o.unshift({t:`让${pro.name}做重组方案(风控${pro.rk}星)`, s:"花20万 · 风险-14,存款不掉", disabled:S.cash<20, fn:()=>{gain("cash",-20);gain("risk",-14);log("good",`${pro.name}拆了担保链,置换了抵押物。贷款收回了一部分，眼下的风险有所缓解。`);}});
      return o;
    }},
   {id:"chain_bridge_a", title:"一笔过桥,三天就还", once:true,
@@ -1942,7 +2108,7 @@ const EVENTS = [
      {t:"处置抵押的商铺", s:"现金-30万 · 风险+6 · 损失可控", fn:()=>{gain("cash",-30);gain("risk",6);log("","幸亏当初留了后手。商铺变现,窟窿基本填上了。风险+6。");}},
    ] : [
      {t:"垫资掩盖,慢慢消化", s:"现金-120万 · 风险+10", fn:()=>{gain("cash",-120);gain("risk",10);dirt(2);log("bad","你从别的科目挪了钱把账做平。这一挪,又是一道疤。");}},
-     {t:"如实上报", s:"风险-8 · 陆明远好感-6 · 口碑-5", fn:()=>{gain("risk",-8);arcFav("lu",-6);gain("rep",-5);log("","报告交上去那天,你在楼梯间站了很久。至少,不用再躲了。");}},
+     {t:"如实上报", s:"风险-8 · 陆明远好感-6 · 口碑-5", fn:()=>{gain("risk",-8);arcFav("lu",-6);gain("rep",-5);log("","报告交上去那天,分行要求你补交说明，陆明远也打来了电话。");}},
    ]},
 
   /* ---------- 零售线 ---------- */
@@ -1976,7 +2142,7 @@ const EVENTS = [
    body:c=>`半年过去,教委的文件正式下发——学区没有调整。传言就是传言。\n\n那一片的房价,一个月跌回原点。`,
    opts:c=>c&&c.aggressive ? [
      {t:"追加抵押物,逐户谈", s:"下月精力-1 · 风险-8 · 士气-4", fn:()=>{S.energyPenalty=(S.energyPenalty||0)+1;gain("risk",-8);gain("morale",-4);log("","客户经理挨家挨户上门谈补充抵押。谈得人心疲惫,但雷拆了一半。");}},
-     {t:"什么都不做,赌他们还得起", s:"风险+15 · 不良+一笔", fn:()=>{gain("risk",15);gain("dep",-0.6);log("bad","断供开始出现。风险+15,存款-0.6亿。");}},
+     {t:"什么都不做,赌他们还得起", s:"风险+15 · 存款−0.6亿", fn:()=>{gain("risk",15);gain("dep",-0.6);log("bad","断供开始出现。风险+15,存款-0.6亿。");}},
    ] : [
      {t:"还好压了成数", s:"风险-4 · 口碑+3", fn:()=>{gain("risk",-4);gain("rep",3);log("good","江北是这一片唯一没出断供的行。同业群里有人问你当初怎么想的。");}},
    ]},
@@ -2107,7 +2273,7 @@ const EVENTS = [
   {id:"mortgagerate", title:"房贷利率打起来了",
    body:"同城几家行连夜下调房贷利率,中介的朋友圈刷屏。你的按揭客户开始咨询『能不能转按揭』。",
    opts:()=>[
-     {t:"跟到底线", s:"存款+0.6亿 · 现金收入下降(利差变薄)", fn:()=>{gain("dep",0.6);gain("cash",-40);log("","量上来了,利差薄了。这生意越来越像卖白菜。");}},
+     {t:"跟到底线", s:"存款+0.6亿 · 现金−40万", fn:()=>{gain("dep",0.6);gain("cash",-40);log("","客户多了，利差却薄了。这次调整花掉40万。");}},
      {t:"不跟,做服务差异化", s:"存款-0.3亿 · 口碑+4", fn:()=>{gain("dep",-0.3);gain("rep",4);log("","你让客户经理上门办、周末办、加急办。走了一批客户,留下的很铁。");}},
    ]},
   {id:"typhoon", title:"限电通知", cond:()=>S.outlets.length>=3,
@@ -2120,7 +2286,7 @@ const EVENTS = [
    body:"一家股份制银行的猎头直接打到你手机上:分行部门总,年薪翻倍,下周就能谈。\n\n『您在江北,还剩多久?』",
    opts:()=>[
      {t:"听听看,去见一面", s:"士气-5(消息走漏) · 现金+30万(对方给的车马费)", fn:()=>{gain("morale",-5);gain("cash",30);log("bad","消息不知怎么传了出去。第二天办公室里的气氛有点微妙。");}},
-     {t:"直接挂了", s:"士气+6 · 口碑+2", fn:()=>{gain("morale",6);gain("rep",2);log("good","你说了句『我这三年还没做完』就挂了。这话不知怎么也传开了,士气+6。");}},
+     {t:"直接挂了", s:"士气+6 · 口碑+2", fn:()=>{gain("morale",6);gain("rep",2);log("good","你说了句『我这届任期还没做完』就挂了。这话不知怎么也传开了,士气+6。");}},
    ]},
   {id:"donation", title:"山里的小学",
    body:"对口帮扶的山区小学来信,想要一间图书室。分行没有预算,要行里自己想办法。",
@@ -2155,7 +2321,7 @@ const EVENTS = [
   {id:"gold", title:"金价疯了",
    body:"国际金价一路上涨,大厅里排队买金条的人比办业务的还多。理财经理问要不要加大投放。",
    opts:()=>[
-     {t:"加大代销,吃手续费", s:"现金+70万 · 口碑-2(高位接盘的客户会骂)", fn:()=>{gain("cash",70);gain("rep",-2);log("","手续费收得很爽。半年后金价回调,有客户来大厅拍了桌子。");}},
+     {t:"加大代销,吃手续费", s:"现金+70万 · 口碑-2(高位接盘的客户会骂)", fn:()=>{gain("cash",70);gain("rep",-2);log("","手续费收了不少，也有客户嫌价格高，在大厅抱怨。");}},
      {t:"提示风险,限量销售", s:"现金+20万 · 口碑+5", fn:()=>{gain("cash",20);gain("rep",5);log("good","你让柜面挂了风险提示牌。少赚了钱,但金价跌下来那天,没有一个人来闹。");}},
    ]},
   {id:"newbranchwar", title:"两家行同时看上一个铺面", cond:()=>S.cash>=100,
@@ -2354,7 +2520,7 @@ EVENTS.push(
      }},
      {t:"照实说,口径是分行给的", s:"陆-18 · 顾+8 · 风险-6", fn:()=>{
        arcFav("lu",-18); arcFav("gu",8); gain("risk",-6);
-       log("","你说完之后,会议室安静了三秒。陆明远低头翻材料,没再看你。");
+       log("","主持人停下记录，让陆明远说明情况。陆明远低头翻材料,没再看你。");
      }},
    ]},
   {id:"fac_gu_list", faction:"gu", minMonth:21, title:"顾清越的自查清单",
@@ -2481,7 +2647,7 @@ function rivalScriptBeat(){
   const it = list.find(x=>!x.done && S.month>=x.at);
   if(!it) return null;
   it.done = true;
-  return fireEventById(it.ev, null, "📮 ");
+  return fireEventById(it.ev, null, "[icon:mail] ");
 }
 function rivalOf(boss){ return S.rivals.find(r=>r.boss===boss); }
 
@@ -2513,7 +2679,7 @@ function groupChat(){
 
 /* ============ 挑战模式 ============ */
 const CHALLENGES = [
-  {id:"xiuluo", nm:"修罗开局", ic:"🔥",
+  {id:"xiuluo", nm:"修罗开局", ic:"[icon:flame]",
    desc:"存款5亿、全区垫底起步,账上只剩150万。前任把摊子砸得稀烂,你来收。",
    apply(s){
      s.dep = 5; s.cash = 150;
@@ -2522,10 +2688,10 @@ const CHALLENGES = [
      s.rivals.forEach(r=>{ r.dep = +(r.dep*1.15).toFixed(1); });
      s.npcs.forEach(n=>{ n.fav = Math.max(15, n.fav-12); });
    }},
-  {id:"lianzheng", nm:"廉政风暴", ic:"⚖",
+  {id:"lianzheng", nm:"廉政风暴", ic:"[icon:scale]",
    desc:"检查类事件全程加倍,巡视组每半年来一次,所有灰色选项直接禁用。干净地做,或者做不成。",
    apply(s){ s.mods.riskDrift -= 1; }},
-  {id:"sutong", nm:"速通 · 两年", ic:"⏱",
+  {id:"sutong", nm:"速通 · 两年", ic:"[icon:clock]",
    desc:"任期压缩到24个月,年度目标同步下调。对手不会因为你时间少就慢下来。",
    apply(s){ s.maxMonth = 24; }},
 ];
@@ -2545,6 +2711,7 @@ function applyLianzheng(opts){
 }
 // 巡视组月份:廉政风暴每半年一次,速通压缩到两年
 function patrolMonths(){
+  if(endM()>36) return Array.from({length:Math.floor(endM()/(isLian()?6:12))},(_,i)=>(i+1)*(isLian()?6:12)-2);
   if(isLian()) return [6,12,18,24,30,34];
   return endM()<=24 ? [8,16,22] : [10,22,34];
 }
@@ -2559,6 +2726,7 @@ function makeCycle(){
 }
 function cyclePhase(m){
   const c = S.cycle; if(!c) return "loose";
+  m = ((m-1)%36)+1;
   if(m < c.t1) return "loose";
   if(m < c.t2) return "tight";
   return "loose2";
@@ -2575,16 +2743,17 @@ const CYCLE_NEWS = {
 // 提前两个月吹风,让玩家来得及布局
 function cycleNews(){
   const c = S.cycle; if(!c) return null;
-  const nx = S.month+2;
+  const round = Math.floor((S.month-1)/36);
+  const nx = ((S.month-1)%36)+3;
   let key = null;
-  if(nx===c.t1 && !c.told.t1){ c.told.t1 = 1; key = "tight"; }
-  else if(nx===c.t2 && !c.told.t2){ c.told.t2 = 1; key = "loose2"; }
+  if(nx===c.t1 && !c.told["t1:"+round]){ c.told["t1:"+round] = 1; c.told.t1 = 1; key = "tight"; }
+  else if(nx===c.t2 && !c.told["t2:"+round]){ c.told["t2:"+round] = 1; c.told.t2 = 1; key = "loose2"; }
   if(!key) return null;
   const txt = pick(CYCLE_NEWS[key]);
   log(key==="tight"?"bad":"good", `「${txt}」`, true);
-  return ["📰 行业风声", txt];
+  return ["[icon:news] 行业风声", txt];
 }
-const CYCLE_TXT = {loose:"🌤 宽松期 · 项目多、派生足", tight:"🌧 收紧期 · 不良高、存款流失", loose2:"🌤 再宽松 · 口子又开了"};
+const CYCLE_TXT = {loose:"[icon:sun] 宽松期 · 项目多、派生足", tight:"[icon:rain] 收紧期 · 不良高、存款流失", loose2:"[icon:sun] 再宽松 · 口子又开了"};
 // 收紧期检查类事件权重翻倍
 const INSPECT_EVENTS = ["inspect","auditdrill","whistle","insider","policy","medialeak","newsystem","embezzle","fraud"];
 
@@ -2594,7 +2763,7 @@ function dirt(n){
   S.dirt = (S.dirt||0) + n;
   if(S.dirt===3) log("", "有些事你自己记得就行。");
 }
-function dirtIcon(){ return (S.dirt||0)>=3 ? ` <span class="dirtic" title="有些事,经不起翻">🗂</span>` : ""; }
+function dirtIcon(){ return (S.dirt||0)>=3 ? ` <span class="dirtic" title="有些事,经不起翻">[icon:folder]</span>` : ""; }
 function patrolBeat(){
   if(!patrolMonths().includes(S.month)) return null;
   const d = S.dirt||0;
@@ -2644,7 +2813,7 @@ function patrolBeat(){
       showEnd("双规",
 `巡视组进驻的第九天,车停在办公楼后门。
 
-来的人很客气,说是请你去谈谈,配合了解一些情况。你回办公室拿外套,顺手把台历翻到了下一页——三年任期,还差几个月。
+来的人很客气,说是请你去谈谈,配合了解一些情况。你回办公室拿外套,顺手把台历翻到了下一页——任期还没结束。
 
 那件外套后来一直挂在椅背上,没人动过。
 
@@ -2668,7 +2837,7 @@ function factionBeat(){
   if(!S.flags.factionMonth) S.flags.factionMonth = 20 + ri(5);
   if(S.month < S.flags.factionMonth || S.month>26) return null;
   S.flags.factionDone = true;
-  return ()=>showModal("🎬 分行的风向",
+  return ()=>showModal("[icon:film] 分行的风向",
 `分行务虚会开了一整天。下午茶歇的时候,走廊上只剩两个人。
 
 陆明远靠着窗户抽烟:『风险那条线现在是踩着我们的脖子在管。业务做不出来,谁替你说话?』
@@ -2679,7 +2848,7 @@ function factionBeat(){
     {t:"站陆明远。业绩是硬道理。", s:"陆+15 · 顾-20 · 解锁两个业务派专属事件",
      fn:()=>{ S.flags.faction="lu"; arcFav("lu",15); arcFav("gu",-20);
        log("", "你把话说得很圆,但站的是哪边,在场的人都听得出来。", true); }},
-    {t:"站顾清越。这两年我睡得着。", s:"顾+15 · 陆-20 · 解锁两个合规派专属事件 · 风险-8",
+    {t:"支持顾清越，先把合规做好。", s:"顾+15 · 陆-20 · 解锁两个合规派专属事件 · 风险-8",
      fn:()=>{ S.flags.faction="gu"; arcFav("gu",15); arcFav("lu",-20); gain("risk",-8);
        log("", "你说完，陆明远把烟摁灭了,笑了一下:『你倒是想得明白。』", true); }},
     {t:"骑墙。两边都不得罪。", s:"两边各-8 · 终局看谁赢",
@@ -2712,7 +2881,7 @@ function fireEventById(id, data, tag){
   const body = typeof ev.body==="function" ? ev.body(data) : ev.body;
   const opts = ev.opts(data);
   S.track.events++;
-  return ()=>showModal((tag||"🦢 ")+ev.title, body, opts);
+  return ()=>showModal((tag||"[icon:leaf] ")+ev.title, body, opts);
 }
 function bsBeat(){
   S.bs = S.bs || {done:[], fired:{}};
@@ -2725,7 +2894,7 @@ function bsBeat(){
   const id = pick(pool);
   S.bs.done.push(id); S.bs.fired[wi] = 1;
   log("bad", `<b>出事了。</b>`, true);
-  return fireEventById("bs_"+id+"_a", null, "🦢 ");
+  return fireEventById("bs_"+id+"_a", null, "[icon:leaf] ");
 }
 
 function schedule(id, delay, data){ S.chain.push({id, at:S.month+delay, data:data||null}); }
@@ -2738,7 +2907,7 @@ function fireChain(){
   const body = typeof ev.body==="function" ? ev.body(c.data) : ev.body;
   const opts = ev.opts(c.data);
   S.track.events++;
-  return ()=>showModal("🔗 "+ev.title, body, opts);
+  return ()=>showModal("[icon:link] "+ev.title, body, opts);
 }
 function pickEvent(){
   const pool = EVENTS.filter(e=>{
@@ -2775,7 +2944,7 @@ function fireEvent(){
   const ctx = ev.pre ? ev.pre() : null;
   const body = typeof ev.body==="function" ? ev.body(ctx) : ev.body;
   const opts = ev.opts(ctx);
-  return ()=>showModal("📌 "+ev.title, body, opts);
+  return ()=>showModal("[icon:pin] "+ev.title, body, opts);
 }
 
 /* ============ 月度结算 ============ */
@@ -2784,6 +2953,7 @@ function settleCore(){
   const lines = [];
   S.lastDelta = {};
   const depAtStart = S.dep;
+  settleCareer(lines);
 
   // 1. 存款进项
   let prod = 0;
@@ -2846,7 +3016,7 @@ function settleCore(){
       S.emps = S.emps.filter(x=>x.id!==e.id);
       gain("morale",-8);
       log("bad", `<b>${e.name}提了辞职,连交接都没做完。</b>倦怠拉满的人,是留不住的。士气-8。`);
-      lines.push(["⚠ 员工倦怠离职", e.name]);
+      lines.push(["[icon:alert] 员工倦怠离职", e.name]);
     }
   }
 
@@ -2855,7 +3025,7 @@ function settleCore(){
     S.negMonths++;
     gain("morale",-12);
     log("bad", `<b>账上没钱,工资发不出来!</b>士气-12。(连续${S.negMonths}个月)`);
-    lines.push(["⚠ 欠薪", "士气-12"]);
+    lines.push(["[icon:alert] 欠薪", "士气-12"]);
   } else S.negMonths = 0;
 
   // 4. 自然衰减 & 被动效果
@@ -2879,7 +3049,7 @@ function settleCore(){
 
   // 5. 对手成长
   for(const r of S.rivals){
-    r.dep *= r.g;
+    r.dep *= S.month>36 ? 1+(r.g-1)*0.35 : r.g;
     if(r.boom && RNG()<r.boom/3){
       r.dep *= 0.85;
       gain("dep",0.3); gain("rep",2);
@@ -2900,9 +3070,9 @@ function settleCore(){
   } else if(S.risk>=60){
     log("bad","风险已过60,分行那边有风声了。抓紧『抓内部→排查风险』,或者多养几个风控星高的员工。");
   }
-  if(!failEnd && S.morale<=10) failEnd = ["人心散了","骨干走光了,柜台连班都排不开。分行党委研究决定:江北支行领导班子调整。\n\n——士气跌破10,队伍散了。游戏结束。"];
+  if(!failEnd && S.morale<=10) failEnd = ["人心散了","骨干走光了,柜台连班都排不开。分行党委研究决定:江北支行领导班子调整。\n\n——士气降到10或以下，任期结束。"];
   if(!failEnd && S.negMonths>=3) failEnd = ["揭不开锅","连续三个月发不出工资,员工把横幅挂到了分行门口。江北支行被渝中支行托管。\n\n——现金连续3个月为负。游戏结束。"];
-  if(!failEnd && S.npl>=3.5) failEnd = ["窟窿太大","不良贷款累计"+fmt(S.npl)+"亿,总行风险条线直接派人接管了江北的信贷审批。\n\n你的办公室还在,签字权没了。\n\n——不良超过3.5亿。游戏结束。"];
+  if(!failEnd && S.npl>=3.5) failEnd = ["窟窿太大","不良贷款累计"+fmt(S.npl)+"亿,总行风险条线直接派人接管了江北的信贷审批。\n\n你的办公室还在,签字权没了。\n\n——不良余额达到3.5亿，任期结束。"];
 
   // 7. 局内埋点:趋势、成就
   if(isTight()) S.track.tightGain = +(((S.track.tightGain||0) + (S.dep-depAtStart))).toFixed(2);
@@ -2968,7 +3138,7 @@ function endMonth(){
     b.appendChild(rep);
     const box=$("#mOpts"); box.innerHTML="";
     const btn=document.createElement("button");
-    btn.textContent = quiet ? `进入第${yearOf(mNow+1)}年${monOf(mNow+1)}月 ▶` : "下一步";
+    btn.textContent = quiet ? `进入第${yearOf(mNow+1)}年${monOf(mNow+1)}月 [icon:play]` : "下一步";
     if(quiet) btn.className = "main";
     btn.onclick=()=>{ $("#mask").classList.remove("show"); flushMQ(); };
     box.appendChild(btn);
@@ -3014,6 +3184,8 @@ function endMonth(){
   const cap = Math.max(1, BALANCE.modal.maxPerMonth - reserved);
   const story = [];
   // 黑天鹅第一幕:优先级高于随机事件
+  const careerFn = careerBeat();
+  if(careerFn) story.push(careerFn);
   const bsFn = bsBeat();
   if(bsFn) story.push(bsFn);
   const rsFn = rivalScriptBeat();      // 对手自己的剧本
@@ -3030,7 +3202,7 @@ function endMonth(){
   const canQuiet = !story.length && !reserved && mNow>=md.quietFrom && mNow<=md.quietTo && RNG()<md.quietChance;
   if(canQuiet){
     log("", "这个月平平淡淡,没什么值得记的事。");
-    lines.push(["💬 " + groupChat()[0], ""]);   // 没事发生的月份,给点世界的动静
+    lines.push(["[icon:chat] " + groupChat()[0], ""]);   // 没事发生的月份,给点世界的动静
   }
   if(!canQuiet && !(arcFn && chainFn) && story.length < cap){
     const evFn = fireEvent();
@@ -3073,12 +3245,12 @@ function endMonth(){
 
   // 年度涨薪涨租 + 年度考核
   if(monOf(mNow)===12 && mNow<endM()){
-    for(const e of S.emps) e.salary = +(e.salary*1.15).toFixed(1);
-    for(const o of S.outlets) o.rent = +(o.rent*1.12).toFixed(1);
-    log("bad","开年全行业普涨工资15%,房东们也默契地把租金抬了12%。");
+    for(const e of S.emps) e.salary = +(e.salary*(mNow>=36?1.04:1.15)).toFixed(1);
+    for(const o of S.outlets) o.rent = +(o.rent*(mNow>=36?1.03:1.12)).toFixed(1);
+    log("bad",mNow>=36?"开年工资上调4%、租金上调3%。长期项目的净收益能否覆盖成本，将决定后半程的底气。":"开年全行业普涨工资15%,房东们也默契地把租金抬了12%。");
     fns.push(()=>{
       const y = yearOf(mNow);
-      const target = Math.round((y===1 ? 24 : 44) * (endM()/36) * 100)/100;
+      const target = Math.round((y===1 ? 24 : 44+Math.max(0,y-2)*16) * (endM()===24?2/3:1) * 100)/100;
       let txt;
       if(S.dep>=target){
         gain("cash",100); gain("rep",5);
@@ -3088,7 +3260,7 @@ function endMonth(){
       } else {
         gain("rep",-5); gain("morale",-5);
         const lu=S.npcs.find(n=>n.id==="lu"); lu.fav=clamp(lu.fav-8,0,100);
-        txt = `年度目标${target}亿——差了${fmt(target-S.dep)}亿。\n\n考核会上你做了检讨。口碑-5,士气-5,陆明远好感-8。\n明年${y===1?"44亿":"就是终点"},没有退路了。`;
+        txt = `年度目标${target}亿——差了${fmt(target-S.dep)}亿。\n\n考核会上你做了检讨。口碑-5,士气-5,陆明远好感-8。\n明年${44+Math.max(0,y-1)*16}亿,没有退路了。`;
         log("bad", `<b>第${y}年年度考核没过</b>,差${fmt(target-S.dep)}亿。`, true);
       }
       showModal(`第${y}年年度考核`, txt, [{t:"继续"}]);
@@ -3111,12 +3283,13 @@ function endMonth(){
 }
 
 /* ============ 结局 ============ */
+function routeGoalNeed(id){ const r=ROUTES[id]; return r ? Math.round(r.goal.need*((id==="corp"||id==="compliance")?Math.max(1,endM()/36):1)*10)/10 : 0; }
 function routeGoalDone(){
   const rt = RT(); if(!rt) return false;
   const cur = rt.goal.cur(S);
-  if(S.route==="retail") return cur>=rt.goal.need && S.rep>=75;
-  if(S.route==="compliance") return cur>=rt.goal.need && (S.track.maxRisk||0)<45;
-  return cur>=rt.goal.need;
+  if(S.route==="retail") return cur>=routeGoalNeed(S.route) && S.rep>=75;
+  if(S.route==="compliance") return cur>=routeGoalNeed(S.route) && (S.track.maxRisk||0)<45;
+  return cur>=routeGoalNeed(S.route);
 }
 function finalEnding(){
   let r = myRank();
@@ -3162,6 +3335,8 @@ function finalEnding(){
   showEnd(title, txt+bump+fx, r<=3);
 }
 function showEnd(title, txt, good){
+  txt = txt.replace(/三年/g, (endM()/12)+"年");
+  if(endM()>36){ const c=careerState(),built=Object.keys(c.projects).length; txt+=`\n\n任内建成${built}项长期项目，共升至${Object.values(c.projects).reduce((a,b)=>a+b,0)}级。任期${endM()/12}年，实际在任${S.month}个月。`; }
   S.over = true;
   S.endTitle = title;
   // S.failed 只由 settleCore 的硬失败置位;good 仅决定结局页图标
@@ -3184,29 +3359,29 @@ function showEnd(title, txt, good){
   const t = S.track||{};
   const fans = S.npcs.filter(n=>n.fav>=80).length;
   const badges = [];
-  if(myRank()===1) badges.push("👑 全区第一");
-  if((t.maxRisk||0)<40) badges.push("🧊 干干净净");
-  if(S.outlets.length>=6) badges.push("🏗 基建狂魔");
-  if(fans>=3) badges.push("🍶 人脉王");
-  if(S.morale>=80) badges.push("❤️ 员工爱戴");
-  if(S.rep>=85) badges.push("📣 金字招牌");
-  if(S.emps.some(e=>e.mk>=5&&e.mg>=5&&e.rk>=5)) badges.push("🌟 麾下有传奇");
-  if((t.train||0)>=3) badges.push("🎓 育人有方");
-  if((t.social||0)<=8 && S.month>=endM()) badges.push("🐺 独行侠");
-  if(S.dep>=60) badges.push("💰 六十亿俱乐部");
-  if((t.maxRisk||0)>=70 && S.month>=endM()) badges.push("🎢 刀尖上跳舞");
-  if((t.loanTotal||0)>=10) badges.push("🏢 放贷十亿");
-  if((t.loanTotal||0)>=3 && (t.badLoans||0)===0) badges.push("🎯 一笔不良都没有");
-  if((t.arcs||0)>=10) badges.push("📖 故事听全了");
-  if((t.arcs||0)>=16) badges.push("🎬 六个人的三年");
-  if(S.flags.whitelist) badges.push("📋 免检白名单");
-  if(S.flags.clean) badges.push("🕯 干净的手");
-  if(S.flags.burned) badges.push("🔥 碎纸机之夜");
-  if((t.rest||0)>=4) badges.push("🛋 有人味的行长");
-  if(S.emps.every(e=>(e.fatigue||0)<50) && S.month>=endM()) badges.push("😌 队伍不垮");
-  if((t.rivalMoves||0)>=5) badges.push("⚔ 见过血");
-  if(routeGoalDone()) badges.push((RT()?RT().icon:"🎖")+" 路线达成");
-  if(!badges.length) badges.push("🍵 平平安安也是福");
+  if(myRank()===1) badges.push("[icon:crown] 全区第一");
+  if((t.maxRisk||0)<40) badges.push("[icon:diamond] 干干净净");
+  if(S.outlets.length>=6) badges.push("[icon:shop] 基建狂魔");
+  if(fans>=3) badges.push("[icon:cup] 人脉王");
+  if(S.morale>=80) badges.push("[icon:heart] 员工爱戴");
+  if(S.rep>=85) badges.push("[icon:voice] 金字招牌");
+  if(S.emps.some(e=>e.mk>=5&&e.mg>=5&&e.rk>=5)) badges.push("[icon:star] 麾下有传奇");
+  if((t.train||0)>=3) badges.push("[icon:cap] 育人有方");
+  if((t.social||0)<=8 && S.month>=endM()) badges.push("[icon:compass] 独行侠");
+  if(S.dep>=60) badges.push("[icon:cash] 六十亿俱乐部");
+  if((t.maxRisk||0)>=70 && S.month>=endM()) badges.push("[icon:chart] 刀尖上跳舞");
+  if((t.loanTotal||0)>=10) badges.push("[icon:bank] 放贷十亿");
+  if((t.loanTotal||0)>=3 && (t.badLoans||0)===0) badges.push("[icon:target] 一笔不良都没有");
+  if((t.arcs||0)>=10) badges.push("[icon:book] 故事听全了");
+  if((t.arcs||0)>=16) badges.push("[icon:film] 江北故交");
+  if(S.flags.whitelist) badges.push("[icon:news] 免检白名单");
+  if(S.flags.clean) badges.push("[icon:lamp] 干净的手");
+  if(S.flags.burned) badges.push("[icon:flame] 碎纸机之夜");
+  if((t.rest||0)>=4) badges.push("[icon:chair] 有人味的行长");
+  if(S.emps.every(e=>(e.fatigue||0)<50) && S.month>=endM()) badges.push("[icon:people] 队伍不垮");
+  if((t.rivalMoves||0)>=5) badges.push("[icon:sword] 见过血");
+  if(routeGoalDone()) badges.push((RT()?RT().icon:"[icon:medal]")+" 路线达成");
+  if(!badges.length) badges.push("[icon:cup] 平平安安也是福");
   const gr = [
     ["最终存款", fmt(S.dep)+"亿"],
     ["最终排名", "第"+myRank()+"名"],
@@ -3222,26 +3397,26 @@ function showEnd(title, txt, good){
     ["对手出招", (t.rivalMoves||0)+"次"],
   ];
   $("#endCard").innerHTML = `
-    <div class="ename">《江北支行》${S.maxMonth===24?"两年":"三年"}任期结算 · 行长 ${esc(S.playerName)}${RT()?" · "+RT().icon+RT().name:""}</div>
+    <div class="ename">《江北支行》${(endM()/12)+"年"}任期结算 · 行长 ${esc(S.playerName)}${RT()?" · "+RT().icon+RT().name:""}</div>
     ${chalOf()||S.seed?`<div class="chalbar">${chalOf()?chalOf().ic+" "+chalOf().nm:""}${S.seed?` · 种子 <b>${esc(S.seed)}</b><small>把种子填进「挑战模式」就能重开同一局</small>`:""}</div>`:""}
-    <div class="etitle">${good?"🏆":"🍂"} ${title}</div>
+    <div class="etitle">${good?"[icon:medal]":"[icon:leaf]"} ${title}</div>
     <div class="etext">${txt}</div>
     <div class="egrid">${gr.map(([k,v])=>`<div class="eg"><div class="v">${v}</div><div class="k">${k}</div></div>`).join("")}</div>
     <div class="badges">${badges.map(b=>`<span class="badge">${b}</span>`).join("")}</div>
     <div class="expline">阅历点 +${gained} · 累计 ${META.exp}<small>下一局开局可以三选一天赋</small></div>
     <div class="endbtns">
-      <button onclick="makeBio()">🖼 生成传记长图</button>
-      <button onclick="galTab('chal')">🎯 挑战模式</button>
-      <button onclick="showGallery()">📖 图鉴</button>
+      <button onclick="makeBio()">[icon:film] 生成传记长图</button>
+      <button onclick="galTab('chal')">[icon:target] 挑战模式</button>
+      <button onclick="showGallery()">[icon:book] 图鉴</button>
     </div>
     <div id="bioBox" class="biobox"></div>
     <button class="main" onclick="restartGame()" style="margin-top:10px;width:100%">再开一局</button>
-    <div class="shot">存下那张长图,晒晒你的三年</div>`;
+    <div class="shot">存下那张长图,晒晒你的行长生涯</div>`;
   $("#endScreen").classList.add("show");
 }
 function restartGame(){
   $("#endScreen").classList.remove("show");
-  newGame();
+  showGameGuide();
 }
 // 中途重开:存档会没,阅历点也不给(阅历只在走完一局时折算)
 function askRestart(){
@@ -3254,7 +3429,7 @@ function askRestart(){
     {t:"重开", s:"这一局作废,从第1年1月开始", fn:()=>{
       try{ localStorage.removeItem("jbzh_save6"); localStorage.removeItem("jbzh_save5"); }catch(e){}
       MQ.length = 0;
-      newGame();
+      newGame(null,null,endM());
     }},
     {t:"算了,接着打", fn:()=>{}},
   ]);
@@ -3276,22 +3451,22 @@ function saveMeta(){ try{ localStorage.setItem(META_KEY, JSON.stringify(META)); 
 
 // 结局图鉴:文案引用原对象,不复制字符串
 const ENDINGS = [
-  {id:"e_corp",   t:()=>ROUTES.corp.endTitle,       ic:"🏢", tag:"路线", hint:"把量做穿,总行公司部会记住你的名字。"},
-  {id:"e_retail", t:()=>ROUTES.retail.endTitle,     ic:"🏪", tag:"路线", hint:"一张卡一张卡地办,慢的东西塌不下来。"},
-  {id:"e_guanxi", t:()=>ROUTES.guanxi.endTitle,     ic:"🍶", tag:"路线", hint:"通讯录也是资产,得有人肯接你电话。"},
-  {id:"e_comply", t:()=>ROUTES.compliance.endTitle, ic:"🛡", tag:"路线", hint:"查三次查不出问题,这本身就是一种成绩。"},
-  {id:"e_rank1",  t:()=>"北疆之王",  ic:"👑", tag:"排名", hint:"全区第一,大红花是要戴的。"},
-  {id:"e_rank3",  t:()=>"明星行长",  ic:"⭐", tag:"排名", hint:"前三名,名字能写进后备干部名单。"},
-  {id:"e_rank6",  t:()=>"稳字当头",  ic:"🍵", tag:"排名", hint:"不好不坏,留任江北,再来三年?"},
-  {id:"e_rank9",  t:()=>"清收办喝茶",ic:"🪑", tag:"排名", hint:"有间办公室在等你,那间没有窗户。"},
-  {id:"e_audit",  t:()=>"东窗事发",  ic:"🚨", tag:"失败", hint:"风险攒到头,封条会自己贴上来。"},
-  {id:"e_morale", t:()=>"人心散了",  ic:"💔", tag:"失败", hint:"柜台排不开班的时候,数字就不重要了。"},
-  {id:"e_cash",   t:()=>"揭不开锅",  ic:"🧾", tag:"失败", hint:"横幅挂到分行门口那天,你才知道现金是硬的。"},
-  {id:"e_npl",    t:()=>"窟窿太大",  ic:"🕳", tag:"失败", hint:"办公室还在,签字权没了。"},
-  {id:"e_clean1", t:()=>"干净的第一名", ic:"🕯", tag:"隐藏", hint:"又快又干净——听说有人做到过。"},
-  {id:"e_gui",    t:()=>"双规",        ic:"🚗", tag:"失败", hint:"后门停的那辆车,不是来接你上任的。"},
-  {id:"e_chuli",  t:()=>"组织处理",    ic:"📄", tag:"失败", hint:"措辞会很克制:管理不到位,建议组织处理。"},
-  {id:"e_dai",    t:()=>"带病提拔",    ic:"🗂", tag:"隐藏", hint:"数字是真的。抽屉最下层那几份,也是真的。"},
+  {id:"e_corp",   t:()=>ROUTES.corp.endTitle,       ic:"[icon:bank]", tag:"路线", hint:"把量做穿,总行公司部会记住你的名字。"},
+  {id:"e_retail", t:()=>ROUTES.retail.endTitle,     ic:"[icon:shop]", tag:"路线", hint:"一张卡一张卡地办,慢的东西塌不下来。"},
+  {id:"e_guanxi", t:()=>ROUTES.guanxi.endTitle,     ic:"[icon:cup]", tag:"路线", hint:"通讯录也是资产,得有人肯接你电话。"},
+  {id:"e_comply", t:()=>ROUTES.compliance.endTitle, ic:"[icon:shield]", tag:"路线", hint:"查三次查不出问题,这本身就是一种成绩。"},
+  {id:"e_rank1",  t:()=>"北疆之王",  ic:"[icon:crown]", tag:"排名", hint:"全区第一,大红花是要戴的。"},
+  {id:"e_rank3",  t:()=>"明星行长",  ic:"[icon:star]", tag:"排名", hint:"前三名,名字能写进后备干部名单。"},
+  {id:"e_rank6",  t:()=>"稳字当头",  ic:"[icon:cup]", tag:"排名", hint:"不好不坏,留任江北,再来三年?"},
+  {id:"e_rank9",  t:()=>"清收办喝茶",ic:"[icon:chair]", tag:"排名", hint:"有间办公室在等你,那间没有窗户。"},
+  {id:"e_audit",  t:()=>"东窗事发",  ic:"[icon:alert]", tag:"失败", hint:"风险攒到头,封条会自己贴上来。"},
+  {id:"e_morale", t:()=>"人心散了",  ic:"[icon:heart]", tag:"失败", hint:"柜台排不开班的时候,数字就不重要了。"},
+  {id:"e_cash",   t:()=>"揭不开锅",  ic:"[icon:news]", tag:"失败", hint:"横幅挂到分行门口那天,你才知道现金是硬的。"},
+  {id:"e_npl",    t:()=>"窟窿太大",  ic:"[icon:hole]", tag:"失败", hint:"办公室还在,签字权没了。"},
+  {id:"e_clean1", t:()=>"干净的第一名", ic:"[icon:lamp]", tag:"隐藏", hint:"又快又干净——听说有人做到过。"},
+  {id:"e_gui",    t:()=>"双规",        ic:"[icon:car]", tag:"失败", hint:"后门停的那辆车,不是来接你上任的。"},
+  {id:"e_chuli",  t:()=>"组织处理",    ic:"[icon:news]", tag:"失败", hint:"措辞会很克制:管理不到位,建议组织处理。"},
+  {id:"e_dai",    t:()=>"带病提拔",    ic:"[icon:folder]", tag:"隐藏", hint:"数字是真的。抽屉最下层那几份,也是真的。"},
 ];
 const END_BY_TITLE = {};
 function endIdOf(title){
@@ -3301,37 +3476,37 @@ function endIdOf(title){
 
 // chk 里只读 s,不改状态;end:true 的只在终局判定
 const ACHIEVEMENTS = [
-  {id:"a_done",   nm:"三年到期",     ic:"📅", end:true,  desc:"完整走完一届任期",              chk:s=>s.month>=(s.maxMonth||36)},
-  {id:"a_first",  nm:"北疆之王",     ic:"👑", end:true,  desc:"任期结束时全区第一",          chk:s=>s.month>=(s.maxMonth||36) && myRank()===1},
-  {id:"a_fast1",  nm:"两年上位",     ic:"🚀", end:false, desc:"第24个月之前坐上全区第一",    chk:s=>(s.track.rank1M||99)<=24},
-  {id:"a_clean",  nm:"一身干净",     ic:"🧊", end:true,  desc:"风险峰值全程压在40以下通关",  chk:s=>s.month>=(s.maxMonth||36) && (s.track.maxRisk||0)<40},
-  {id:"a_nonpl",  nm:"零不良通关",   ic:"🎯", end:true,  desc:"放贷≥3亿且一笔不良都没有",    chk:s=>s.month>=(s.maxMonth||36) && (s.track.loanTotal||0)>=3 && (s.track.badLoans||0)===0},
-  {id:"a_nodrink",nm:"三年不喝一顿酒",ic:"🚱",end:true,  desc:"整个任期一次应酬都没有",      chk:s=>s.month>=(s.maxMonth||36) && (s.track.social||0)===0},
-  {id:"a_allfav", nm:"六个人的三年", ic:"🤝", end:false, desc:"六位关系人好感同时≥80",      chk:s=>s.npcs.filter(n=>n.fav>=80).length===6},
-  {id:"a_out6",   nm:"基建狂魔",     ic:"🏗", end:false, desc:"网点开到6家",                chk:s=>s.outlets.length>=6},
-  {id:"a_dep60",  nm:"六十亿俱乐部", ic:"💰", end:false, desc:"存款突破60亿",               chk:s=>s.dep>=60},
-  {id:"a_dep100", nm:"百亿江北",     ic:"🏦", end:false, desc:"存款突破100亿",              chk:s=>s.dep>=100},
-  {id:"a_legend", nm:"麾下有传奇",   ic:"🌟", end:false, desc:"招到一名三维全5星的干将",     chk:s=>s.emps.some(e=>e.mk>=5&&e.mg>=5&&e.rk>=5)},
-  {id:"a_train",  nm:"育人有方",     ic:"🎓", end:false, desc:"累计培训5次",                chk:s=>(s.track.train||0)>=5},
-  {id:"a_nofire", nm:"一个都没辞",   ic:"🕊", end:true,  desc:"任期内没开除过任何人",        chk:s=>s.month>=(s.maxMonth||36) && (s.track.fired||0)===0},
-  {id:"a_fresh",  nm:"队伍不垮",     ic:"😌", end:true,  desc:"通关时全员倦怠都低于50",      chk:s=>s.month>=(s.maxMonth||36) && s.emps.length>0 && s.emps.every(e=>(e.fatigue||0)<50)},
-  {id:"a_loan10", nm:"放贷十亿",     ic:"📈", end:false, desc:"累计投放贷款≥10亿",          chk:s=>(s.track.loanTotal||0)>=10},
-  {id:"a_pledge", nm:"言出必行",     ic:"✍️", end:false, desc:"军令状连兑现3次",            chk:s=>(s.track.pledgeWin||0)>=3},
-  {id:"a_arcs",   nm:"故事听全了",   ic:"📖", end:false, desc:"主线累计推进16幕",           chk:s=>(s.track.arcs||0)>=16},
-  {id:"a_war",    nm:"见过血",       ic:"⚔", end:true,  desc:"扛住对手8次出招走到最后",     chk:s=>s.month>=(s.maxMonth||36) && (s.track.rivalMoves||0)>=8},
-  {id:"a_rest",   nm:"有人味的行长", ic:"🛋", end:false, desc:"累计安排4次轮休",            chk:s=>(s.track.rest||0)>=4},
-  {id:"a_solo",   nm:"独行侠",       ic:"🐺", end:true,  desc:"应酬不超过8次走完三年",      chk:s=>s.month>=(s.maxMonth||36) && (s.track.social||0)<=8},
-  {id:"a_fall",   nm:"也算见识过",   ic:"🍂", end:true,  desc:"第一次尝到失败结局",         chk:s=>!!s.failed, hidden:true},
-  {id:"a_bio",    nm:"留个纪念",     ic:"🖼", end:false, desc:"生成一张行长传记长图",       chk:()=>META.bioMade>0, hidden:true},
-  {id:"a_4route", nm:"四条路都走过", ic:"🧭", end:false, desc:"四条路线各通关一次",         chk:()=>Object.keys(META.routesDone||{}).length>=4, hidden:true},
-  {id:"a_nodirt", nm:"手上没东西",   ic:"🧼", end:true,  desc:"全程把柄为0走完三年",         chk:s=>s.month>=(s.maxMonth||36) && (s.dirt||0)===0},
-  {id:"a_dirty",  nm:"收下所有把柄还全身而退", ic:"🗂", end:true, desc:"把柄≥8,却走完了三年", chk:s=>s.month>=(s.maxMonth||36) && (s.dirt||0)>=8},
-  {id:"a_tight",  nm:"逆周期",       ic:"🌧", end:false, desc:"收紧期里存款还涨了3亿",        chk:s=>(s.track.tightGain||0)>=3},
-  {id:"a_swan",   nm:"三只黑天鹅",   ic:"🦢", end:false, desc:"一局里三套年度大事件全遇上",   chk:s=>((s.bs&&s.bs.done)||[]).length>=3, hidden:true},
-  {id:"a_xiuluo", nm:"从五亿爬回来", ic:"🔥", end:true,  desc:"通关「修罗开局」",              chk:s=>s.chal==="xiuluo" && s.month>=(s.maxMonth||36)},
-  {id:"a_lian",   nm:"经得起翻",     ic:"⚖", end:true,  desc:"通关「廉政风暴」",              chk:s=>s.chal==="lianzheng" && s.month>=(s.maxMonth||36)},
-  {id:"a_sutong", nm:"两年就够了",   ic:"⏱", end:true,  desc:"通关「速通 · 两年」",           chk:s=>s.chal==="sutong" && s.month>=(s.maxMonth||36)},
-  {id:"a_allchal",nm:"三关全过",     ic:"🏅", end:false, desc:"三个挑战模式全部通关",         chk:()=>Object.keys(META.chals||{}).length>=3, hidden:true},
+  {id:"a_done",   nm:"任期圆满",     ic:"[icon:clock]", end:true,  desc:"完整走完一届任期",              chk:s=>s.month>=(s.maxMonth||36)},
+  {id:"a_first",  nm:"北疆之王",     ic:"[icon:crown]", end:true,  desc:"任期结束时全区第一",          chk:s=>s.month>=(s.maxMonth||36) && myRank()===1},
+  {id:"a_fast1",  nm:"两年上位",     ic:"[icon:chart]", end:false, desc:"第24个月之前坐上全区第一",    chk:s=>(s.track.rank1M||99)<=24},
+  {id:"a_clean",  nm:"一身干净",     ic:"[icon:diamond]", end:true,  desc:"风险峰值全程压在40以下通关",  chk:s=>s.month>=(s.maxMonth||36) && (s.track.maxRisk||0)<40},
+  {id:"a_nonpl",  nm:"零不良通关",   ic:"[icon:target]", end:true,  desc:"放贷≥3亿且一笔不良都没有",    chk:s=>s.month>=(s.maxMonth||36) && (s.track.loanTotal||0)>=3 && (s.track.badLoans||0)===0},
+  {id:"a_nodrink",nm:"滴酒不沾",ic:"[icon:cup]",end:true,  desc:"整个任期一次应酬都没有",      chk:s=>s.month>=(s.maxMonth||36) && (s.track.social||0)===0},
+  {id:"a_allfav", nm:"江北故交", ic:"[icon:people]", end:false, desc:"六位关系人好感同时≥80",      chk:s=>s.npcs.filter(n=>n.fav>=80).length===6},
+  {id:"a_out6",   nm:"基建狂魔",     ic:"[icon:shop]", end:false, desc:"网点开到6家",                chk:s=>s.outlets.length>=6},
+  {id:"a_dep60",  nm:"六十亿俱乐部", ic:"[icon:cash]", end:false, desc:"存款突破60亿",               chk:s=>s.dep>=60},
+  {id:"a_dep100", nm:"百亿江北",     ic:"[icon:bank]", end:false, desc:"存款突破100亿",              chk:s=>s.dep>=100},
+  {id:"a_legend", nm:"麾下有传奇",   ic:"[icon:star]", end:false, desc:"拥有一名营销、管理、风控均达5星的员工",     chk:s=>s.emps.some(e=>e.mk>=5&&e.mg>=5&&e.rk>=5)},
+  {id:"a_train",  nm:"育人有方",     ic:"[icon:cap]", end:false, desc:"累计培训5次",                chk:s=>(s.track.train||0)>=5},
+  {id:"a_nofire", nm:"一个都没辞",   ic:"[icon:leaf]", end:true,  desc:"任期内没开除过任何人",        chk:s=>s.month>=(s.maxMonth||36) && (s.track.fired||0)===0},
+  {id:"a_fresh",  nm:"队伍不垮",     ic:"[icon:people]", end:true,  desc:"通关时全员倦怠都低于50",      chk:s=>s.month>=(s.maxMonth||36) && s.emps.length>0 && s.emps.every(e=>(e.fatigue||0)<50)},
+  {id:"a_loan10", nm:"放贷十亿",     ic:"[icon:chart]", end:false, desc:"累计投放贷款≥10亿",          chk:s=>(s.track.loanTotal||0)>=10},
+  {id:"a_pledge", nm:"言出必行",     ic:"[icon:pen]", end:false, desc:"累计兑现3次军令状",            chk:s=>(s.track.pledgeWin||0)>=3},
+  {id:"a_arcs",   nm:"故事听全了",   ic:"[icon:book]", end:false, desc:"主线累计推进16幕",           chk:s=>(s.track.arcs||0)>=16},
+  {id:"a_war",    nm:"见过血",       ic:"[icon:sword]", end:true,  desc:"扛住对手8次出招走到最后",     chk:s=>s.month>=(s.maxMonth||36) && (s.track.rivalMoves||0)>=8},
+  {id:"a_rest",   nm:"有人味的行长", ic:"[icon:chair]", end:false, desc:"累计安排4次轮休",            chk:s=>(s.track.rest||0)>=4},
+  {id:"a_solo",   nm:"独行侠",       ic:"[icon:compass]", end:true,  desc:"应酬不超过8次走完任期",      chk:s=>s.month>=(s.maxMonth||36) && (s.track.social||0)<=8},
+  {id:"a_fall",   nm:"也算见识过",   ic:"[icon:leaf]", end:true,  desc:"第一次尝到失败结局",         chk:s=>!!s.failed, hidden:true},
+  {id:"a_bio",    nm:"留个纪念",     ic:"[icon:film]", end:false, desc:"生成一张行长传记长图",       chk:()=>META.bioMade>0, hidden:true},
+  {id:"a_4route", nm:"四条路都走过", ic:"[icon:compass]", end:false, desc:"四条路线各通关一次",         chk:()=>Object.keys(META.routesDone||{}).length>=4, hidden:true},
+  {id:"a_nodirt", nm:"手上没东西",   ic:"[icon:shield]", end:true,  desc:"任期结束时把柄为0",         chk:s=>s.month>=(s.maxMonth||36) && (s.dirt||0)===0},
+  {id:"a_dirty",  nm:"带着旧账卸任", ic:"[icon:folder]", end:true, desc:"把柄≥8,却走完了任期", chk:s=>s.month>=(s.maxMonth||36) && (s.dirt||0)>=8},
+  {id:"a_tight",  nm:"逆周期",       ic:"[icon:rain]", end:false, desc:"收紧期里存款还涨了3亿",        chk:s=>(s.track.tightGain||0)>=3},
+  {id:"a_swan",   nm:"三只黑天鹅",   ic:"[icon:leaf]", end:false, desc:"一局里三套年度大事件全遇上",   chk:s=>((s.bs&&s.bs.done)||[]).length>=3, hidden:true},
+  {id:"a_xiuluo", nm:"从五亿爬回来", ic:"[icon:flame]", end:true,  desc:"通关「修罗开局」",              chk:s=>s.chal==="xiuluo" && s.month>=(s.maxMonth||36)},
+  {id:"a_lian",   nm:"经得起翻",     ic:"[icon:scale]", end:true,  desc:"通关「廉政风暴」",              chk:s=>s.chal==="lianzheng" && s.month>=(s.maxMonth||36)},
+  {id:"a_sutong", nm:"两年就够了",   ic:"[icon:clock]", end:true,  desc:"通关「速通 · 两年」",           chk:s=>s.chal==="sutong" && s.month>=(s.maxMonth||36)},
+  {id:"a_allchal",nm:"三关全过",     ic:"[icon:medal]", end:false, desc:"三个挑战模式全部通关",         chk:()=>Object.keys(META.chals||{}).length>=3, hidden:true},
 ];
 
 function toast(msg){
@@ -3351,7 +3526,7 @@ function checkAch(atEnd){
     if(a.end && !atEnd) continue;
     let ok = false;
     try{ ok = !!a.chk(S); }catch(e){}
-    if(ok){ META.achs[a.id] = Date.now(); got++; toast(`🏅 成就达成 · ${a.ic} <b>${a.nm}</b>`); }
+    if(ok){ META.achs[a.id] = Date.now(); got++; toast(`[icon:medal] 成就达成 · ${a.ic} <b>${a.nm}</b>`); }
   }
   if(got) saveMeta();
 }
@@ -3373,7 +3548,7 @@ function showGallery(){
     h += `<div class="galsum">已解锁 ${n}/${ENDINGS.length} 个结局</div><div class="gallist">`;
     for(const e of ENDINGS){
       const on = !!META.endings[e.id];
-      h += `<div class="gal ${on?"on":""}"><div class="gi">${on?e.ic:"❔"}</div><div><b>${on?esc(e.t()):"???"}</b> <span class="gt">${e.tag}</span><small>${on?"已达成":esc(e.hint)}</small></div></div>`;
+      h += `<div class="gal ${on?"on":""}"><div class="gi">${on?e.ic:"[icon:question]"}</div><div><b>${on?esc(e.t()):"???"}</b> <span class="gt">${e.tag}</span><small>${on?"已达成":esc(e.hint)}</small></div></div>`;
     }
     h += `</div>`;
   } else if(GAL_TAB==="ach"){
@@ -3382,7 +3557,7 @@ function showGallery(){
     for(const a of ACHIEVEMENTS){
       const on = !!META.achs[a.id];
       const hide = a.hidden && !on;
-      h += `<div class="gal ${on?"on":""}"><div class="gi">${on?a.ic:"❔"}</div><div><b>${hide?"???":esc(a.nm)}</b><small>${hide?"隐藏成就":esc(a.desc)}</small></div></div>`;
+      h += `<div class="gal ${on?"on":""}"><div class="gi">${on?a.ic:"[icon:question]"}</div><div><b>${hide?"???":esc(a.nm)}</b><small>${hide?"隐藏成就":esc(a.desc)}</small></div></div>`;
     }
     h += `</div>`;
   } else if(GAL_TAB==="chal"){
@@ -3395,7 +3570,7 @@ function showGallery(){
       h += `<div class="gal on"><div class="gi">${c.ic}</div><div><b>${esc(c.nm)}</b>${on?` <span class="gt">已通关</span>`:""}<small>${esc(c.desc)}</small></div>
         <div class="gact"><button onclick="startChallenge('${c.id}')">开始</button></div></div>`;
     }
-    h += `<div class="gal on"><div class="gi">🎲</div><div><b>普通模式 · 指定种子</b><small>不加任何限制,只是把这一局固定下来,方便跟人比。</small></div>
+    h += `<div class="gal on"><div class="gi">[icon:dice]</div><div><b>普通模式 · 指定种子</b><small>不加任何限制,只是把这一局固定下来,方便跟人比。</small></div>
       <div class="gact"><button onclick="startChallenge('')">开始</button></div></div>`;
     h += `</div>`;
   } else {
@@ -3429,31 +3604,31 @@ function unlockTalent(id){
   const t = TALENTS.find(x=>x.id===id);
   if(!t || META.talents.includes(id) || META.exp < t.cost) return;
   META.exp -= t.cost; META.talents.push(id); saveMeta();
-  toast(`✨ 解锁天赋 · ${t.ic} <b>${t.nm}</b>`);
+  toast(`[icon:star] 解锁天赋 · ${t.ic} <b>${t.nm}</b>`);
   showGallery();
 }
 
 /* ============ 开局天赋 ============ */
 const TALENTS = [
-  {id:"laoling", nm:"老领导关照", ic:"🎖", cost:0,   desc:"上任前陆明远替你打过招呼。陆明远初始好感+15。",
+  {id:"laoling", nm:"老领导关照", ic:"[icon:medal]", cost:0,   desc:"上任前陆明远替你打过招呼。陆明远初始好感+15。",
    apply(s){ const n=s.npcs.find(x=>x.id==="lu"); if(n) n.fav=clamp(n.fav+15,0,100); }},
-  {id:"beishui", nm:"背水一战",   ic:"🔥", cost:0,   desc:"你把家底垫进去了。开局现金-100万,全行产出×1.12。",
+  {id:"beishui", nm:"背水一战",   ic:"[icon:flame]", cost:0,   desc:"你把家底垫进去了。开局现金-100万,全行产出×1.12。",
    apply(s){ s.cash-=100; s.mods.output=+(s.mods.output*1.12).toFixed(2); }},
-  {id:"jiubu",   nm:"旧部来投",   ic:"🧳", cost:0,   desc:"老单位跟过你的人辞职跟了过来:开局多一名随机好手。",
+  {id:"jiubu",   nm:"旧部来投",   ic:"[icon:folder]", cost:0,   desc:"老单位跟过你的人辞职跟了过来:开局多一名随机好手。",
    apply(s){ const e=genCandidates()[0]; e.id=s.empSeq++; e.fatigue=0; s.emps.push(e); }},
-  {id:"shiren",  nm:"识人之明",   ic:"👁", cost:60,  desc:"看人极准:招聘候选人三维各+1(不超5星)。",
+  {id:"shiren",  nm:"识人之明",   ic:"[icon:eye]", cost:60,  desc:"看人极准:招聘候选人三维各+1(不超5星)。",
    apply(s){ s.flags.sharpEye=true; }},
-  {id:"kubaba",  nm:"库房有底",   ic:"💵", cost:80,  desc:"前任留了笔机动经费。开局现金+200万。",
+  {id:"kubaba",  nm:"库房有底",   ic:"[icon:cash]", cost:80,  desc:"前任留了笔机动经费。开局现金+200万。",
    apply(s){ s.cash+=200; }},
-  {id:"jiufang", nm:"旧改红利",   ic:"🏚", cost:100, desc:"辖区拆迁款正好落地。开局存款+4亿,口碑-4(有人说你运气好)。",
+  {id:"jiufang", nm:"旧改红利",   ic:"[icon:bank]", cost:100, desc:"辖区拆迁款正好落地。开局存款+4亿,口碑-4(有人说你运气好)。",
    apply(s){ s.dep+=4; s.rep=clamp(s.rep-4,0,100); }},
-  {id:"tiemian", nm:"铁面",       ic:"⚖", cost:120, desc:"你不吃这一套:每月风险额外-2,应酬花费×1.3。",
+  {id:"tiemian", nm:"铁面",       ic:"[icon:scale]", cost:120, desc:"你不吃这一套:每月风险额外-2,应酬花费×1.3。",
    apply(s){ s.mods.riskDrift-=2; s.mods.socialCost=+(s.mods.socialCost*1.3).toFixed(2); }},
-  {id:"jiuliang",nm:"酒量惊人",   ic:"🥃", cost:120, desc:"半斤不上脸。好感增益×1.25,应酬花费×0.8。",
+  {id:"jiuliang",nm:"酒量惊人",   ic:"[icon:cup]", cost:120, desc:"半斤不上脸。好感增益×1.25,应酬花费×0.8。",
    apply(s){ s.mods.favGain=+(s.mods.favGain*1.25).toFixed(2); s.mods.socialCost=+(s.mods.socialCost*0.8).toFixed(2); }},
-  {id:"fengkong",nm:"风控出身",   ic:"🛡", cost:150, desc:"你是从风险条线上来的。贷款不良概率×0.75。",
+  {id:"fengkong",nm:"风控出身",   ic:"[icon:shield]", cost:150, desc:"你是从风险条线上来的。贷款不良概率×0.75。",
    apply(s){ s.mods.npl=+(s.mods.npl*0.75).toFixed(2); }},
-  {id:"kuaiche", nm:"快车道",     ic:"🛣", cost:180, desc:"开局就有两家网点满产,不用爬坡;网点开办费×0.85。",
+  {id:"kuaiche", nm:"快车道",     ic:"[icon:road]", cost:180, desc:"开局就有两家网点满产,不用爬坡;网点开办费×0.85。",
    apply(s){ s.outlets.forEach(o=>o.ramp=1); s.mods.openCost=+(s.mods.openCost*0.85).toFixed(2); }},
 ];
 function talentPool(){ return TALENTS.filter(t=>META.talents.includes(t.id)); }
@@ -3464,7 +3639,7 @@ function chooseTalent(next){
   const three = [];
   while(three.length<3 && pool.length) three.push(pool.splice(ri(pool.length),1)[0]);
   $("#mTitle").textContent = "开局天赋 · 三选一";
-  $("#mBody").innerHTML = `这不是你第一次当行长了。有些东西,是上一趟带下来的。<br><br><span style="color:var(--dim);font-size:13px">当前阅历点 ${META.exp} · 更多天赋在「📖 图鉴 → 天赋」里解锁。</span>`;
+  $("#mBody").innerHTML = `这不是你第一次当行长了。有些东西,是上一趟带下来的。<br><br><span style="color:var(--dim);font-size:13px">当前阅历点 ${META.exp} · 更多天赋在「[icon:book] 图鉴 → 天赋」里解锁。</span>`;
   const box = $("#mOpts"); box.innerHTML = "";
   three.forEach(t=>{
     const b = document.createElement("button");
@@ -3503,7 +3678,7 @@ function bioTier(){
   if(r<=6) return "b";
   return "c";
 }
-function stripTags(s){ return String(s).replace(/<[^>]*>/g,"").replace(/\s+/g," ").trim(); }
+function stripTags(s){ return String(s).replace(/\[icon:[a-z]+\]/g,"").replace(/<[^>]*>/g,"").replace(/\s+/g," ").trim(); }
 function bioBeats(){
   const all = (S.track && S.track.keyEvents) ? S.track.keyEvents.slice() : [];
   const max = BALANCE.bio.maxBeats;
@@ -3528,7 +3703,7 @@ function renderBiography(withQR, cb){
   const beats = bioBeats();
   // 高度按内容算,别留大片空白:头部 + 雷达/数据 + 时间轴 + 总评(与二维码并排)
   const vsAll = BIO_VERDICT[bioTier()];
-  const verdictTxt = vsAll[(S.month + Math.round(S.dep)) % vsAll.length];
+  const verdictTxt = vsAll[(S.month + Math.round(S.dep)) % vsAll.length].replace(/三年/g,(endM()/12)+"年");
   const vMaxW = W-P*2-140;
   const vLines = Math.max(1, Math.ceil(verdictTxt.length*15/vMaxW));
   const headH = 254, midH = 250, tlH = 26 + Math.max(1,beats.length)*30 + 26;
@@ -3538,16 +3713,19 @@ function renderBiography(withQR, cb){
   cv.width = W*dpr; cv.height = H*dpr;
   cv.style.width = "100%"; cv.style.maxWidth = W+"px"; cv.style.borderRadius = "10px";
   const c = cv.getContext("2d");
+  const rawFillText=c.fillText.bind(c), rawMeasure=c.measureText.bind(c);
+  c.fillText=(t,...args)=>rawFillText(stripTags(t),...args);
+  c.measureText=t=>rawMeasure(stripTags(t));
   c.scale(dpr, dpr);
-  const GOLD="#e8b84b", TXT="#e8e5dc", DIM="#9aa3b2", LINE="#3a4354";
+  const GOLD="#8b6434", TXT="#28343c", DIM="#626860", LINE="#d4cec1";
   const g = c.createLinearGradient(0,0,0,H);
-  g.addColorStop(0,"#2b3242"); g.addColorStop(1,"#171b23");
+  g.addColorStop(0,"#fffcf5"); g.addColorStop(1,"#f2eee5");
   c.fillStyle = g; c.fillRect(0,0,W,H);
   c.strokeStyle = GOLD; c.lineWidth = 3; c.strokeRect(6,6,W-12,H-12);
   const F = (sz,w)=>`${w||400} ${sz}px "PingFang SC","Microsoft YaHei",sans-serif`;
   let y = P+34;
   c.textAlign = "center";
-  c.fillStyle = DIM; c.font = F(16); c.fillText("《江北支行》· 行长的三年", W/2, y); y += 46;
+  c.fillStyle = DIM; c.font = F(16); c.fillText("《江北支行》· 行长生涯", W/2, y); y += 46;
   c.fillStyle = GOLD; c.font = F(42,700);
   c.fillText(S.endTitle || "任期未满", W/2, y); y += 34;
   const rt = RT();
@@ -3558,13 +3736,13 @@ function renderBiography(withQR, cb){
   // 履历标签:挑战 / 站队 / 把柄 / 黑天鹅,一行说完这一局是怎么过来的
   const tags = [];
   if(chalOf()) tags.push(chalOf().ic+" "+chalOf().nm);
-  if(S.flags.faction) tags.push(S.flags.faction==="lu"?"⚑ 业务派":S.flags.faction==="gu"?"⚖ 合规派":"🌫 骑墙");
+  if(S.flags.faction) tags.push(S.flags.faction==="lu"?"[icon:pin] 业务派":S.flags.faction==="gu"?"[icon:scale] 合规派":"[icon:rain] 骑墙");
   const dv = S.dirt||0;
-  tags.push(dv===0 ? "🕯 手上没东西" : dv>=7 ? "🗂 一身是把柄" : dv>=4 ? "🗂 手上有东西" : "🗂 沾过一点");
-  if(((S.bs&&S.bs.done)||[]).length) tags.push("🦢 黑天鹅×"+S.bs.done.length);
-  if((S.track.pledgeWin||0)>0) tags.push("✍️ 军令状×"+S.track.pledgeWin);
+  tags.push(dv===0 ? "[icon:lamp] 手上没东西" : dv>=7 ? "[icon:folder] 一身是把柄" : dv>=4 ? "[icon:folder] 手上有东西" : "[icon:folder] 沾过一点");
+  if(((S.bs&&S.bs.done)||[]).length) tags.push("[icon:leaf] 黑天鹅×"+S.bs.done.length);
+  if((S.track.pledgeWin||0)>0) tags.push("[icon:pen] 军令状×"+S.track.pledgeWin);
   if(tags.length){
-    c.font = F(12); c.fillStyle = "#c9b071";
+    c.font = F(12); c.fillStyle = "#8b6434";
     const tw = tags.map(t=>c.measureText(t).width+18);
     let total = tw.reduce((a,b)=>a+b,0) + (tags.length-1)*8;
     let tx = (W-total)/2;
@@ -3592,7 +3770,7 @@ function renderBiography(withQR, cb){
   for(let ring=1; ring<=4; ring++){
     c.beginPath();
     for(let i=0;i<N;i++){ const r=R*ring/4, x=cx+Math.cos(ang(i))*r, yy=cy+Math.sin(ang(i))*r; i?c.lineTo(x,yy):c.moveTo(x,yy); }
-    c.closePath(); c.strokeStyle = "#39404f"; c.stroke();
+    c.closePath(); c.strokeStyle = "#d4cec1"; c.stroke();
   }
   c.beginPath();
   for(let i=0;i<N;i++){ const r=R*Math.max(4,data[i][1])/100, x=cx+Math.cos(ang(i))*r, yy=cy+Math.sin(ang(i))*r; i?c.lineTo(x,yy):c.moveTo(x,yy); }
@@ -3628,7 +3806,7 @@ function renderBiography(withQR, cb){
   y += 250;
 
   // 时间轴
-  c.fillStyle = GOLD; c.font = F(16,700); c.fillText("三年大事记", P+6, y-14);
+  c.fillStyle = GOLD; c.font = F(16,700); c.fillText("任期大事记", P+6, y-14);
   const lx = P+16;
   c.strokeStyle = LINE; c.beginPath(); c.moveTo(lx, y-2); c.lineTo(lx, y+beats.length*30-10); c.stroke();
   beats.forEach((b,i)=>{
@@ -3677,7 +3855,7 @@ function makeBio(){
       cv.toBlob(bl=>{
         if(!bl) return;
         const a = document.createElement("a");
-        a.href = URL.createObjectURL(bl); a.download = `${S.playerName}的三年·行长传记.png`;
+        a.href = URL.createObjectURL(bl); a.download = `${S.playerName}的行长生涯·传记.png`;
         document.body.appendChild(a); a.click(); a.remove();
         setTimeout(()=>URL.revokeObjectURL(a.href), 3000);
       }, "image/png");
@@ -3700,7 +3878,7 @@ function drawTrend(cv){
   const c = cv.getContext("2d"); c.scale(dpr,dpr);
   const d = h.slice(-12), mx = Math.max(...d), mn = Math.min(...d);
   const sp = Math.max(0.1, mx-mn);
-  c.strokeStyle = "#e8b84b"; c.lineWidth = 1.6; c.beginPath();
+  c.strokeStyle = "#8b6434"; c.lineWidth = 1.6; c.beginPath();
   d.forEach((v,i)=>{
     const x = 2 + i*(W-4)/Math.max(1,d.length-1);
     const yy = H-3 - (v-mn)/sp*(H-8);
@@ -3709,7 +3887,7 @@ function drawTrend(cv){
   c.stroke();
   const lx = 2 + (d.length-1)*(W-4)/Math.max(1,d.length-1);
   const ly = H-3 - (d[d.length-1]-mn)/sp*(H-8);
-  c.beginPath(); c.arc(lx, ly, 2.6, 0, Math.PI*2); c.fillStyle = "#e8b84b"; c.fill();
+  c.beginPath(); c.arc(lx, ly, 2.6, 0, Math.PI*2); c.fillStyle = "#8b6434"; c.fill();
 }
 
 /* ============ 渲染 ============ */
@@ -3717,8 +3895,8 @@ const STAT_DEFS = [
   {k:"cash", lb:"现金", unit:"万", tip:"发工资、交房租、送礼、开网点全靠它。负数=欠薪,士气暴跌;连负3个月直接出局。", f:v=>Math.round(v)},
   {k:"dep", lb:"存款", unit:"亿", tip:"你的成绩单,排名只看它。来源:网点产出、关系户、跑业务、贷款派生、随机事件。每亿存款每月带来2万经营收入。", f:v=>fmt(v)},
   {k:"rep", lb:"口碑", unit:"", tip:"高于50,存款自然上涨;低于50,客户悄悄流失。每月自然-1,得靠跑业务、办活动、处理好事件来养。", f:v=>Math.round(v)},
-  {k:"morale", lb:"士气", unit:"", tip:"直接乘在网点产出上。士气会向一个基准值回归——基准由口碑、全员倦怠、管理星决定。团建奖金是一次性脉冲,想长期高,得把口碑和倦怠管好。跌破10队伍就散了。", f:v=>Math.round(v)},
-  {k:"risk", lb:"风险", unit:"", tip:"灰色操作和放贷会攒风险。到60分行盯上你,到85直接免职。排查-15,员工的风控星每月自动降一些。", f:v=>Math.round(v)},
+  {k:"morale", lb:"士气", unit:"", tip:"士气影响网点产出。团建和奖金能暂时提振士气；长期还要靠口碑、员工状态和管理能力。士气降到10或以下，任期提前结束。", f:v=>Math.round(v)},
+  {k:"risk", lb:"风险", unit:"", tip:"风险达到60会收到警告，达到85会触发审计；没有顾清越的保护，就会被免职。排查可降低15点风险，员工风控能力也能降低每月风险。", f:v=>Math.round(v)},
   {k:"rank", lb:"排名", unit:"/9", tip:"全区9家支行按存款排座次。季度点评、年度考核、最终结局都看它。", f:()=>myRank()},
 ];
 function renderStats(){
@@ -3726,7 +3904,7 @@ function renderStats(){
   for(const d of STAT_DEFS){
     const v = d.k==="rank" ? myRank() : S[d.k];
     const delta = S.lastDelta[d.k]||0;
-    const div = document.createElement("div"); div.className="stat";
+    const div = document.createElement("div"); div.className="stat"; div.tabIndex=0; div.setAttribute("role","button"); div.setAttribute("aria-label",d.lb+"："+d.f(v)+d.unit+"。"+d.tip); div.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();div.click();}};
     let color = "";
     if(d.k==="risk") color = v>=60?"style='color:var(--red)'":(v>=40?"style='color:var(--gold)'":"");
     if(d.k==="cash" && v<0) color = "style='color:var(--red)'";
@@ -3754,7 +3932,7 @@ function renderGoal(){
   const el = $("#goalBar"); if(!el) return;
   const rt = RT();
   if(!rt){ el.className="goalbar"; el.innerHTML=""; return; }
-  const cur = rt.goal.cur(S), need = rt.goal.need;
+  const cur = rt.goal.cur(S), need = routeGoalNeed(S.route);
   const pct = clamp(cur/need*100, 0, 100);
   const done = routeGoalDone();
   let extra = "";
@@ -3767,22 +3945,22 @@ function renderGoal(){
 }
 function warnings(){
   const w = [];
-  if(S.risk>=75) w.push(["red",`🚨 风险 ${Math.round(S.risk)}:再到85就是免职。立刻『抓内部→排查风险』。`]);
-  else if(S.risk>=60) w.push(["amber",`⚠ 风险 ${Math.round(S.risk)}:分行盯上你了。`]);
-  if(S.morale<=20) w.push(["red",`🚨 士气 ${Math.round(S.morale)}:跌破10队伍就散。团建、发奖金、批轮休。`]);
-  else if(S.morale<=30) w.push(["amber",`⚠ 士气 ${Math.round(S.morale)}:人心浮动。`]);
+  if(S.risk>=75) w.push(["red",`[icon:alert] 风险 ${Math.round(S.risk)}:再到85就是免职。立刻『抓内部→排查风险』。`]);
+  else if(S.risk>=60) w.push(["amber",`[icon:alert] 风险 ${Math.round(S.risk)}:分行盯上你了。`]);
+  if(S.morale<=20) w.push(["red",`[icon:alert] 士气 ${Math.round(S.morale)}:跌破10队伍就散。团建、发奖金、批轮休。`]);
+  else if(S.morale<=30) w.push(["amber",`[icon:alert] 士气 ${Math.round(S.morale)}:人心浮动。`]);
   const net = Math.round(S.dep*BALANCE.nim.baseYield - S.dep*(S.depCostRate||0) - totalSalary() - totalRent() + S.loans.filter(l=>!l.bad).reduce((s,l)=>s+l.amt*l.rate*100,0));
-  if(S.cash<0) w.push(["red",`🚨 账上是负的:已连续欠薪${S.negMonths}个月,满3个月出局。`]);
-  else if(net<0 && S.cash + net*2 < 0) w.push(["amber",`⚠ 每月净流出${-net}万,现金${Math.round(S.cash)}万,撑不过两个月。`]);
+  if(S.cash<0) w.push(["red",`[icon:alert] 账上是负的:已连续欠薪${S.negMonths}个月,满3个月出局。`]);
+  else if(net<0 && S.cash + net*2 < 0) w.push(["amber",`[icon:alert] 每月净流出${-net}万,现金${Math.round(S.cash)}万,撑不过两个月。`]);
   const bad = S.loans.filter(l=>l.bad);
-  if(S.npl>=2) w.push(["red",`🚨 不良 ${fmt(S.npl)}亿:到3.5亿总行接管。`]);
-  else if(bad.length) w.push(["amber",`⚠ ${bad.length}笔贷款已成不良,每月还在计提。`]);
+  if(S.npl>=2) w.push(["red",`[icon:alert] 不良 ${fmt(S.npl)}亿:到3.5亿总行接管。`]);
+  else if(bad.length) w.push(["amber",`[icon:alert] ${bad.length}笔贷款已成不良,每月还在计提。`]);
   const tired = S.emps.filter(e=>(e.fatigue||0)>=80);
-  if(tired.length) w.push(["amber",`⚠ ${tired.map(e=>e.name).join("、")} 倦怠爆表,随时可能不辞而别。`]);
+  if(tired.length) w.push(["amber",`[icon:alert] ${tired.map(e=>e.name).join("、")} 倦怠爆表,随时可能不辞而别。`]);
   const noMgr = S.outlets.filter(o=>o.mgr==null && o.closed===0);
-  if(noMgr.length) w.push(["info",`🪑 ${noMgr.map(o=>o.name).join("、")} 还没派主任,产出只有一半。`]);
-  if(S.pledge) w.push(["info",`📜 军令状:第${yearOf(S.pledge.due)}年${monOf(S.pledge.due)}月底存款≥${S.pledge.target}亿(现${fmt(S.dep)}亿)`]);
-  if(S.chain.length) w.push(["info",`🔗 有${S.chain.length}件事还没了结,过些日子会找上门。`]);
+  if(noMgr.length) w.push(["info",`[icon:chair] ${noMgr.map(o=>o.name).join("、")} 还没派主任,产出只有一半。`]);
+  if(S.pledge) w.push(["info",`[icon:book] 军令状:第${yearOf(S.pledge.due)}年${monOf(S.pledge.due)}月底存款≥${S.pledge.target}亿(现${fmt(S.dep)}亿)`]);
+  if(S.chain.length) w.push(["info",`[icon:link] 有${S.chain.length}件事还没了结,过些日子会找上门。`]);
   return w;
 }
 function renderWarn(){
@@ -3798,51 +3976,56 @@ function renderWarn(){
 }
 function renderForecast(){
   const income = Math.round(S.dep*BALANCE.nim.baseYield) - Math.round(S.dep*(S.depCostRate||0)), sal = totalSalary().toFixed(1), rent = totalRent();
-  const net = Math.round(income-sal-rent);
+  const projectNet=PROJECTS.reduce((v,p)=>v+projectReturn(p,careerState().projects[p.id]||0).cash,0);
+  const net = Math.round(income-sal-rent+projectNet);
   const prod = S.outlets.reduce((s,o)=>s+outletOutput(o),0);
   const season = seasonInfo().txt;
   const pledge = "";   // 军令状统一由警告条呈现(那条带当前存款),预报条不再重复
   $("#forecast").innerHTML =
     `<span>本月预计 → 网点产出 <b>+${fmt(prod)}亿</b></span>`+
     `<span>收入 <b>+${income}万</b></span><span>工资 <b>-${sal}万</b></span><span>房租 <b>-${rent}万</b></span>`+
-    `<span>现金净 <b class="${net>=0?"up":"down"}">${net>=0?"+":""}${net}万</b></span>`+
+    `<span>项目净收益 <b>${projectNet.toFixed(0)}万</b></span><span>现金净 <b class="${net>=0?"up":"down"}">${net>=0?"+":""}${net}万</b></span>`+
     (season?`<span>${season}</span>`:"") +
     (S.cycle?`<span title="宏观信贷周期:宽松期项目多、派生足;收紧期不良高、资金外流">${CYCLE_TXT[cyclePhase(S.month)]}</span>`:"") + pledge;
 }
 const ACTIONS = [
-  {ic:"🏃", nm:"跑业务", ds:"拉存款+口碑", fn:actRun},
-  {ic:"🍶", nm:"拜访关系", ds:"经营6位关系人", fn:actSocial},
-  {ic:"📋", nm:"抓内部", ds:"团建/排查/轮休", fn:actManage},
-  {ic:"💴", nm:"批贷款", ds:"利息+派生存款", fn:actLoan},
-  {ic:"🤝", nm:"招聘", ds:"看3份简历", fn:actHire},
-  {ic:"🏗", nm:"开网点", ds:"扩张地盘", fn:actOpen},
+  {ic:"[icon:road]", nm:"跑业务", ds:"拉存款+口碑", fn:actRun},
+  {ic:"[icon:cup]", nm:"拜访关系", ds:"拜访熟人，打点关系", fn:actSocial},
+  {ic:"[icon:news]", nm:"抓内部", ds:"团建/排查/轮休", fn:actManage},
+  {ic:"[icon:cash]", nm:"批贷款", ds:"利息+派生存款", fn:actLoan},
+  {ic:"[icon:people]", nm:"招聘", ds:"看3份简历", fn:actHire},
+  {ic:"[icon:shop]", nm:"开网点", ds:"增设营业网点", fn:actOpen},
 ];
 function renderActions(){
   const el = $("#actionBar"); el.innerHTML="";
   ACTIONS.forEach(a=>{
-    const d = document.createElement("div");
+    const d = document.createElement("button");
+    d.type = "button"; d.disabled = S.energy<=0;
     d.className = "act"+(S.energy<=0&&a.nm!=="拜访关系"?" off":"");
     if(S.energy<=0) d.className = "act off";
-    d.innerHTML = `<div class="ic">${a.ic}</div><div class="nm">${a.nm}</div><div class="ds">${a.ds}</div>`;
+    d.innerHTML = `<div class="ic">${a.ic}</div><div class="nm">${a.nm}</div><div class="ds">${a.ds}</div><span class="action-cost">${S.energy<=0?"精力已用完":"1点精力"}</span>`;
     d.onclick = a.fn;
     el.appendChild(d);
   });
 }
 function switchTab(t){
   S.tab = t;
-  document.querySelectorAll("#tabBar button").forEach(b=>b.classList.toggle("on", b.dataset.tab===t));
+  document.querySelectorAll("#tabBar button").forEach(b=>{b.classList.toggle("on", b.dataset.tab===t);if(b.dataset.tab===t)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
   renderPanel();
+  if(window.matchMedia("(max-width:760px)").matches) $("#panel").scrollIntoView({block:"start"});
 }
 function renderPanel(){
   const el = $("#panel"); el.innerHTML="";
   const t = S.tab;
+  document.querySelectorAll("#tabBar button").forEach(b=>{b.classList.toggle("on",b.dataset.tab===t);if(b.dataset.tab===t)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
+  if(t==="strategy"){ renderCareer(el); return; }
   if(t==="outlets"){
     S.outlets.forEach((o,i)=>{
       const m = o.mgr!=null?empById(o.mgr):null;
       const c = document.createElement("div"); c.className="card";
       c.innerHTML = `<div class="row"><div><h3>${o.name}</h3> <span class="stars">${starTxt(o.star)}</span>
-        ${o.closed>0?'<span class="tag" style="background:#4a2020;color:#e08080">停业中</span>':''}
-        ${o.ramp<1?'<span class="tag" style="background:#3a3320;color:#d0b060">爬坡'+Math.round(o.ramp*100)+'%</span>':''}</div>
+        ${o.closed>0?'<span class="tag" style="background:#f4e1db;color:#933d32">停业中</span>':''}
+        ${o.ramp<1?'<span class="tag" style="background:#ece6d5;color:#785a28">爬坡'+Math.round(o.ramp*100)+'%</span>':''}</div>
         <div class="num">存款 <b>${fmt(o.dep)}亿</b> · 月租${o.rent}万</div></div>
         <div class="sub">${o.desc}</div>
         <div class="sub">主任:<b style="color:var(--txt)">${m?`${m.name}(营销${m.mk}星)`:"没派(产出打五折!)"}</b>
@@ -3853,12 +4036,12 @@ function renderPanel(){
     });
     const hint = document.createElement("div"); hint.className="sub";
     hint.style.padding="4px";
-    hint.textContent = `产出公式:0.08亿 × 地段星 × 主任系数 × 士气系数。营销型主任产出最高,没主任只有一半。想扩张,点上面『开网点』。`;
+    hint.textContent = `每月新增存款 = 0.08亿 × 地段星 × 主任系数 × 士气系数。未派主任时，主任系数为0.5。`;
     el.appendChild(hint);
   }
   if(t==="team"){
     const head = document.createElement("div"); head.className="sub"; head.style.marginBottom="8px";
-    head.innerHTML = `在编 <b>${S.emps.length}/8</b> 人,月工资合计 <b>${totalSalary().toFixed(1)}万</b>。<b>营销星</b>当主任撑网点产出、在机动队拉存款;<b>管理星</b>全员生效养士气;<b>风控星</b>全员生效压风险、还决定你看不看得穿贷款客户的底。<br>每个人还有<b style="color:var(--gold)">特质</b>和<b>倦怠条</b>——倦怠越高干得越差,到顶会不辞而别。『抓内部→批假轮休』能把全员倦怠压下来。`;
+    head.innerHTML = `在编 <b>${S.emps.length}/8</b> 人 · 月工资 <b>${totalSalary().toFixed(1)}万</b>。倦怠过高会影响工作，也可能留不住人。可在「抓内部」安排轮休。<details><summary>能力与岗位</summary>普通员工倦怠达到92后，每月有30%的概率离职。营销能力影响网点和机动队新增存款；管理能力帮助维持士气；风控能力降低风险，也帮助判断贷款客户。管理和风控能力在任何岗位都生效。</details>`;
     el.appendChild(head);
     S.emps.forEach(e=>{
       const post = S.outlets.find(o=>o.mgr===e.id);
@@ -3868,7 +4051,7 @@ function renderPanel(){
         : `机动队 · 每月拉存款+${fmt(0.025*e.mk)}亿`;
       const tr = traitOf(e);
       const c = document.createElement("div"); c.className="card";
-      c.innerHTML = `<div class="row"><div><h3>${e.name}</h3>${attrTags(e)}${e.mk+e.mg+e.rk>=15?'<span class="tag" style="background:#4a3320;color:var(--gold)">🌟 传奇</span>':''}${e.protectedEmp?'<span class="tag" style="background:#3a2a3a;color:#c8a0d0">关系户</span>':''}${fatigueTag(e)}</div><div class="num">月薪 <b>${e.salary}万</b></div></div>
+      c.innerHTML = `<div class="row"><div><h3>${e.name}</h3>${attrTags(e)}${e.mk+e.mg+e.rk>=15?'<span class="tag" style="background:#f0e3ce;color:var(--gold)">[icon:star] 传奇</span>':''}${e.protectedEmp?'<span class="tag" style="background:#3a2a3a;color:#c8a0d0">关系户</span>':''}${fatigueTag(e)}</div><div class="num">月薪 <b>${e.salary}万</b></div></div>
         <div class="sub">${e.flavor}</div>
         ${tr?`<div class="sub"><b style="color:var(--gold)">${tr.ic} ${tr.nm}</b> · ${tr.desc}</div>`:""}
         <div class="sub">岗位:<b style="color:var(--txt)">${duty}</b> · 管理星每月士气+${(0.15*e.mg).toFixed(1)},风控每月风险-${(0.2*rkPower(e)).toFixed(1)}</div>
@@ -3881,7 +4064,7 @@ function renderPanel(){
   }
   if(t==="npc"){
     const head = document.createElement("div"); head.className="sub"; head.style.marginBottom="8px";
-    head.innerHTML = `每个人吃哪一套,得自己试——投其所好+12,不对路+6,踩雷-5。试过一次就记住了。好感过60/80解锁福利,不走动每月-2,每人每月只能见一次。`;
+    head.innerHTML = `每人每月可拜访一次。好感高于40且本月未见面时，好感−2；关系路线减1。好感达到60、80时可获得帮助。<details><summary>相处偏好</summary>基础好感变化：合心意+12、一般+6、反感−5。已尝试的方式会留有标记；路线和员工特质还会影响结果。</details>`;
     el.appendChild(head);
     const mark = v => v===undefined ? "" : (v>=12?" ✓":(v<0?" ✗":" ·"));
     const gc = Math.round(5*MOD("socialCost")), fc = Math.round(15*MOD("socialCost"));
@@ -3903,10 +4086,10 @@ function renderPanel(){
         arcTxt += `</div>`;
       }
       c.innerHTML = `<div class="row"><div><h3>${n.name}</h3> <span class="sub" style="display:inline">${n.title}</span>
-        <span class="tag" style="background:#333;color:#aaa">${n.line}</span>${isPatron?'<span class="tag" style="background:#2a3a4a;color:#8fc4dc">主线</span>':''}</div>
+        <span class="tag" style="background:#e9e5da;color:#626860">${n.line}</span>${isPatron?'<span class="tag" style="background:#e3edf1;color:#355e72">主线</span>':''}</div>
         <div class="num">好感 <b>${n.fav}</b></div></div>
         <div class="bar"><i style="width:${n.fav}%;background:${n.fav>=80?"var(--gold)":n.fav>=60?"var(--green)":"var(--blue)"}"></i></div>
-        <div class="sub">${n.hint}</div>
+        <div class="sub">${esc((NPCS.find(def=>def.id===n.id)||n).hint)}</div>
         ${arcTxt}
         <div class="unlock"><span class="${n.fav>=60?"ok":""}">${n.fav>=60?"✓":"○"} 60 ${n.perk60}</span><br>
         <span class="${n.fav>=80?"ok":""}">${n.fav>=80?"✓":"○"} 80 ${n.perk80}</span></div>
@@ -3922,8 +4105,8 @@ function renderPanel(){
   if(t==="loans"){
     const head = document.createElement("div"); head.className="sub"; head.style.marginBottom="8px";
     const cap = loanCapAmt(), used = loanOutstanding();
-    head.innerHTML = `贷款是存款之外的第二条腿:每笔贷款按月给你<b>利息现金</b>,还会<b>派生一笔存款</b>。代价是——它会变不良。<br>
-      不良一出:派生存款回吐、风险跳涨、每月还要计提现金。<b style="color:var(--red)">不良累计3.5亿直接出局。</b><br>
+    head.innerHTML = `贷款每月收取<b>利息</b>，并带来<b>派生存款</b>。客户还不上款时，会转为不良贷款。<br>
+      转为不良后，派生存款减少、风险上升，每月还会扣除拨备费用。<b style="color:var(--red)">不良累计3.5亿直接出局。</b><br>
       敞口上限 <b>${cap.toFixed(2)}亿</b>(随存款增长),已用 <b>${used.toFixed(2)}亿</b> · 不良余额 <b style="color:${S.npl>0?"var(--red)":"var(--txt)"}">${fmt(S.npl)}亿</b> · 累计投放 <b>${fmt(S.track.loanTotal||0)}亿</b><br>
       风控星越高,坏账概率越低(当前全行削减到 <b>${Math.round(loanRiskCut()*100)}%</b>);有风控4星以上的人,批贷时能看穿客户的真实评级。`;
     el.appendChild(head);
@@ -3936,7 +4119,7 @@ function renderPanel(){
       const c=document.createElement("div"); c.className="card";
       const p = l.bad?0:badChance(l);
       c.innerHTML = `<div class="row"><div><h3>${l.nm}</h3>
-        <span class="tag" style="background:${l.bad?"#4a2020":l.tier===3?"#4a3320":l.tier===2?"#3a3a20":"#213d2a"};color:${l.bad?"#e08080":l.tier===3?"#e0a860":l.tier===2?"#d0d060":"#84cc90"}">${l.bad?"已成不良":TIER_TXT[l.tier]}</span></div>
+        <span class="tag" style="background:${l.bad?"#f4e1db":l.tier===3?"#f0e3ce":l.tier===2?"#eee8d5":"#e2ebe0"};color:${l.bad?"#933d32":l.tier===3?"#805921":l.tier===2?"#736023":"#356044"}">${l.bad?"已成不良":TIER_TXT[l.tier]}</span></div>
         <div class="num">${l.amt}亿</div></div>
         <div class="sub">${l.bad?`每月计提 -${Math.round(l.amt*18)}万,风险持续+1.2 · 还剩${l.badLeft||0}个月核销完`
           :`月息 +${Math.round(interestOf(l))}万 · 派生存款 ${l.derive}亿 · 还剩${l.left}期 · 本月变不良概率约 <b style="color:${p>0.04?"var(--red)":p>0.02?"var(--gold)":"var(--green)"}">${(p*100).toFixed(1)}%</b>`}</div>`;
@@ -3975,21 +4158,14 @@ function renderAll(){
 function showIntro(){
   const rt = RT();
   showModal("上任第一天",
-`${endM()===24?"两年,24个月":"三年,36个月"}。存款从${fmt(S.dep)}亿往上做,排名从第${myRank()}往前挪。${chalOf()?"\n【"+chalOf().ic+" "+chalOf().nm+"】"+chalOf().desc:""}${S.seedGiven?"\n(种子:"+S.seed+")":""}
-${rt?`你选的路是「${rt.name}」——${rt.goal.label} 做到 ${rt.goal.need}${rt.goal.unit},就是你自己的那份答卷。`:""}
+`${(endM()/12)+"年,"+endM()+"个月"}。存款从${fmt(S.dep)}亿往上做,排名从第${myRank()}往前挪。${chalOf()?"\n【"+chalOf().ic+" "+chalOf().nm+"】"+chalOf().desc:""}${S.seedGiven?"\n(种子:"+S.seed+")":""}
+${rt?`你选的路是「${rt.name}」——${rt.goal.label} 做到 ${routeGoalNeed(S.route)}${rt.goal.unit},就是你自己的那份答卷。`:""}
 
-每月3点精力,六个行动随便点。月底按『结束本月』收账。
-
-要记住的五件事:
-· 存款靠网点和关系——派好主任,处好那6个人。
-· 贷款是第二条腿:给现金、给派生存款,也会变不良。
-· 人是会累的。倦怠拉满的人,会不辞而别。
-· 六个关系人各有一条自己的故事线,好感够了才往下走。
-· 风险到85,审计组直接送你走。别贪。`,
+这个月先看看网点有没有配齐主任，再决定去见谁、做哪笔业务。安排好后，点『结束本月』结算。\n\n现金要够周转，员工也要轮休。风险达到85会触发审计；没有顾清越的保护，就会被免职。`,
     [{t:"上任", s:"祝你官运亨通"}]);
 }
-function showGameGuide(){ $("#gameGuide").classList.add("show"); }
-function startBankFromGuide(){ $("#gameGuide").classList.remove("show"); newGame(); }
+function showGameGuide(){ $("#gameGuide").classList.add("show"); $("#app").inert=true; }
+function startBankFromGuide(){ const term=Number($("#termSelect").value); $("#gameGuide").classList.remove("show"); $("#app").inert=false; newGame(null,null,term); }
 function save(){
   if(typeof localStorage==="undefined") return;
   if(S && !S.over){
@@ -4024,6 +4200,7 @@ function migrate(s){
   if(s.track.tightGain===undefined) s.track.tightGain = 0;
   if(!s.track.keyEvents) s.track.keyEvents = [];
   if(!s.track.depHistory) s.track.depHistory = [+(s.dep||10).toFixed(2)];
+  s.career = s.career || {projects:{}, active:null, reviews:0};
   s.ver = 6;
   return s;
 }
@@ -4107,9 +4284,79 @@ function simBatch(n){
   return res;
 }
 
+
+/* 长期经营：建设、维护与回报使用同一份项目定义。金额单位：万元/亿元。 */
+const PROJECTS = [
+ {id:"payroll",name:"代发薪资平台",icon:"people",month:1,cost:120,time:3,upkeep:4,income:14,dep:.12,desc:"争取企业把工资放在江北代发，留住职工的工资账户。"},
+ {id:"digital",name:"数字运营中心",icon:"chart",month:13,cost:180,time:4,upkeep:7,income:23,dep:.18,desc:"把更多业务搬到线上，让客户少跑柜台，员工也能轻松些。",morale:.4},
+ {id:"risklab",name:"风险预警中心",icon:"shield",month:25,cost:220,time:4,upkeep:10,income:14,dep:.08,risk:-1.2,desc:"早点查出贷款里的问题，别等客户还不上钱才着急。"},
+ {id:"supply",name:"供应链服务",icon:"link",month:37,cost:300,time:6,upkeep:14,income:42,dep:.35,risk:.4,desc:"从一家企业做起，再服务它的供应商和经销商。收紧期收入与新增存款减半。",cyclical:true},
+ {id:"wealth",name:"养老财富服务",icon:"vault",month:49,cost:280,time:6,upkeep:12,income:35,dep:.28,desc:"帮老客户安排养老资金，靠服务留住他们。口碑低于60时，收入与新增存款减半。",reputation:true},
+ {id:"regional",name:"区域协同中心",icon:"bank",month:73,cost:420,time:8,upkeep:20,income:65,dep:.5,morale:.5,desc:"把各网点的人手组织起来，一起争取周边企业的业务。"}
+];
+function careerState(){ return S.career || (S.career={projects:{},active:null,reviews:0}); }
+function projectReturn(p,level){ const factor=(p.cyclical&&isTight()?0.5:1)*(p.reputation&&S.rep<60?0.5:1); return {cash:(p.income*factor-p.upkeep)*level,dep:p.dep*factor*level}; }
+function startProject(id){
+ const c=careerState(),p=PROJECTS.find(x=>x.id===id); if(!p||S.over)return false;
+ const level=c.projects[id]||0,cost=p.cost*(level+1);
+ if(c.active||S.month<p.month||level>=3||S.energy<1||S.cash<cost||S.month+p.time-1>endM())return false;
+ gain("cash",-cost); S.energy--; c.active={id,left:p.time,level:level+1};
+ log("good",`${p.name}第${level+1}级启动：投入${cost}万，${p.time}个月建成。`,true); renderAll(); return true;
+}
+function settleCareer(lines){
+ const c=careerState();
+ for(const p of PROJECTS){ const level=c.projects[p.id]||0; if(!level)continue;
+ const r=projectReturn(p,level); gain("cash",r.cash); gain("dep",r.dep);
+ if(p.risk)gain("risk",p.risk*level); if(p.morale)gain("morale",p.morale*level);
+ lines.push([p.name+" · 净收益",`${r.cash>=0?"+":""}${r.cash.toFixed(1)}万 / +${r.dep.toFixed(2)}亿`]);
+ }
+ if(c.active&&--c.active.left<=0){ const a=c.active,p=PROJECTS.find(x=>x.id===a.id); c.projects[a.id]=a.level;c.active=null; log("good",`${p.name}第${a.level}级建成，下月起产生收益并支付维护费用。`,true);lines.push([p.name,"建设完成 · 下月投产"]); }
+}
+function careerBeat(){
+ if(S.month<=36||S.month%12!==0)return null;
+ const c=careerState(),y=yearOf(S.month); if(c.reviews>=y)return null; c.reviews=y;
+ const themes=[
+ {title:"企业客户续约",body:"一家老客户准备续约，但希望江北连代发工资和日常结算一起接下来。需要增派客户经理，还得花钱改系统。",t:"签下新合同",cash:100,dep:2,risk:3,rep:1},
+ {title:"数字服务投诉",body:"线上业务扩大后，老客户反映流程太复杂。改造适老柜面会占用今年的推广预算。",t:"改造适老服务",cash:80,dep:.5,risk:-2,rep:8},
+ {title:"骨干接班计划",body:"几个年轻员工已经能独立带队了。安排一轮培训，再让他们接手更大的客户，你也能腾出些精力。",t:"设立骨干培养班",cash:100,dep:.8,risk:-4,rep:4},
+ {title:"区域客户争夺",body:"邻区园区正在招合作银行。参加投标要花一笔钱，中标后还得两头跑。团队等你拿主意。",t:"参加园区联合投标",cash:180,dep:3,risk:6,rep:2},
+ {title:"存量资产盘活",body:"几家经营困难的企业接到了新订单。帮他们重新安排还款，需要花钱跟进，也得压缩一部分业务。",t:"投入客户重整服务",cash:120,dep:-.5,risk:-12,rep:6},
+ {title:"养老服务扩容",body:"来办养老业务的客户多了，常有人等着问问题。团队提议增设服务站，安排专人接待。",t:"开设养老服务站",cash:150,dep:1.8,risk:-2,rep:6},
+ {title:"任期交接",body:"任期快满了，还有些办事规矩只记在老员工脑子里。团队想把制度和客户档案整理好，交到下一任手上。",t:"完成经营制度交接",cash:80,dep:.5,risk:-6,rep:8}
+ ]; const issue=themes[(y-4)%themes.length];
+ return ()=>showModal(`第${y}年经营议题 · ${issue.title}`,issue.body,[
+ {t:issue.t,s:`现金−${issue.cash}万 · 存款${issue.dep>=0?"+":""}${issue.dep}亿 · 风险${issue.risk>=0?"+":""}${issue.risk} · 口碑+${issue.rep}`,disabled:S.cash<issue.cash,fn:()=>{gain("cash",-issue.cash);gain("dep",issue.dep);gain("risk",issue.risk);gain("rep",issue.rep);log("good",`年度决议：${issue.t}，现金−${issue.cash}万、存款${issue.dep}亿、风险${issue.risk}、口碑+${issue.rep}。`,true);}},
+ {t:"培养接班骨干",s:"现金−60万 · 全员倦怠−15 · 士气+8",disabled:S.cash<60,fn:()=>{gain("cash",-60);gain("morale",8);S.emps.forEach(e=>e.fatigue=Math.max(0,(e.fatigue||0)-15));log("good","年度经营决议：培养骨干投入60万，全员倦怠−15，士气+8。",true);}},
+ {t:"压降存量风险",s:"存款−0.6亿 · 风险−8 · 不良−0.15亿",fn:()=>{gain("dep",-.6);gain("risk",-8);S.npl=Math.max(0,S.npl-.15);log("good","年度经营决议：存款−0.6亿，风险−8，不良−0.15亿。",true);}}
+ ]);
+}
+function projectBlockReason(p,level,c){
+ if(S.month<p.month)return `第${yearOf(p.month)}年解锁`;
+ if(level>=3)return "已满级";
+ if(c.active)return "已有项目在建";
+ if(S.energy<1)return "本月精力不足";
+ if(S.cash<p.cost*(level+1))return `还差${Math.ceil(p.cost*(level+1)-S.cash)}万`;
+ if(S.month+p.time-1>endM())return "剩余任期不足";
+ return "";
+}
+function renderCareer(el){
+ const c=careerState(),phase=S.month<=36?"扎根支行":S.month<=72?"业务转型":"区域协同";
+ el.innerHTML=`<div class="career-head"><span class="eyebrow">CAREER / 第${yearOf(S.month)}年</span><h2>${phase}</h2><p>同时可建1项，开工花1点精力，建成次月开始计收支。每项最多3级；升一级增加一份收益，投入也会增加。</p>${c.active?`<b>在建：${PROJECTS.find(p=>p.id===c.active.id).name} · 还需${c.active.left}个月</b>`:"<b>目前没有在建项目。</b>"}</div>`;
+ for(const p of PROJECTS){ const level=c.projects[p.id]||0,r=projectReturn(p,1),locked=S.month<p.month;
+ const d=document.createElement("div");d.className="card";const blocked=projectBlockReason(p,level,c);
+ d.innerHTML=`<h3>[icon:${p.icon}] ${p.name} <span class="tag">${level}/3级</span></h3><p>${p.desc}</p><p>每级每月：${p.risk?`风险${p.risk>0?"+":""}${p.risk} · `:""}${p.morale?`士气+${p.morale} · `:""}收入${p.income}万 − 维护${p.upkeep}万；存款+${p.dep}亿<br>按本月情况，每级预计：净收入${r.cash.toFixed(1)}万 · 新增存款${r.dep.toFixed(2)}亿</p><button ${locked||level>=3||c.active||S.energy<1||S.cash<p.cost*(level+1)||S.month+p.time-1>endM()?"disabled":""} onclick="startProject('${p.id}')">${locked?`第${yearOf(p.month)}年解锁`:level>=3?"已满级":`${level?"升级":"建设"} · ${p.cost*(level+1)}万 · ${p.time}个月 · 1精力`}</button>${blocked?`<div class="sub">${blocked}</div>`:""}`;el.appendChild(d);
+ }
+}
+function showSettings(){
+ const opts=[];
+ if(S&&!S.over&&!S.chal&&endM()<120)opts.push({t:"延长为十年经营",s:"保留当前进度与资产，任期延至120个月",fn:()=>{S.maxMonth=120;careerState();log("good","任期延长为十年，继续经营江北支行。",true);renderAll();}});
+ opts.push({t:"返回游戏"});
+ showModal("设置与联系",`江北支行 · 行长生涯\n\n作者联系方式\nWeChat：Lynchrrr\n\n欢迎反馈玩法建议或遇到的问题。\n\n进度自动保存在当前浏览器。${S?"当前任期："+endM()/12+"年。":""}\n普通新局可选择三年、六年或十年；挑战模式保持原有规则。`,opts);
+}
+
 /* ============ 无头测试接口 ============ */
 const API = {
-  initialState, settleCore, nextMonth, endMonth, finalEnding, routeGoalDone,
+  PROJECTS, startProject, settleCareer, projectReturn, careerBeat, initialState, settleCore, nextMonth, endMonth, finalEnding, routeGoalDone,
   outletOutput, mgrCoef, seasonInfo, npcMonthlyDep, totalSalary, totalRent,
   loanCapAmt, loanOutstanding, badChance, genOffers, settleLoans, nplRate, loanRiskCut, deriveOf, interestOf,
   genCandidates, pickEvent, fireEvent, fireChain, pickArcBeat, rivalMove, schedule,
@@ -4128,13 +4375,30 @@ const API = {
 };
 if(typeof globalThis!=="undefined") globalThis.BankGame = API;
 
-/* ============ 移动端缩放拦截 ============ */
-// Safari 自 iOS 10 起忽略 user-scalable=no,捏合缩放只能靠拦 gesture 事件;
-// 双击放大则由 CSS 的 touch-action 挡掉。
+const BANK_ICON_PATHS={"book":"M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4z M12 6v15","refresh":"M20 9a8 8 0 1 0 0 7 M20 3v6h-6","play":"M8 4l12 8-12 8z","bank":"M3 8l9-5 9 5z M5 10v8m5-8v8m4-8v8m5-8v8M3 21h18","shop":"M3 9l2-5h14l2 5v3H3z M5 12v9h14v-9M10 21v-6h4v6","cup":"M5 4h11v10a5.5 5.5 0 0 1-11 0zM16 6h3a3 3 0 0 1 0 6h-3M4 22h14","shield":"M12 3l8 3v6c0 5-8 9-8 9s-8-4-8-9V6zM8 12l3 3 5-6","flame":"M12 3c0 6-8 7-8 12a8 8 0 0 0 16 0c0-4-3-6-4-7 0 4-3 4-3 4z","voice":"M4 9h5l10-5v16L9 15H4zM8 15l2 6","grid":"M3 4h18v16H3zM3 12h18M8 4v8m8 0v8","pen":"M4 20l1-6L16 3l5 5-11 11zM5 14l5 5M14 5l5 5","mask":"M4 4l8 3 8-3v9c0 5-8 8-8 8s-8-3-8-8zM7 10h3m4 0h3M8 15q4 4 8 0","leaf":"M4 20C2 6 12 3 21 3c0 10-3 17-17 17zM4 20L16 8","film":"M3 4h18v16H3zM3 8h18M7 4v4m10-4v4M9 12l6 3-6 3z","sword":"M4 3l5 2 11 14-2 2L5 8zM3 19L19 3M3 15l6 6m6-18 6 6","people":"M8 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6M2 21v-5a6 6 0 0 1 12 0v5M17 5a3 3 0 0 1 0 6m0 3q5 0 5 7","cash":"M2 5h20v14H2zM9 8l3 4 3-4m-6 5h6m-6 3h6m-3-4v6","star":"M12 2l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z","mail":"M3 5h18v15H3zM3 6l9 7 9-7","scale":"M12 3v17M5 21h14M3 7h18M6 7l-4 8h8zM18 7l-4 8h8z","clock":"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M12 6v6l4 3","news":"M5 3h14v18H5zM8 7h8M8 11h8M8 15h5","sun":"M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2","rain":"M5 14a4 4 0 1 1 1-8 6 6 0 0 1 11 0 4 4 0 0 1 2 8zM7 17l-2 4m8-4-2 4m8-4-2 4","folder":"M3 6h7l2 3h9v12H3zM3 6V3h7l2 3h7v3","link":"M9 15l6-6M8 16l-2 2a4 4 0 0 1-5-5l5-5a4 4 0 0 1 5 0M16 8l2-2a4 4 0 0 1 5 5l-5 5a4 4 0 0 1-5 0","pin":"M8 3h8l-1 7 4 4H5l4-4zM12 14v8","alert":"M12 3l10 18H2zM12 9v5m0 3v1","chat":"M3 4h18v13H9l-6 4zM7 8h10M7 12h6","crown":"M3 5l5 5 4-7 4 7 5-5-2 14H5zM5 22h14","diamond":"M7 3h10l5 7-10 12L2 10zM2 10h20M7 3l5 19 5-19","heart":"M12 21L3 12C-2 4 8 0 12 7c4-7 14-3 9 5z","cap":"M2 9l10-6 10 6-10 6zM6 12v7q6 4 12 0v-7M22 9v10","compass":"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M16 6l-3 7-7 5 4-8z","chart":"M3 3v18h19M6 16l5-6 4 3 6-8M16 5h5v5","target":"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10M12 11v2","lamp":"M8 10h8v11H8zM12 8c-5-2 0-6 0-6s5 4 0 6M5 22h14","chair":"M6 12V3h12v9M3 9v9h18V9M6 18v4m12-4v4M3 14h18","medal":"M6 2h5l1 7 1-7h5l-3 9M12 9a6 6 0 1 0 0 12 6 6 0 0 0 0-12M10 15h4","hole":"M3 12c0-7 18-7 18 0s-18 7-18 0M6 12c0-3 12-3 12 0s-12 3-12 0","car":"M3 11l3-7h12l3 7v8H3zM3 11h18M6 19v3m12-3v3M6 15h2m8 0h2","question":"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M9 8a3 3 0 1 1 4 3l-1 3m0 3v1","dice":"M4 3h16v18H4zM8 7h.1M16 7h.1M12 12h.1M8 17h.1M16 17h.1","eye":"M2 12q10-15 20 0-10 15-20 0M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8","road":"M7 2L3 22M17 2l4 20M12 2v4m0 4v4m0 4v4","settings":"M4 6h16M4 12h16M4 18h16M8 3v6m8 0v6m-6 0v6","vault":"M3 3h18v18H3zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10M12 7v10M7 12h10"};
+function paintBankIcons(root){
+ const walker=document.createTreeWalker(root,4);const nodes=[];let n;
+ while(n=walker.nextNode())if(!['SCRIPT','STYLE','TEXTAREA','OPTION'].includes(n.parentElement?.tagName)&&/\[icon:[a-z]+\]|\p{Extended_Pictographic}/u.test(n.nodeValue))nodes.push(n);
+ for(const node of nodes){const frag=document.createDocumentFragment();const parts=node.nodeValue.replace(/\p{Extended_Pictographic}\uFE0F?/gu,"[icon:news]").split(/(\[icon:[a-z]+\])/);for(const part of parts){const m=part.match(/^\[icon:([a-z]+)\]$/);if(!m){frag.appendChild(document.createTextNode(part));continue;}const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('class','bank-icon');svg.setAttribute('aria-hidden','true');const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',BANK_ICON_PATHS[m[1]]||BANK_ICON_PATHS.bank);svg.appendChild(path);frag.appendChild(svg);}node.replaceWith(frag);}
+}
+if(typeof document!=='undefined'){paintBankIcons(document.body);const io=new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData'&&m.target.parentElement)paintBankIcons(m.target.parentElement);else for(const n of m.addedNodes)if(n.nodeType===1)paintBankIcons(n);else if(n.nodeType===3&&n.parentElement)paintBankIcons(n.parentElement);}});io.observe(document.body,{childList:true,subtree:true,characterData:true});}
+
 if(typeof document!=="undefined"){
-  ["gesturestart","gesturechange","gestureend"].forEach(ev=>{
-    document.addEventListener(ev, e=>e.preventDefault(), {passive:false});
-  });
+ let returnFocus=null;
+ const mask=document.querySelector("#mask");
+ new MutationObserver(()=>{
+  document.querySelector("#app").inert=mask.classList.contains("show")||document.querySelector("#gameGuide").classList.contains("show")||document.querySelector("#endScreen").classList.contains("show");
+  if(mask.classList.contains("show")){if(!mask.contains(document.activeElement))returnFocus=document.activeElement;document.querySelector("#mTitle").focus({preventScroll:true});}
+  else if(returnFocus&&returnFocus.isConnected){returnFocus.focus({preventScroll:true});returnFocus=null;}
+ }).observe(mask,{attributes:true,attributeFilter:["class"]});
+ document.addEventListener("keydown",e=>{
+  if(e.key!=="Tab"||!mask.classList.contains("show"))return;
+  const list=Array.from(mask.querySelectorAll("button:not(:disabled),input,select,[tabindex='0']")).filter(x=>x.getClientRects().length);
+  if(!list.length)return;
+  const first=list[0],last=list[list.length-1];
+  if(e.shiftKey&&(document.activeElement===first||!list.includes(document.activeElement))){e.preventDefault();last.focus();}
+  else if(!e.shiftKey&&(document.activeElement===last||!list.includes(document.activeElement))){e.preventDefault();first.focus();}
+ });
 }
 
 /* ============ 启动 ============ */
@@ -4157,7 +4421,7 @@ document.addEventListener("click", ()=>{ document.querySelectorAll(".stat.tipOn"
 window.assignMgr = assignMgr; window.recallMgr = recallMgr;
 window.fireEmp = fireEmp; window.doSocial = doSocial; window.upgradeDeco = upgradeDeco;
 window.trainEmp = trainEmp; window.restartGame = restartGame; window.startBankFromGuide = startBankFromGuide;
-window.actLoan = actLoan;
+window.actLoan = actLoan; window.startProject=startProject; window.showSettings=showSettings;
 window.showGallery = showGallery; window.galTab = galTab;
 window.unlockTalent = unlockTalent; window.makeBio = makeBio;
 window.startChallenge = startChallenge; window.askRestart = askRestart;

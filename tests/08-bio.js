@@ -4,7 +4,9 @@ const path = require("path"), fs = require("fs");
 const {load, runner, has, skip} = require("./lib");
 if(!has("@napi-rs/canvas")){ skip("传记出图", "没装 @napi-rs/canvas,跑 `npm i` 就有了"); return; }
 
-const {createCanvas} = require("@napi-rs/canvas");
+const {createCanvas, GlobalFonts} = require("@napi-rs/canvas");
+const chineseFont="/System/Library/Fonts/STHeiti Medium.ttc";
+if(fs.existsSync(chineseFont)) GlobalFonts.registerFromPath(chineseFont,"PingFang SC");
 const {G} = load({dpr:2, patch:c => c.replace('c.drawImage(img,', 'c.drawImage(img._img||img,')});
 const r = runner("传记出图");
 
