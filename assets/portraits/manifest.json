@@ -1,0 +1,255 @@
+[
+  {
+    "id": "lu",
+    "name": "陆明远",
+    "source": "source/lu.png",
+    "web": "web/lu.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 23196
+  },
+  {
+    "id": "gu",
+    "name": "顾清越",
+    "source": "source/gu.png",
+    "web": "web/gu.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 24618
+  },
+  {
+    "id": "meng",
+    "name": "孟知微",
+    "source": "source/meng.png",
+    "web": "web/meng.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 26744
+  },
+  {
+    "id": "han",
+    "name": "韩云帆",
+    "source": "source/han.png",
+    "web": "web/han.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 31830
+  },
+  {
+    "id": "wei",
+    "name": "魏临川",
+    "source": "source/wei.png",
+    "web": "web/wei.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 43660
+  },
+  {
+    "id": "fan",
+    "name": "范以恒",
+    "source": "source/fan.png",
+    "web": "web/fan.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 26048
+  },
+  {
+    "id": "laozhang",
+    "name": "老张",
+    "source": "source/laozhang.png",
+    "web": "web/laozhang.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 27554
+  },
+  {
+    "id": "xiaoliu",
+    "name": "小刘",
+    "source": "source/xiaoliu.png",
+    "web": "web/xiaoliu.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 25286
+  },
+  {
+    "id": "staff_f1",
+    "name": "员工形象一",
+    "source": "source/staff_f1.png",
+    "web": "web/staff_f1.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 25656
+  },
+  {
+    "id": "staff_f2",
+    "name": "员工形象二",
+    "source": "source/staff_f2.png",
+    "web": "web/staff_f2.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 25810
+  },
+  {
+    "id": "staff_f3",
+    "name": "员工形象三",
+    "source": "source/staff_f3.png",
+    "web": "web/staff_f3.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 25824
+  },
+  {
+    "id": "staff_m1",
+    "name": "员工形象四",
+    "source": "source/staff_m1.png",
+    "web": "web/staff_m1.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 25826
+  },
+  {
+    "id": "staff_m2",
+    "name": "员工形象五",
+    "source": "source/staff_m2.png",
+    "web": "web/staff_m2.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 26964
+  },
+  {
+    "id": "staff_m3",
+    "name": "员工形象六",
+    "source": "source/staff_m3.png",
+    "web": "web/staff_m3.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 23938
+  },
+  {
+    "id": "chen",
+    "name": "陈崇山",
+    "source": "source/chen.png",
+    "web": "web/chen.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 23918
+  },
+  {
+    "id": "ma",
+    "name": "马奔",
+    "source": "source/ma.png",
+    "web": "web/ma.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 25824
+  },
+  {
+    "id": "huang",
+    "name": "黄世海",
+    "source": "source/huang.png",
+    "web": "web/huang.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 28010
+  },
+  {
+    "id": "tang",
+    "name": "唐建国",
+    "source": "source/tang.png",
+    "web": "web/tang.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 24890
+  },
+  {
+    "id": "wen",
+    "name": "文卓然",
+    "source": "source/wen.png",
+    "web": "web/wen.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 27424
+  },
+  {
+    "id": "wei_mingde",
+    "name": "韦明德",
+    "source": "source/wei_mingde.png",
+    "web": "web/wei_mingde.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 22724
+  },
+  {
+    "id": "shi",
+    "name": "石小川",
+    "source": "source/shi.png",
+    "web": "web/shi.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 25784
+  },
+  {
+    "id": "luda",
+    "name": "鲁达",
+    "source": "source/luda.png",
+    "web": "web/luda.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 31256
+  },
+  {
+    "id": "player",
+    "name": "玩家行长",
+    "source": "source/player.png",
+    "web": "web/player.webp",
+    "size": [
+      420,
+      560
+    ],
+    "bytes": 24738
+  }
+]

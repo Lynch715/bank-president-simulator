@@ -25,7 +25,7 @@ process.exit(h===b?0:1);
 ' || { echo "  语法或同步检查未通过"; FAIL=$((FAIL+1)); }
 echo
 
-for f in 01-headless.js 02-meta.js 03-p1.js 04-p2.js 05-ui.js 07-clicks.js 08-bio.js 09-career.js 10-feedback.js; do
+for f in 01-headless.js 02-meta.js 03-p1.js 04-p2.js 05-ui.js 07-clicks.js 08-bio.js 09-career.js 10-feedback.js 11-portraits.js; do
   echo "── $f ────────────────────────────────"
   rc=0
   out="$(node "$f" 2>&1)" || rc=$?

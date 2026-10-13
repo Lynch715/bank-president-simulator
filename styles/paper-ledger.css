@@ -179,3 +179,42 @@
 
 .pm-ui .decision-receipt{margin-top:16px;padding:12px 14px;background:var(--paper2);border-left:3px solid var(--ink2);font-size:13px;line-height:1.9;white-space:normal}
 .pm-ui .decision-receipt h3{margin:0 0 6px;color:var(--ink);font-size:14px}
+/* 人物立绘：完整展示，姓名与数值仍由原卡片呈现。 */
+.pm-ui .person-card{display:grid;grid-template-columns:148px minmax(0,1fr);gap:20px;align-items:start}
+.pm-ui .person-info{min-width:0}
+.pm-ui .person-info .row{flex-wrap:wrap;gap:8px}
+.pm-ui .person-portrait,.pm-ui .rank-portrait{padding:0;border:1px solid var(--line);border-radius:3px;overflow:hidden;background:linear-gradient(155deg,#e6e2d7,#d5dce0);position:relative;display:block;cursor:zoom-in}
+.pm-ui .person-portrait{width:100%;aspect-ratio:3/4}
+.pm-ui .person-portrait img,.pm-ui .rank-portrait img,.pm-ui .candidate-portrait img{width:100%;height:100%;object-fit:contain;display:block}
+.pm-ui .portrait-zoom{position:absolute;inset:auto 0 0;padding:4px;background:#253e52de;color:#fff;font-size:11px;letter-spacing:1px;text-align:center}
+.pm-ui .person-portrait:hover{border-color:var(--ink);background:#dce3e7}
+.pm-ui .rank-person{display:flex;align-items:center;gap:7px;white-space:nowrap}
+.pm-ui .rank-portrait{flex:none;width:38px;height:50px}
+.pm-ui .rank-portrait .portrait-zoom{display:none}
+.pm-ui .story-portraits{display:flex;justify-content:center;gap:20px;margin:0 0 18px;border-bottom:1px solid var(--line);padding-bottom:14px}
+.pm-ui .story-portraits[hidden]{display:none}
+.pm-ui .story-portraits figure{margin:0;text-align:center;width:148px}
+.pm-ui .story-portraits img{width:100%;height:194px;object-fit:contain;display:block;background:linear-gradient(155deg,#e6e2d7,#d5dce0);border-radius:3px}
+.pm-ui .story-portraits figcaption{font-family:var(--serif);font-size:14px;color:var(--ink);padding-top:7px}
+.pm-ui .portrait-detail{height:min(62dvh,640px);white-space:normal;background:linear-gradient(155deg,#e6e2d7,#d5dce0);border:1px solid var(--line)}
+.pm-ui .portrait-detail img{display:block;width:100%;height:100%;object-fit:contain}
+.pm-ui .modal .opts .candidate-option{display:flex;gap:14px;align-items:center}
+.pm-ui .candidate-portrait{width:72px;height:96px;flex:none;background:linear-gradient(155deg,#e6e2d7,#d5dce0);border-radius:3px;overflow:hidden}
+.pm-ui .candidate-copy{min-width:0;display:block}
+@media(max-width:760px){
+ .pm-ui .person-card{grid-template-columns:90px minmax(0,1fr);gap:12px}
+ .pm-ui .person-info{display:contents}
+ .pm-ui .person-portrait{grid-column:1;grid-row:1}
+ .pm-ui .person-info>.row{grid-column:2;align-items:flex-start;align-content:flex-start}
+ .pm-ui .person-info>:not(.row){grid-column:1/-1;margin-top:0}
+ .pm-ui .person-info .cardbtns{gap:6px}
+ .pm-ui .person-info .cardbtns button{flex:1;padding:7px 8px}
+ .pm-ui .person-info h3{font-size:18px}
+ .pm-ui .story-portraits figure{width:114px}
+ .pm-ui .story-portraits img{height:150px}
+ .pm-ui .modal .opts .candidate-option{gap:10px}
+ .pm-ui .candidate-portrait{width:60px;height:80px}
+ .pm-ui .rank-portrait{width:28px;height:38px}
+ .pm-ui .rank-person{gap:4px}
+}
+@media(max-width:360px){.pm-ui .person-card{grid-template-columns:76px minmax(0,1fr);gap:10px}.pm-ui .person-info .tag{margin:2px 2px 2px 0}.pm-ui .rank-portrait{width:24px;height:32px}}

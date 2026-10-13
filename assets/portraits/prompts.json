@@ -1,0 +1,122 @@
+{
+  "tool": "built-in image_gen",
+  "transparent": true,
+  "style": "Use case: stylized-concept. Asset type: a single character standing illustration for a Chinese contemporary bank management game. Vertical 3:4 composition, full head and torso to mid thigh, both shoulders and hands fully in frame, centered with generous transparent margins. Refined realistic editorial digital painting, subtly textured brushwork, plausible East Asian facial anatomy, natural mature professional presence, not a photograph, not anime, no glamour retouching. Understated palette: navy blue, warm ivory, muted brown gold, slate gray; soft neutral studio light. Isolated single person on genuinely transparent background, clean edges and alpha, no scenery, no shadow rectangle, no text, name, logos, watermark or frame. All people are entirely fictional.",
+  "characters": [
+    {
+      "id": "lu",
+      "name": "陆明远",
+      "detail": "Male regional bank president age 54, broad rectangular face, neatly combed black hair graying at temples, attentive reserved eyes, discreet confident smile. Impeccable dark navy suit, white shirt, muted burgundy tie, one hand resting lightly over the other in front, distinguished authoritative stance."
+    },
+    {
+      "id": "gu",
+      "name": "顾清越",
+      "detail": "Female bank risk director age 44, angular oval face, intelligent unwavering eyes, neatly tied low bun, thin subtle silver eyeglasses. Charcoal navy tailored trouser suit, ivory shirt, holding a plain dark green thermos with both hands, serious calm upright posture."
+    },
+    {
+      "id": "meng",
+      "name": "孟知微",
+      "detail": "Female deputy finance bureau director age 41, slim oval face, straight neat chin-length bob tucked behind one ear, clear discerning eyes, controlled neutral expression. Muted slate blue blazer, warm ivory blouse, holding a cream document folder against her waist, discreet small pearl studs, composed precise posture."
+    },
+    {
+      "id": "han",
+      "name": "韩云帆",
+      "detail": "Male housing bureau section chief age 48, round broad face, slightly ruddy cheeks, broad warm smile, short crew cut with a little gray. Practical navy zip jacket open over light blue shirt, stocky sturdy physique, holding a white construction hard hat at waist, friendly energetic expression."
+    },
+    {
+      "id": "wei",
+      "name": "魏临川",
+      "detail": "Male logistics business chairman age 51, weathered square face, sun-browned skin, strong eyebrows, short slightly tousled hair, welcoming confident grin. Brown leather jacket over dark navy polo, sturdy build, one hand lightly raised in a conversational gesture, rough-handed self-made entrepreneur presence."
+    },
+    {
+      "id": "fan",
+      "name": "范以恒",
+      "detail": "Male technology company founder age 34, lean narrow face, black rectangular glasses, casually messy short hair, earnest thoughtful expression. Charcoal casual blazer over dark navy crew-neck knit, holding closed slim laptop with no logo at waist, modest relaxed technically minded presence."
+    },
+    {
+      "id": "laozhang",
+      "name": "老张",
+      "detail": "Male veteran bank team supervisor age 52, slightly rounded face, receding hairline graying at temples, warm knowing smile and fine wrinkles. Navy sweater vest over pale blue rolled-sleeve shirt, holding plain worn notebook at waist, relaxed experienced approachable demeanor."
+    },
+    {
+      "id": "xiaoliu",
+      "name": "小刘",
+      "detail": "Male junior bank employee age 24, youthful slim face, lively eyes, tidy short black hair, earnest slightly nervous smile. Navy suit a little loosely fitted, white shirt and slim muted blue tie, holding a plain ivory document envelope with both hands, enthusiastic upright posture."
+    },
+    {
+      "id": "staff_f1",
+      "name": "员工形象一",
+      "detail": "Female bank professional age 29, rounded oval face, medium length black hair tied in ponytail, friendly energetic eyes. Navy blazer and ivory collared blouse, holding a closed plain notebook, confident warm posture."
+    },
+    {
+      "id": "staff_f2",
+      "name": "员工形象二",
+      "detail": "Female bank professional age 38, square oval face, straight shoulder-length hair, understated thin glasses, patient measured expression. Slate blue jacket and ivory blouse, hands loosely folded at waist, dependable competent demeanor."
+    },
+    {
+      "id": "staff_f3",
+      "name": "员工形象三",
+      "detail": "Female bank professional age 31, long oval face, neat short pixie haircut, sharp clear eyes, restrained smile. Charcoal tailored suit and muted blue shirt, holding cream file folder, capable decisive demeanor."
+    },
+    {
+      "id": "staff_m1",
+      "name": "员工形象四",
+      "detail": "Male bank professional age 32, broad oval face, neat side-parted hair, no glasses, friendly open expression. Slate navy suit and ivory shirt without tie, holding cream file folder, approachable confident posture."
+    },
+    {
+      "id": "staff_m2",
+      "name": "员工形象五",
+      "detail": "Male bank professional age 40, lean rectangular face, neatly combed short hair, thin silver glasses, focused serious eyes. Charcoal suit, pale blue shirt and navy tie, holding plain notebook, calm detail-oriented demeanor."
+    },
+    {
+      "id": "staff_m3",
+      "name": "员工形象六",
+      "detail": "Male bank professional age 28, youthful angular face, tidy crew cut, energetic bright eyes and discreet smile. Navy blazer with ivory shirt open at collar, hands gently folded at waist, optimistic professional presence."
+    },
+    {
+      "id": "chen",
+      "name": "陈崇山",
+      "detail": "Male rival bank branch president age 55, broad square face, slick neat salt-and-pepper hair, serious reliable eyes, restrained smile. Deep navy suit, ivory shirt, brown gold tie, hands calmly folded at waist, conservative veteran demeanor."
+    },
+    {
+      "id": "ma",
+      "name": "马奔",
+      "detail": "Male rival bank branch president age 36, lean sharply defined face, thick dark eyebrows, short brushed up hair, intense ambitious eyes and confident small smile. Modern fitted navy suit, white shirt, muted red tie, arms folded naturally, competitive driven demeanor."
+    },
+    {
+      "id": "huang",
+      "name": "黄世海",
+      "detail": "Male rival bank branch president age 47, round face, neatly slicked side parted dark hair, small cunning smile and watchful eyes. Charcoal suit with cream shirt and patterned muted brown tie, one hand in pocket and other holding plain closed black notebook, smooth calculating demeanor."
+    },
+    {
+      "id": "tang",
+      "name": "唐建国",
+      "detail": "Male rival bank branch president age 53, round kindly face, thin receding graying hair, jovial warm smile, faint wrinkles. Navy blazer over pale blue open-collar shirt, holding plain ceramic tea cup with both hands, sociable well-connected demeanor."
+    },
+    {
+      "id": "wen",
+      "name": "文卓然",
+      "detail": "Male rival bank branch president age 42, long elegant face, neat side parted black hair, thin rimless glasses, thoughtful reserved smile. Gray navy suit, ivory shirt, navy tie, holding cream notebook with one hand, scholarly conscientious demeanor."
+    },
+    {
+      "id": "wei_mingde",
+      "name": "韦明德",
+      "detail": "Male rival bank branch president age 58, broad slightly lined face, short gray hair, modest steady expression. Charcoal blazer over light blue shirt, no tie, hands folded comfortably at waist, quiet seasoned practical demeanor."
+    },
+    {
+      "id": "shi",
+      "name": "石小川",
+      "detail": "Male rival bank branch president age 39, soft round face, slightly unruly hair, mild relaxed smile and sleepy gentle eyes. Loose navy jacket over beige knit polo, hands resting casually at waist, easygoing unhurried demeanor."
+    },
+    {
+      "id": "luda",
+      "name": "鲁达",
+      "detail": "Male rival bank branch president age 49, stocky large build, broad rugged face, very short black hair, thick eyebrows, friendly amused smile. Brown-gray sports coat over dark navy polo, arms loosely folded, relaxed unambitious friendly presence."
+    },
+    {
+      "id": "player",
+      "name": "玩家行长",
+      "detail": "Male bank branch president age 37, clean angular East Asian face, short neatly side-parted black hair, focused hopeful eyes, calm small smile. Navy suit, ivory shirt, restrained slate blue tie, holding a closed plain folder at waist, capable grounded central protagonist demeanor."
+    }
+  ]
+}
