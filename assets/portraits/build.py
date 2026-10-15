@@ -27,8 +27,13 @@ for person in spec['characters']:
 html = (ROOT / 'index.html').read_text()
 start = html.index('/* PORTRAIT_DATA_START */')
 end = html.index('/* PORTRAIT_DATA_END */', start) + len('/* PORTRAIT_DATA_END */')
-data = '/* PORTRAIT_DATA_START */\nconst PORTRAITS = ' + json.dumps(portraits, separators=(',', ':')) + ';\n/* PORTRAIT_DATA_END */'
+links = {key: f'assets/portraits/web/{key}.webp' for key in portraits}
+data = '/* PORTRAIT_DATA_START */\nconst PORTRAITS = ' + json.dumps(links, separators=(',', ':')) + ';\n/* PORTRAIT_DATA_END */'
 html = html[:start] + data + html[end:]
+tag = '<script type="application/json" id="bankPortraitData">'
+start = html.index(tag) + len(tag)
+end = html.index('</script>', start)
+html = html[:start] + json.dumps(portraits, separators=(',', ':')) + html[end:]
 (ROOT / 'index.html').write_text(html)
 (ROOT / '模拟银行.html').write_text(html)
 (ART / 'manifest.json').write_text(json.dumps(manifest, ensure_ascii=False, indent=2))

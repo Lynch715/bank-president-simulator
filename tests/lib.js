@@ -4,7 +4,7 @@ const GAME = path.join(__dirname, "..", "index.html");
 
 function readCode(file){
   const html = fs.readFileSync(file || GAME, "utf8");
-  const m = html.match(/<script>([\s\S]*)<\/script>/);
+  const m = html.match(/<script id="bankGameCode">([\s\S]*?)<\/script>/)||html.match(/<script>([\s\S]*?)<\/script>/);
   if(!m) throw new Error("没找到 <script> 块:" + (file||GAME));
   return m[1].replace('"use strict";', "");
 }

@@ -16,7 +16,7 @@ echo "语法自检"
 node -e '
 const fs=require("fs");
 const h=fs.readFileSync("../index.html","utf8");
-const m=h.match(/<script>([\s\S]*)<\/script>/);
+const m=h.match(/<script id="bankGameCode">([\s\S]*?)<\/script>/)||h.match(/<script>([\s\S]*?)<\/script>/);
 new Function(m[1]);
 const b=fs.readFileSync("../模拟银行.html","utf8");
 console.log("  ✓ index.html 语法通过");
@@ -25,7 +25,7 @@ process.exit(h===b?0:1);
 ' || { echo "  语法或同步检查未通过"; FAIL=$((FAIL+1)); }
 echo
 
-for f in 01-headless.js 02-meta.js 03-p1.js 04-p2.js 05-ui.js 07-clicks.js 08-bio.js 09-career.js 10-feedback.js 11-portraits.js 12-android-startup.js; do
+for f in 01-headless.js 02-meta.js 03-p1.js 04-p2.js 05-ui.js 07-clicks.js 08-bio.js 09-career.js 10-feedback.js 11-portraits.js 12-android-startup.js 13-delayed-startup.js; do
   echo "── $f ────────────────────────────────"
   rc=0
   out="$(node "$f" 2>&1)" || rc=$?

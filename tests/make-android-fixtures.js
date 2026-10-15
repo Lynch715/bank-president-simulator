@@ -13,5 +13,5 @@ const profile=`<script id="android-fixture-profile">
 })();
 </script>\n`;
 fs.writeFileSync(path.join(out,'android-compat-fixture.html'),html.replace('<script id="bankBootGuard">',profile+'<script id="bankBootGuard">'));
-fs.writeFileSync(path.join(out,'android-syntax-fixture.html'),html.replace('<script id="bankBootGuard">',profile+'<script id="bankBootGuard">').replace(/<script>[\s\S]*?<\/script>/,'<script>function {</script>'));
+fs.writeFileSync(path.join(out,'android-syntax-fixture.html'),html.replace('<script id="bankBootGuard">',profile+'<script id="bankBootGuard">').replace(/<script id="bankGameCode">[\s\S]*?<\/script>/,'<script id="bankGameCode">function {</script>'));
 console.log('Generated isolated Android compatibility and startup-error browser fixtures.');
