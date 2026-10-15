@@ -523,6 +523,19 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
  .pm-ui .rank-person{gap:4px}
 }
 @media(max-width:360px){.pm-ui .person-card{grid-template-columns:76px minmax(0,1fr);gap:10px}.pm-ui .person-info .tag{margin:2px 2px 2px 0}.pm-ui .rank-portrait{width:24px;height:32px}}
+
+/* 启动保护只覆盖加载/异常阶段，不展示未初始化的经营台账。 */
+.pm-ui .bank-boot-status{position:fixed;top:0;right:0;bottom:0;left:0;z-index:200;background:#f2eee5;color:#28343c;overflow:auto;padding:24px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom))}
+.pm-ui .bank-boot-status[hidden],.pm-ui .bank-boot-status [hidden],.pm-ui .bank-storage-notice[hidden]{display:none!important}
+.pm-ui .bank-boot-card{max-width:600px;margin:10vh auto 24px;padding:24px;background:#fffcf5;border:1px solid #d4cec1;line-height:1.85}
+.pm-ui .bank-boot-card h2{color:#253e52;font-family:var(--serif);font-size:26px;margin:0 0 16px}
+.pm-ui .bank-boot-card button{white-space:normal}
+.pm-ui .bank-boot-card textarea{display:block;width:100%;height:180px;box-sizing:border-box;background:#f2eee5;color:#28343c;border:1px solid #d4cec1;padding:10px;font-size:13px;line-height:1.6;resize:vertical;overflow-wrap:anywhere}
+.pm-ui .bank-boot-card details{margin:18px 0}
+.pm-ui .bank-storage-notice{padding:12px 16px;margin:12px 0;background:#eee6d6;border-left:3px solid #8b6434;line-height:1.7}
+.pm-ui #gameGuide,.pm-ui .mask,.pm-ui #endScreen{top:0;right:0;bottom:0;left:0}
+.pm-ui .portrait-zoom{left:0;right:0;bottom:0}
+@media(max-width:760px){.pm-ui .bank-boot-status{padding:16px}.pm-ui .bank-boot-card{margin:5vh auto 20px;padding:18px}.pm-ui .bank-boot-card .cardbtns{display:flex;flex-wrap:wrap;gap:8px}.pm-ui .bank-boot-card .cardbtns button{flex:1;min-width:110px}}
 </style>
 </head>
 <body class="pm-ui">
@@ -539,7 +552,7 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
       <div class="guide-point"><b>05</b><span>月底结算<b>收支</b>。有些事情还会有后续，记得留些现金应急。</span></div>
     </div>
     <label class="term-choice">任期 <select id="termSelect"><option value="120">十年 · 完整经营</option><option value="72">六年 · 进阶经营</option><option value="36">三年 · 经典任期</option></select></label><p class="guide-lead">任期越长，可办的项目越多。第四年可做供应链服务，第七年可建区域协同中心。</p><button class="guide-start" onclick="startBankFromGuide()">报到上任</button>
-    <button id="guideGallery" class="guide-gallery" style="display:none" onclick="showGallery()">[icon:book] 图鉴 · 结局 / 成就 / 天赋</button>
+    <button id="guideGallery" class="guide-gallery" style="display:none" onclick="showGallery()"><svg viewBox="0 0 24 24" class="bank-icon" aria-hidden="true"><path d="M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4z M12 6v15"></path></svg> 图鉴 · 结局 / 成就 / 天赋</button>
   </div></div>
 </section>
 <div id="app">
@@ -549,9 +562,10 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
   </div>
 
   <div class="toolbar">
-    <button id="btnGallery" onclick="showGallery()">[icon:book] 图鉴</button>
-    <button id="btnSettings" onclick="showSettings()">[icon:settings] 设置</button><button id="btnRestart" onclick="askRestart()">[icon:refresh] 重开一局</button>
+    <button id="btnGallery" onclick="showGallery()"><svg viewBox="0 0 24 24" class="bank-icon" aria-hidden="true"><path d="M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4z M12 6v15"></path></svg> 图鉴</button>
+    <button id="btnSettings" onclick="showSettings()"><svg viewBox="0 0 24 24" class="bank-icon" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16M8 3v6m8 0v6m-6 0v6"></path></svg> 设置</button><button id="btnRestart" onclick="askRestart()"><svg viewBox="0 0 24 24" class="bank-icon" aria-hidden="true"><path d="M20 9a8 8 0 1 0 0 7 M20 3v6h-6"></path></svg> 重开一局</button>
   </div>
+  <div id="bankStorageNotice" class="bank-storage-notice" role="status" hidden>当前浏览器无法保存进度，关闭页面后可能丢失。请使用允许保存数据的浏览器打开游戏。</div>
 
   <div class="pm-desk"><aside class="pm-overview" aria-label="经营概览"><h2 class="section-caption">01 / 本期概览</h2>
   <div class="stats" id="statBar"></div>
@@ -559,7 +573,7 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
   <div class="energy">
     <span class="dots" id="energyDots">●●●</span>
     <span class="hint">每件事花1点精力,用完就结算</span>
-    <button class="main" id="btnEnd">结束本月 [icon:play]</button>
+    <button class="main" id="btnEnd">结束本月 <svg viewBox="0 0 24 24" class="bank-icon" aria-hidden="true"><path d="M8 4l12 8-12 8z"></path></svg></button>
   </div>
 
   <div class="goalbar" id="goalBar"></div>
@@ -593,6 +607,77 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
   </div>
 </div>
 
+<section id="bankBootStatus" class="bank-boot-status" role="status" aria-live="polite">
+ <div class="bank-boot-card">
+  <p class="eyebrow">江北支行 · 行长生涯</p>
+  <h2 id="bankBootTitle">正在载入游戏</h2>
+  <p id="bankBootMessage">首次打开请稍等片刻。</p>
+  <div id="bankBootActions" hidden>
+   <p>请保留浏览器数据，先导出进度备份。</p>
+   <div class="cardbtns"><button onclick="location.reload()">重新载入</button><button onclick="BANK_BOOT.exportSaves()">导出进度备份</button><button onclick="BANK_BOOT.copyDiagnostic()">复制错误详情</button></div>
+   <details><summary>查看错误详情</summary><textarea id="bankBootDiagnostic" readonly aria-label="启动错误详情"></textarea></details>
+   <div id="bankBootBackup" hidden><label for="bankBootBackupText">进度备份（也可长按复制保存）</label><textarea id="bankBootBackupText" readonly></textarea></div>
+   <p id="bankBootActionStatus"></p>
+  </div>
+ </div>
+</section>
+<noscript><style>#bankBootStatus,#app{display:none!important}</style><div class="bank-boot-card"><h2>请允许浏览器运行 JavaScript</h2><p>游戏需要 JavaScript 才能启动。启用后重新载入页面，现有进度会保留。</p></div></noscript>
+<script id="bankBootGuard">
+/* 独立 ES5 启动保护：主脚本无法解析时也能显示错误并导出原始存档。 */
+(function () {
+ var version='android-startup-20261015',broken=false,timer;
+ var keys=['jbzh_save6','jbzh_save5','jbzh_save4','jbzh_meta','jbzh_name'],original={};
+ var root=document.documentElement;
+ function el(id){return document.getElementById(id);}
+ root.setAttribute('data-boot','loading');
+ for(var i=0;i<keys.length;i++){try{var value=window.localStorage.getItem(keys[i]);if(value!==null)original[keys[i]]=value;}catch(ignore){}}
+ function message(text){el('bankBootActionStatus').textContent=text;}
+ function diagnostic(error){
+  var detail=error?String(error.stack||error.message||error):'启动流程未完成';
+  return '版本：'+version+'\n错误：'+detail+'\n浏览器：'+navigator.userAgent+'\n页面：'+location.protocol+'//'+location.host+location.pathname;
+ }
+ window.BANK_BOOT={
+  failed:function(){return broken;},
+  fail:function(text,error){
+   broken=true;clearTimeout(timer);root.setAttribute('data-boot','error');
+   el('bankBootStatus').hidden=false;el('bankBootActions').hidden=false;
+   el('bankBootTitle').textContent='游戏暂时没能启动';
+   el('bankBootMessage').textContent=text||'页面启动遇到了问题，请重新载入；如果仍然如此，可复制错误详情反馈。';
+   el('bankBootDiagnostic').value=diagnostic(error);
+  },
+  ready:function(){if(!broken){clearTimeout(timer);root.setAttribute('data-boot','ready');el('bankBootStatus').hidden=true;}},
+  storageUnavailable:function(){var notice=el('bankStorageNotice');if(notice)notice.hidden=false;},
+  copyDiagnostic:function(){
+   var input=el('bankBootDiagnostic');input.parentNode.open=true;input.focus();input.select();
+   var copied=false;try{copied=document.execCommand('copy');}catch(ignore){}
+   message(copied?'错误详情已复制。':'请长按错误详情，复制后反馈。');
+  },
+  exportSaves:function(){
+   var data={format:'jiangbei-bank-backup-v1',version:version,storage:{}},count=0;
+   for(var j=0;j<keys.length;j++){
+    var key=keys[j],raw=Object.prototype.hasOwnProperty.call(original,key)?original[key]:null;
+    try{if(!broken)raw=window.localStorage.getItem(key);}catch(ignore){}
+    if(raw!==null){data.storage[key]=raw;count++;}
+   }
+   try{if(window.BankGame&&window.BankGame.getState())data.currentState=window.BankGame.getState();}catch(ignore){}
+   if(!count&&!data.currentState){message('当前浏览器没有可读取的进度。');return;}
+   var text=JSON.stringify(data,null,2),box=el('bankBootBackupText');box.value=text;el('bankBootBackup').hidden=false;
+   try{
+    var url=window.URL||window.webkitURL;
+    if(!url||!url.createObjectURL)throw new Error('download unavailable');
+    var blob=new Blob([text],{type:'application/json;charset=utf-8'}),href=url.createObjectURL(blob),a=document.createElement('a');
+    a.href=href;a.download='江北支行-进度备份.json';document.body.appendChild(a);a.click();a.parentNode.removeChild(a);
+    setTimeout(function(){url.revokeObjectURL(href);},1000);message('备份已生成；若未弹出下载，请复制上方备份内容保存。');
+   }catch(ignore){message('请长按上方备份内容，复制保存。');}
+  }
+ };
+ window.addEventListener('error',function(event){
+  if(event.target&&event.target!==window)return;
+  window.BANK_BOOT.fail(null,event.error||new Error(event.message||'脚本启动失败'));
+ });
+ timer=setTimeout(function(){if(root.getAttribute('data-boot')!=='ready'&&!broken)window.BANK_BOOT.fail('游戏没有完成载入，请检查连接后重新载入页面。');},15000);
+})();
+</script>
 <script>
 "use strict";
 /* ============ 随机源(可注种子) ============ */
@@ -1449,18 +1534,19 @@ function decisionChanges(before){
  for(const o of b.outlets){
   const old=a.outlets.find(x=>x.name===o.name);
   if(!old){rows.push(`${o.name}开业 · 月租${o.rent}万`);continue;}
-  if(old.mgr!==o.mgr)rows.push(`${o.name}主任：${b.emps.find(e=>e.id===o.mgr)?.name||"空缺"}`);
+  if(old.mgr!==o.mgr){const mgr=b.emps.find(e=>e.id===o.mgr);rows.push(`${o.name}主任：${mgr?mgr.name:"空缺"}`);}
   if((old.deco||0)!==(o.deco||0))rows.push(`${o.name}装修升至${o.deco}级`);
  }
  if(!a.marketing&&b.marketing)rows.push("本月网点营销已安排 · 产出×1.5");
  if(!a.restMonth&&b.restMonth)rows.push("本月轮休已安排 · 网点产出×0.75");
  if(JSON.stringify(a.pledge)!==JSON.stringify(b.pledge)&&b.pledge)rows.push(`军令状：第${b.pledge.due}个月末，存款达到${b.pledge.target}亿`);
- if(JSON.stringify(a.career?.active)!==JSON.stringify(b.career?.active)&&b.career?.active){const p=PROJECTS.find(x=>x.id===b.career.active.id);rows.push(`${p.name}开工 · ${b.career.active.left}个月后建成，次月计收支`);}
+ const beforeProject=a.career&&a.career.active,afterProject=b.career&&b.career.active;
+ if(JSON.stringify(beforeProject)!==JSON.stringify(afterProject)&&afterProject){const p=PROJECTS.find(x=>x.id===afterProject.id);rows.push(`${p.name}开工 · ${afterProject.left}个月后建成，次月计收支`);}
  if(b.chain.length>a.chain.length)rows.push("后续事情已记下，届时会有消息。");
  for(const r of b.rivals){const old=a.rivals.find(x=>x.name===r.name);if(old)delta(r.name+"存款",old.dep,r.dep,"亿");}
  if((a.depCostRate||0)!==(b.depCostRate||0)||(a.depCostLeft||0)!==(b.depCostLeft||0))rows.push(`额外付息：每亿每月${b.depCostRate||0}万，持续${b.depCostLeft||0}个月`);
  delta("阅历点",before.exp,META.exp);
- for(const id of META.talents)if(!before.talents.includes(id))rows.push("解锁天赋："+(TALENTS.find(t=>t.id===id)?.nm||id));
+ for(const id of META.talents)if(!before.talents.includes(id)){const talent=TALENTS.find(t=>t.id===id);rows.push("解锁天赋："+(talent?talent.nm:id));}
  return rows;
 }
 function feedbackProse(text){
@@ -1468,7 +1554,7 @@ function feedbackProse(text){
 }
 function withDecision(label,fn){
  if(typeof document==="undefined"||decisionDepth)return fn();
- const before=decisionSnapshot(),oldHead=S?.log?.[0];
+ const before=decisionSnapshot(),oldHead=S&&S.log&&S.log[0];
  let result;
  decisionDepth++;
  try{result=fn();}finally{decisionDepth--;}
@@ -1529,9 +1615,12 @@ function showModal(title, body, opts, people){
 // 弹窗内容超出可视区时,底部给个渐隐箭头;滚到底就收起来
 function syncScrollHint(){
   if(typeof document==="undefined") return;
+  syncBankInert();
   const m = document.querySelector(".modal"); if(!m) return;
+  refreshBankIcons(m);
   m.scrollTop = 0;
-  requestAnimationFrame(()=>{
+  const afterPaint=typeof requestAnimationFrame==="function"?requestAnimationFrame:fn=>setTimeout(fn,0);
+  afterPaint(()=>{
     m.classList.toggle("more", m.scrollHeight - m.clientHeight - m.scrollTop > 8);
   });
 }
@@ -3893,7 +3982,8 @@ function renderBiography(withQR, cb){
   const cv = document.createElement("canvas");
   cv.width = W*dpr; cv.height = H*dpr;
   cv.style.width = "100%"; cv.style.maxWidth = W+"px"; cv.style.borderRadius = "10px";
-  const c = cv.getContext("2d");
+  let c;try{c=cv.getContext("2d");}catch(e){}
+  if(!c){cb(null);return;}
   const rawFillText=c.fillText.bind(c), rawMeasure=c.measureText.bind(c);
   c.fillText=(t,...args)=>rawFillText(stripTags(t),...args);
   c.measureText=t=>rawMeasure(stripTags(t));
@@ -4029,6 +4119,7 @@ function makeBio(){
   renderBiography(true, cv=>{
     const wrap = $("#bioBox");
     wrap.innerHTML = "";
+    if(!cv){wrap.textContent="当前浏览器无法生成传记图片，经营进度不受影响。";return;}
     wrap.appendChild(cv);
     META.bioMade = (META.bioMade||0)+1; saveMeta(); checkAch(true);
     let ok = true;
@@ -4056,7 +4147,8 @@ function drawTrend(cv){
   const dpr = Math.min(3, (typeof devicePixelRatio!=="undefined" ? devicePixelRatio : 1) || 1);
   const W = 200, H = 34;
   cv.width = W*dpr; cv.height = H*dpr; cv.style.width = W+"px"; cv.style.height = H+"px";
-  const c = cv.getContext("2d"); c.scale(dpr,dpr);
+  let c;try{c=cv.getContext("2d");}catch(e){}
+  if(!c){cv.hidden=true;return;} c.scale(dpr,dpr);
   const d = h.slice(-12), mx = Math.max(...d), mn = Math.min(...d);
   const sp = Math.max(0.1, mx-mn);
   c.strokeStyle = "#8b6434"; c.lineWidth = 1.6; c.beginPath();
@@ -4193,7 +4285,8 @@ function switchTab(t){
   S.tab = t;
   document.querySelectorAll("#tabBar button").forEach(b=>{b.classList.toggle("on", b.dataset.tab===t);if(b.dataset.tab===t)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
   renderPanel();
-  if(window.matchMedia("(max-width:760px)").matches) $("#panel").scrollIntoView({block:"start"});
+  const panel=$("#panel"),mobile=typeof window.matchMedia==="function"?window.matchMedia("(max-width:760px)").matches:window.innerWidth<=760;
+  if(mobile&&typeof panel.scrollIntoView==="function"){try{panel.scrollIntoView({block:"start"});}catch(e){panel.scrollIntoView();}}
 }
 function renderPanel(){
   const el = $("#panel"); el.innerHTML="";
@@ -4336,6 +4429,8 @@ function renderPanel(){
 function renderAll(){
   if(typeof document==="undefined") return;
   renderStats(); renderEnergy(); renderGoal(); renderWarn(); renderForecast(); renderActions(); renderPanel();
+  refreshBankIcons($("#app"));
+  syncBankInert();
   save();
 }
 
@@ -4352,13 +4447,13 @@ ${rt?`你选的路是「${rt.name}」——${rt.goal.label} 做到 ${routeGoalNe
 function showGameGuide(){ $("#gameGuide").classList.add("show"); $("#app").inert=true; }
 function startBankFromGuide(){ const term=Number($("#termSelect").value); $("#gameGuide").classList.remove("show"); $("#app").inert=false; newGame(null,null,term); }
 function save(){
-  if(typeof localStorage==="undefined") return;
-  if(S && !S.over){
-    try{ localStorage.setItem("jbzh_save6", JSON.stringify(S)); }catch(e){}
-  }
+  if(typeof document!=="undefined"&&document.documentElement.getAttribute("data-boot")==="error")return;
+  try{if(S&&!S.over)localStorage.setItem("jbzh_save6",JSON.stringify(S));}
+  catch(e){if(typeof window!=="undefined"&&window.BANK_BOOT)window.BANK_BOOT.storageUnavailable();}
 }
 // v5 老档补齐 v6 新字段,必须能继续玩到结局
 function migrate(s){
+  s.lastDelta=s.lastDelta||{};s.socialed=s.socialed||{};s.log=s.log||[];s.tab=s.tab||"outlets";
   s.flags = s.flags||{}; s.loans = s.loans||[]; s.chain = s.chain||[];
   s.mods = s.mods||{derive:1,npl:1,output:1,socialCost:1,favGain:1,riskDrift:0,openCost:1};
   s.npl = s.npl||0; s.loanSeq = s.loanSeq||1;
@@ -4390,19 +4485,22 @@ function migrate(s){
   return s;
 }
 function load(){
-  if(typeof localStorage==="undefined") return false;
-  try{ localStorage.removeItem("jbzh_save4"); }catch(e){}
+  let raw;
+  try{raw=localStorage.getItem("jbzh_save6")||localStorage.getItem("jbzh_save5");}
+  catch(e){if(typeof window!=="undefined"&&window.BANK_BOOT)window.BANK_BOOT.storageUnavailable();return false;}
+  if(!raw)return false;
   try{
-    let d = localStorage.getItem("jbzh_save6");
-    if(!d) d = localStorage.getItem("jbzh_save5");     // 吃掉 v5 老档
-    if(d){
-      const o = JSON.parse(d);
-      if(!o || !o.ver || o.ver<5) return false;
-      S = migrate(o);
-      renderAll(); return true;
-    }
-  }catch(e){}
-  return false;
+    const o=JSON.parse(raw);
+    if(!o||typeof o!=="object"||Array.isArray(o)||!Number.isFinite(o.ver)||o.ver<5||o.ver>6)throw new Error("无法识别存档版本");
+    for(const key of ["month","energy","cash","dep","rep","morale","risk"])if(!Number.isFinite(o[key]))throw new Error("存档数值缺失："+key);
+    if(o.month<1)throw new Error("存档月份无效");
+    for(const key of ["emps","npcs","outlets","rivals"])if(!Array.isArray(o[key])||o[key].some(item=>!item||typeof item!=="object"))throw new Error("存档列表无效："+key);
+    S=migrate(o);renderAll();return true;
+  }catch(e){
+    S=null;
+    if(typeof window!=="undefined"&&window.BANK_BOOT)window.BANK_BOOT.fail("进度没有成功载入，原始存档已保留。请先导出备份。",e);
+    return false;
+  }
 }
 
 /* ============ 模拟器(回归用,console 可跑) ============ */
@@ -4558,24 +4656,63 @@ const API = {
   getArcCount:()=>Object.values(NPC_ARCS).reduce((a,b)=>a+b.length,0),
   setState:s=>{ S=s; }, getState:()=>S,
 };
-if(typeof globalThis!=="undefined") globalThis.BankGame = API;
+if(typeof window!=="undefined")window.BankGame=API;
+else if(typeof globalThis!=="undefined")globalThis.BankGame=API;
 
 const BANK_ICON_PATHS={"book":"M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4z M12 6v15","refresh":"M20 9a8 8 0 1 0 0 7 M20 3v6h-6","play":"M8 4l12 8-12 8z","bank":"M3 8l9-5 9 5z M5 10v8m5-8v8m4-8v8m5-8v8M3 21h18","shop":"M3 9l2-5h14l2 5v3H3z M5 12v9h14v-9M10 21v-6h4v6","cup":"M5 4h11v10a5.5 5.5 0 0 1-11 0zM16 6h3a3 3 0 0 1 0 6h-3M4 22h14","shield":"M12 3l8 3v6c0 5-8 9-8 9s-8-4-8-9V6zM8 12l3 3 5-6","flame":"M12 3c0 6-8 7-8 12a8 8 0 0 0 16 0c0-4-3-6-4-7 0 4-3 4-3 4z","voice":"M4 9h5l10-5v16L9 15H4zM8 15l2 6","grid":"M3 4h18v16H3zM3 12h18M8 4v8m8 0v8","pen":"M4 20l1-6L16 3l5 5-11 11zM5 14l5 5M14 5l5 5","mask":"M4 4l8 3 8-3v9c0 5-8 8-8 8s-8-3-8-8zM7 10h3m4 0h3M8 15q4 4 8 0","leaf":"M4 20C2 6 12 3 21 3c0 10-3 17-17 17zM4 20L16 8","film":"M3 4h18v16H3zM3 8h18M7 4v4m10-4v4M9 12l6 3-6 3z","sword":"M4 3l5 2 11 14-2 2L5 8zM3 19L19 3M3 15l6 6m6-18 6 6","people":"M8 4a3 3 0 1 0 0 6 3 3 0 0 0 0-6M2 21v-5a6 6 0 0 1 12 0v5M17 5a3 3 0 0 1 0 6m0 3q5 0 5 7","cash":"M2 5h20v14H2zM9 8l3 4 3-4m-6 5h6m-6 3h6m-3-4v6","star":"M12 2l3 7 7 1-5 5 1 7-6-4-6 4 1-7-5-5 7-1z","mail":"M3 5h18v15H3zM3 6l9 7 9-7","scale":"M12 3v17M5 21h14M3 7h18M6 7l-4 8h8zM18 7l-4 8h8z","clock":"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M12 6v6l4 3","news":"M5 3h14v18H5zM8 7h8M8 11h8M8 15h5","sun":"M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10M12 1v3m0 16v3M1 12h3m16 0h3M4 4l2 2m12 12 2 2M4 20l2-2M18 6l2-2","rain":"M5 14a4 4 0 1 1 1-8 6 6 0 0 1 11 0 4 4 0 0 1 2 8zM7 17l-2 4m8-4-2 4m8-4-2 4","folder":"M3 6h7l2 3h9v12H3zM3 6V3h7l2 3h7v3","link":"M9 15l6-6M8 16l-2 2a4 4 0 0 1-5-5l5-5a4 4 0 0 1 5 0M16 8l2-2a4 4 0 0 1 5 5l-5 5a4 4 0 0 1-5 0","pin":"M8 3h8l-1 7 4 4H5l4-4zM12 14v8","alert":"M12 3l10 18H2zM12 9v5m0 3v1","chat":"M3 4h18v13H9l-6 4zM7 8h10M7 12h6","crown":"M3 5l5 5 4-7 4 7 5-5-2 14H5zM5 22h14","diamond":"M7 3h10l5 7-10 12L2 10zM2 10h20M7 3l5 19 5-19","heart":"M12 21L3 12C-2 4 8 0 12 7c4-7 14-3 9 5z","cap":"M2 9l10-6 10 6-10 6zM6 12v7q6 4 12 0v-7M22 9v10","compass":"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M16 6l-3 7-7 5 4-8z","chart":"M3 3v18h19M6 16l5-6 4 3 6-8M16 5h5v5","target":"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10M12 11v2","lamp":"M8 10h8v11H8zM12 8c-5-2 0-6 0-6s5 4 0 6M5 22h14","chair":"M6 12V3h12v9M3 9v9h18V9M6 18v4m12-4v4M3 14h18","medal":"M6 2h5l1 7 1-7h5l-3 9M12 9a6 6 0 1 0 0 12 6 6 0 0 0 0-12M10 15h4","hole":"M3 12c0-7 18-7 18 0s-18 7-18 0M6 12c0-3 12-3 12 0s-12 3-12 0","car":"M3 11l3-7h12l3 7v8H3zM3 11h18M6 19v3m12-3v3M6 15h2m8 0h2","question":"M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20M9 8a3 3 0 1 1 4 3l-1 3m0 3v1","dice":"M4 3h16v18H4zM8 7h.1M16 7h.1M12 12h.1M8 17h.1M16 17h.1","eye":"M2 12q10-15 20 0-10 15-20 0M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8","road":"M7 2L3 22M17 2l4 20M12 2v4m0 4v4m0 4v4","settings":"M4 6h16M4 12h16M4 18h16M8 3v6m8 0v6m-6 0v6","vault":"M3 3h18v18H3zM12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10M12 7v10M7 12h10"};
-function paintBankIcons(root){
- const walker=document.createTreeWalker(root,4);const nodes=[];let n;
- while(n=walker.nextNode())if(!['SCRIPT','STYLE','TEXTAREA','OPTION'].includes(n.parentElement?.tagName)&&/\[icon:[a-z]+\]|\p{Extended_Pictographic}/u.test(n.nodeValue))nodes.push(n);
- for(const node of nodes){const frag=document.createDocumentFragment();const parts=node.nodeValue.replace(/\p{Extended_Pictographic}\uFE0F?/gu,"[icon:news]").split(/(\[icon:[a-z]+\])/);for(const part of parts){const m=part.match(/^\[icon:([a-z]+)\]$/);if(!m){frag.appendChild(document.createTextNode(part));continue;}const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('class','bank-icon');svg.setAttribute('aria-hidden','true');const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',BANK_ICON_PATHS[m[1]]||BANK_ICON_PATHS.bank);svg.appendChild(path);frag.appendChild(svg);}node.replaceWith(frag);}
+// 图标是可降级的装饰，不得阻止游戏启动；不再依赖 Unicode 属性正则和 replaceWith。
+function bankTextNodes(root){
+ const nodes=[];
+ function walk(node){
+  if(node.nodeType===3){nodes.push(node);return;}
+  if(['SCRIPT','STYLE','TEXTAREA','OPTION','PRE'].includes(node.tagName))return;
+  for(let child=node.firstChild;child;child=child.nextSibling)walk(child);
+ }
+ if(root)walk(root);return nodes;
 }
-if(typeof document!=='undefined'){paintBankIcons(document.body);const io=new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData'&&m.target.parentElement)paintBankIcons(m.target.parentElement);else for(const n of m.addedNodes)if(n.nodeType===1)paintBankIcons(n);else if(n.nodeType===3&&n.parentElement)paintBankIcons(n.parentElement);}});io.observe(document.body,{childList:true,subtree:true,characterData:true});}
+function paintBankIcons(root){
+ for(const node of bankTextNodes(root)){
+  if(!/\[icon:[a-z]+\]/.test(node.nodeValue))continue;
+  const frag=document.createDocumentFragment(),parts=node.nodeValue.split(/(\[icon:[a-z]+\])/);
+  for(const part of parts){
+   const m=part.match(/^\[icon:([a-z]+)\]$/);
+   if(!m){frag.appendChild(document.createTextNode(part));continue;}
+   const svg=document.createElementNS('http://www.w3.org/2000/svg','svg');
+   svg.setAttribute('viewBox','0 0 24 24');svg.setAttribute('class','bank-icon');svg.setAttribute('aria-hidden','true');
+   const path=document.createElementNS(svg.namespaceURI,'path');path.setAttribute('d',BANK_ICON_PATHS[m[1]]||BANK_ICON_PATHS.bank);svg.appendChild(path);frag.appendChild(svg);
+  }
+  if(node.parentNode)node.parentNode.replaceChild(frag,node);
+ }
+}
+function refreshBankIcons(root){
+ try{paintBankIcons(root);}catch(e){
+  // 极少数内嵌浏览器缺少 SVG DOM API 时保留可读按钮文字。
+  for(const node of bankTextNodes(root))if(/\[icon:[a-z]+\]/.test(node.nodeValue))node.nodeValue=node.nodeValue.replace(/\[icon:[a-z]+\]\s*/g,"");
+ }
+}
+if(typeof document!=='undefined'){
+ refreshBankIcons(document.body);
+ if(typeof MutationObserver==='function'){
+  try{const io=new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData'&&m.target.parentNode)refreshBankIcons(m.target.parentNode);else for(const n of m.addedNodes)if(n.nodeType===1)refreshBankIcons(n);else if(n.nodeType===3&&n.parentNode)refreshBankIcons(n.parentNode);}});io.observe(document.body,{childList:true,subtree:true,characterData:true});}catch(e){}
+ }
+}
 
+function focusBankElement(el){
+ if(!el||typeof el.focus!=="function")return;
+ try{el.focus({preventScroll:true});}catch(e){el.focus();}
+}
+function syncBankInert(){
+ const app=document.querySelector("#app");
+ if(app)app.inert=document.querySelector("#mask").classList.contains("show")||document.querySelector("#gameGuide").classList.contains("show")||document.querySelector("#endScreen").classList.contains("show");
+}
 if(typeof document!=="undefined"){
  let returnFocus=null;
  const mask=document.querySelector("#mask");
- new MutationObserver(()=>{
+ if(typeof MutationObserver==='function')try{new MutationObserver(()=>{
   document.querySelector("#app").inert=mask.classList.contains("show")||document.querySelector("#gameGuide").classList.contains("show")||document.querySelector("#endScreen").classList.contains("show");
-  if(mask.classList.contains("show")){if(!mask.contains(document.activeElement))returnFocus=document.activeElement;document.querySelector("#mTitle").focus({preventScroll:true});}
-  else if(returnFocus&&returnFocus.isConnected){returnFocus.focus({preventScroll:true});returnFocus=null;}
- }).observe(mask,{attributes:true,attributeFilter:["class"]});
+  if(mask.classList.contains("show")){if(!mask.contains(document.activeElement))returnFocus=document.activeElement;focusBankElement(document.querySelector("#mTitle"));}
+  else if(returnFocus&&returnFocus.isConnected){focusBankElement(returnFocus);returnFocus=null;}
+ }).observe(mask,{attributes:true,attributeFilter:["class"]});}catch(e){}
  document.addEventListener("keydown",e=>{
   if(e.key!=="Tab"||!mask.classList.contains("show"))return;
   const list=Array.from(mask.querySelectorAll("button:not(:disabled),input,select,[tabindex='0']")).filter(x=>x.getClientRects().length);
@@ -4619,7 +4756,8 @@ window.startChallenge = startChallenge; window.askRestart = askRestart;
 
 loadMeta();
 if(META.runs>0){ const g=$("#guideGallery"); if(g) g.style.display="block"; }
-if(!load()) showGameGuide();
+if(!load()&&(!window.BANK_BOOT||!window.BANK_BOOT.failed()))showGameGuide();
+if(window.BANK_BOOT)window.BANK_BOOT.ready();
 }
 </script>
 </body>
