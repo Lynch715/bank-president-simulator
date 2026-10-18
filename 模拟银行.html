@@ -389,6 +389,8 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
 .pm-ui .log p{padding:10px 12px;border:0;border-left:2px solid var(--line);margin-bottom:8px;background:var(--card)}
 .pm-ui .log p.good{border-left-color:var(--green)}.pm-ui .log p.bad{border-left-color:var(--red)}
 .pm-ui .mask,.pm-ui #endScreen{background:#172b3bc4;backdrop-filter:none}
+.pm-ui .mask{z-index:85}
+.pm-ui .gallist{max-height:none;overflow:visible}
 .pm-ui .modal{background:var(--card);border:1px solid var(--line);border-top:4px solid var(--ink);border-radius:6px;max-height:88dvh;padding:24px;box-shadow:0 16px 60px #16273240}
 .pm-ui .modal h2{color:var(--ink);font-size:24px;line-height:1.5;margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--line)}
 .pm-ui .modal .body{font-size:15px;line-height:1.85}
@@ -493,8 +495,9 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
 .pm-ui .person-portrait img,.pm-ui .rank-portrait img,.pm-ui .candidate-portrait img{width:100%;height:100%;object-fit:contain;display:block}
 .pm-ui .portrait-zoom{position:absolute;inset:auto 0 0;padding:4px;background:#253e52de;color:#fff;font-size:11px;letter-spacing:1px;text-align:center}
 .pm-ui .person-portrait:hover{border-color:var(--ink);background:#dce3e7}
-.pm-ui .rank-person{display:flex;align-items:center;gap:7px;white-space:nowrap}
-.pm-ui .rank-portrait{flex:none;width:38px;height:50px}
+.pm-ui .rank-person{display:flex;align-items:center;gap:7px;min-width:0}
+.pm-ui .rank-name{min-width:0;white-space:normal;overflow-wrap:anywhere}
+.pm-ui .rank-portrait{flex:none;width:44px;min-width:44px;height:56px}
 .pm-ui .rank-portrait .portrait-zoom{display:none}
 .pm-ui .story-portraits{display:flex;justify-content:center;gap:20px;margin:0 0 18px;border-bottom:1px solid var(--line);padding-bottom:14px}
 .pm-ui .story-portraits[hidden]{display:none}
@@ -519,10 +522,9 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
  .pm-ui .story-portraits img{height:150px}
  .pm-ui .modal .opts .candidate-option{gap:10px}
  .pm-ui .candidate-portrait{width:60px;height:80px}
- .pm-ui .rank-portrait{width:28px;height:38px}
  .pm-ui .rank-person{gap:4px}
 }
-@media(max-width:360px){.pm-ui .person-card{grid-template-columns:76px minmax(0,1fr);gap:10px}.pm-ui .person-info .tag{margin:2px 2px 2px 0}.pm-ui .rank-portrait{width:24px;height:32px}}
+@media(max-width:360px){.pm-ui .person-card{grid-template-columns:76px minmax(0,1fr);gap:10px}.pm-ui .person-info .tag{margin:2px 2px 2px 0}}
 
 /* 启动保护只覆盖加载/异常阶段，不展示未初始化的经营台账。 */
 .pm-ui .bank-boot-status{position:fixed;top:0;right:0;bottom:0;left:0;z-index:200;background:#f2eee5;color:#28343c;overflow:auto;padding:24px;padding-top:max(24px,env(safe-area-inset-top));padding-bottom:max(24px,env(safe-area-inset-bottom))}
@@ -1666,7 +1668,7 @@ function syncScrollHint(){
 }
 function flushMQ(){
   if(MQ.length){ MQ.shift()(); }
-  else renderAll();
+  else if(S) renderAll();
 }
 function runQueue(fns){ MQ.push(...fns); flushMQ(); }
 
@@ -3722,9 +3724,15 @@ function showEnd(title, txt, good){
     <button class="main" onclick="restartGame()" style="margin-top:10px;width:100%">再开一局</button>
     <div class="shot">存下那张长图,晒晒你的行长生涯</div>`;
   $("#endScreen").classList.add("show");
+  refreshBankIcons($("#endCard"));
+  syncBankInert();
 }
 function restartGame(){
+  $("#mask").classList.remove("show");
   $("#endScreen").classList.remove("show");
+  MQ.length = 0;
+  S = null;
+  try{ localStorage.removeItem("jbzh_save6"); localStorage.removeItem("jbzh_save5"); }catch(e){}
   showGameGuide();
 }
 // 中途重开:存档会没,阅历点也不给(阅历只在走完一局时折算)
@@ -3736,9 +3744,7 @@ function askRestart(){
 
 重开会把这一局抹掉,存档不留。没走完的任期不折算阅历点——图鉴和成就不受影响,那些是另存的。`, [
     {t:"重开", s:"这一局作废,从第1年1月开始", fn:()=>{
-      try{ localStorage.removeItem("jbzh_save6"); localStorage.removeItem("jbzh_save5"); }catch(e){}
-      MQ.length = 0;
-      newGame(null,null,endM());
+      restartGame();
     }},
     {t:"算了,接着打", fn:()=>{}},
   ]);
@@ -3823,6 +3829,7 @@ function toast(msg){
   let box = $("#toastBox");
   if(!box){ box = document.createElement("div"); box.id = "toastBox"; document.body.appendChild(box); }
   const d = document.createElement("div"); d.className = "toast"; d.innerHTML = msg;
+  refreshBankIcons(d);
   box.appendChild(d);
   setTimeout(()=>{ d.classList.add("out"); setTimeout(()=>d.remove(), 400); }, 2500);
 }
@@ -3895,7 +3902,7 @@ function showGallery(){
   $("#mBody").innerHTML = h;
   box.innerHTML = "";
   const b = document.createElement("button"); b.textContent = "关上";
-  b.onclick = ()=>{ $("#mask").classList.remove("show"); if(!S || S.over) return; flushMQ(); };
+  b.onclick = ()=>{ $("#mask").classList.remove("show"); syncBankInert(); if(!S || S.over) return; flushMQ(); };
   box.appendChild(b);
   $("#mask").classList.add("show");
   syncScrollHint();
@@ -3907,6 +3914,7 @@ function startChallenge(id){
   META.lastSeed = sd; saveMeta();
   $("#mask").classList.remove("show");
   $("#endScreen").classList.remove("show");
+  $("#gameGuide").classList.remove("show");
   MQ.length = 0;
   newGame(id || null, sd || null);
 }
@@ -4325,6 +4333,7 @@ function switchTab(t){
   S.tab = t;
   document.querySelectorAll("#tabBar button").forEach(b=>{b.classList.toggle("on", b.dataset.tab===t);if(b.dataset.tab===t)b.setAttribute("aria-current","page");else b.removeAttribute("aria-current");});
   renderPanel();
+  refreshBankIcons($("#panel"));
   const panel=$("#panel"),mobile=typeof window.matchMedia==="function"?window.matchMedia("(max-width:760px)").matches:window.innerWidth<=760;
   if(mobile&&typeof panel.scrollIntoView==="function"){try{panel.scrollIntoView({block:"start"});}catch(e){panel.scrollIntoView();}}
 }
@@ -4450,7 +4459,7 @@ function renderPanel(){
     rows.sort((a,b)=>b.dep-a.dep);
     let html = `<table><tr><th>#</th><th>支行</th><th>行长</th><th>打法</th><th>存款</th></tr>`;
     rows.forEach((r,i)=>{
-      html += `<tr class="${r.me?"me":""}"><td>${i+1}</td><td>${r.name}</td><td><span class="rank-person">${portraitFigure(r.me?"player":RIVAL_PORTRAITS[r.boss],r.boss,"rank-portrait")}${esc(r.boss)}</span></td><td>${r.style}</td><td>${fmt(r.dep)}亿</td></tr>`;
+      html += `<tr class="${r.me?"me":""}"><td>${i+1}</td><td>${r.name}</td><td><span class="rank-person">${portraitFigure(r.me?"player":RIVAL_PORTRAITS[r.boss],r.boss,"rank-portrait")}<span class="rank-name">${esc(r.boss)}</span></span></td><td>${r.style}</td><td>${fmt(r.dep)}亿</td></tr>`;
     });
     html += `</table><div class="sub" style="margin-top:8px">狼性、灰色打法的对手冲得快,但有概率爆雷倒退——他们摔跟头时,客户会流到你这来。</div>`;
     el.innerHTML = html;
@@ -4484,7 +4493,11 @@ ${rt?`你选的路是「${rt.name}」——${rt.goal.label} 做到 ${routeGoalNe
 这个月先看看网点有没有配齐主任，再决定去见谁、做哪笔业务。安排好后，点『结束本月』结算。\n\n现金要够周转，员工也要轮休。风险达到85会触发审计；没有顾清越的保护，就会被免职。`,
     [{t:"上任", s:"祝你官运亨通"}]);
 }
-function showGameGuide(){ $("#gameGuide").classList.add("show"); $("#gameGuide").scrollTop=0; syncBankInert(); }
+function showGameGuide(){
+  $("#gameGuide").classList.add("show"); $("#gameGuide").scrollTop=0;
+  const gallery=$("#guideGallery"); if(gallery) gallery.style.display=META.runs>0?"block":"none";
+  syncBankInert();
+}
 function startBankFromGuide(){ const term=Number($("#termSelect").value); $("#gameGuide").classList.remove("show"); syncBankInert(); newGame(null,null,term); }
 function save(){
   if(typeof document!=="undefined"&&document.documentElement.getAttribute("data-boot")==="error")return;
@@ -4743,9 +4756,12 @@ function focusBankElement(el){
 }
 function syncBankInert(){
  const app=document.querySelector("#app");
- const blocked=["#mask","#gameGuide","#endScreen"].some(s=>document.querySelector(s).classList.contains("show"));
- if(app)app.inert=blocked;
- document.documentElement.classList.toggle("bank-overlay-open",blocked);
+ const mask=document.querySelector("#mask"),guide=document.querySelector("#gameGuide"),end=document.querySelector("#endScreen");
+ const modalOpen=mask.classList.contains("show"),guideOpen=guide.classList.contains("show"),endOpen=end.classList.contains("show");
+ if(app)app.inert=modalOpen||guideOpen||endOpen;
+ guide.inert=modalOpen;
+ end.inert=modalOpen||guideOpen;
+ document.documentElement.classList.toggle("bank-overlay-open",modalOpen||guideOpen||endOpen);
 }
 if(typeof document!=="undefined"){
  let returnFocus=null;

@@ -57,6 +57,9 @@ setTimeout(()=>{
     // 真重开
     $("#btnRestart").click();
     $("#mOpts").children[0].click(); ackSetup();
+    ok("中途重开先回开屏,可重选经营年限", $("#gameGuide").classList.contains("show") && !$("#mask").classList.contains("show") && G0.getState()===null);
+    $("#termSelect").value="36";
+    $(".guide-start").click();
     $("#nameInput") && ($("#nameInput").value="李", $("#mOpts").querySelector("button").click());
     $("#mOpts").children[0].click(); ackSetup();
     if(/开局天赋/.test($("#mTitle").textContent)){ $("#mOpts").children[0].click(); ackSetup(); }
@@ -94,6 +97,7 @@ setTimeout(()=>{
   // 二周目:图鉴入口出现 + 天赋三选一
   ok("META runs 已+1:"+G.getMeta().runs, G.getMeta().runs>=1);
   w.restartGame();
+  ok("首次结局后重开立即显示首页图鉴入口", $("#guideGallery").style.display==="block");
   w.startBankFromGuide();
   $("#nameInput").value="李维安"; $("#mOpts").querySelector("button").click();
   $("#mOpts").children[0].click(); ackSetup();

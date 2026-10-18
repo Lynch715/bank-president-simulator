@@ -1,0 +1,359 @@
+[
+  {
+    "cards": 6,
+    "docWidth": 320,
+    "label": "网点-顶部",
+    "obstructed": [],
+    "scrollMax": 2236,
+    "scrollY": 1195,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 4
+  },
+  {
+    "cards": 6,
+    "docWidth": 320,
+    "label": "网点-底部",
+    "obstructed": [],
+    "scrollMax": 2236,
+    "scrollY": 2236.5,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 4
+  },
+  {
+    "cards": 6,
+    "docWidth": 320,
+    "label": "团队-顶部",
+    "obstructed": [],
+    "scrollMax": 2967,
+    "scrollY": 1195,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 3
+  },
+  {
+    "cards": 6,
+    "docWidth": 320,
+    "label": "团队-底部",
+    "obstructed": [],
+    "scrollMax": 2967,
+    "scrollY": 2967.5,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 5
+  },
+  {
+    "cards": 6,
+    "docWidth": 320,
+    "label": "关系-顶部",
+    "obstructed": [],
+    "scrollMax": 3098,
+    "scrollY": 1195,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 4
+  },
+  {
+    "cards": 6,
+    "docWidth": 320,
+    "label": "关系-底部",
+    "obstructed": [],
+    "scrollMax": 3098,
+    "scrollY": 3098.5,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 7
+  },
+  {
+    "cards": 6,
+    "docWidth": 320,
+    "label": "经营-顶部",
+    "obstructed": [],
+    "scrollMax": 2504,
+    "scrollY": 1195,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 1
+  },
+  {
+    "cards": 6,
+    "docWidth": 320,
+    "label": "经营-底部",
+    "obstructed": [],
+    "scrollMax": 2504,
+    "scrollY": 2504,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 2
+  },
+  {
+    "cards": 8,
+    "docWidth": 320,
+    "label": "贷款-顶部",
+    "obstructed": [],
+    "scrollMax": 1992,
+    "scrollY": 1195,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 0
+  },
+  {
+    "cards": 8,
+    "docWidth": 320,
+    "label": "贷款-底部",
+    "obstructed": [],
+    "scrollMax": 1992,
+    "scrollY": 1992,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 0
+  },
+  {
+    "cards": 0,
+    "docWidth": 320,
+    "label": "排行-顶部",
+    "obstructed": [],
+    "scrollMax": 1509,
+    "scrollY": 1195,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 6
+  },
+  {
+    "cards": 0,
+    "docWidth": 320,
+    "label": "排行-底部",
+    "obstructed": [],
+    "scrollMax": 1509,
+    "scrollY": 1509,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 5
+  },
+  {
+    "cards": 0,
+    "docWidth": 320,
+    "label": "日志-顶部",
+    "obstructed": [],
+    "scrollMax": 5174,
+    "scrollY": 1195,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 0
+  },
+  {
+    "cards": 0,
+    "docWidth": 320,
+    "label": "日志-底部",
+    "obstructed": [],
+    "scrollMax": 5174,
+    "scrollY": 5174.5,
+    "size": [
+      320,
+      568
+    ],
+    "smallTargets": [],
+    "visibleButtons": 0
+  },
+  {
+    "backgroundTop": 0,
+    "closeReachable": true,
+    "docWidth": 390,
+    "label": "首页图鉴-结局",
+    "listOverflow": "visible",
+    "modalMax": 655,
+    "modalTop": 655,
+    "width": 390
+  },
+  {
+    "backgroundTop": 0,
+    "closeReachable": true,
+    "docWidth": 390,
+    "label": "首页图鉴-成就",
+    "listOverflow": "visible",
+    "modalMax": 1677,
+    "modalTop": 1677,
+    "width": 390
+  },
+  {
+    "backgroundTop": 0,
+    "closeReachable": true,
+    "docWidth": 390,
+    "label": "首页图鉴-天赋",
+    "listOverflow": "visible",
+    "modalMax": 462,
+    "modalTop": 461.5,
+    "width": 390
+  },
+  {
+    "backgroundTop": 0,
+    "closeReachable": true,
+    "docWidth": 390,
+    "label": "首页图鉴-挑战",
+    "listOverflow": "visible",
+    "modalMax": 81,
+    "modalTop": 81.5,
+    "width": 390
+  },
+  {
+    "horizontalOverflow": false,
+    "label": "跑业务",
+    "receipt": true,
+    "receiptText": "本次实际变化存款 +0.09亿（200 → 200.09）口碑 +1（50 → 51）精力 -1（3 → 2）",
+    "title": "办理结果 · 跑业务"
+  },
+  {
+    "horizontalOverflow": false,
+    "label": "拜访关系",
+    "receipt": true,
+    "receiptText": "本次实际变化精力 -1（3 → 2）陆明远好感 +6（40 → 46）",
+    "title": "陆明远 · 办公室"
+  },
+  {
+    "horizontalOverflow": false,
+    "label": "抓内部",
+    "receipt": true,
+    "receiptText": "本次实际变化现金 -20万（50000 → 49980）士气 +6（50 → 56）精力 -1（3 → 2）老张 · 倦怠 -10（10 → 0）本月轮休已安排 · 网点产出×0.75",
+    "title": "办理结果 · 批假轮休"
+  },
+  {
+    "horizontalOverflow": false,
+    "label": "批贷款",
+    "receipt": true,
+    "receiptText": "本次实际变化现金 -38万（50000 → 49962）存款 +0.39亿（200 → 200.39）风险 +1（20 → 21）精力 -1（3 → 2）",
+    "title": "办理结果 · 永辉超市供应链 · 0.64亿 · 低风险"
+  },
+  {
+    "horizontalOverflow": false,
+    "label": "招聘",
+    "receipt": true,
+    "receiptText": "本次实际变化精力 -1（3 → 2）吕布衣入职 · 月薪1.8万",
+    "title": "办理结果 · 吕布衣 · 营4 管1 风1"
+  },
+  {
+    "horizontalOverflow": false,
+    "label": "开网点",
+    "receipt": true,
+    "receiptText": "本次实际变化现金 -90万（50000 → 49910）精力 -1（3 → 2）蔡家支行开业 · 月租5.9万",
+    "title": "办理结果 · 蔡家支行 地段"
+  },
+  {
+    "label": "派主任",
+    "modalOpen": true,
+    "overflow": false,
+    "receipt": "本次实际变化复盛支行主任：小刘",
+    "title": "办理结果 · 小刘 · 营3 管1 风1"
+  },
+  {
+    "label": "调回主任",
+    "modalOpen": true,
+    "overflow": false,
+    "receipt": "本次实际变化观音桥支行主任：空缺",
+    "title": "办理结果 · 调回主任"
+  },
+  {
+    "label": "网点装修",
+    "modalOpen": true,
+    "overflow": false,
+    "receipt": "本次实际变化现金 -200万（50000 → 49800）观音桥支行装修升至1级",
+    "title": "办理结果 · 砸200万,干"
+  },
+  {
+    "label": "员工培训",
+    "modalOpen": true,
+    "overflow": false,
+    "receipt": "本次实际变化现金 -100万（50000 → 49900）老张 · 营销 +1星（2 → 3）老张 · 月薪 +0.3万（2.1 → 2.4）老张 · 倦怠 -10（10 → 0）",
+    "title": "办理结果 · 主攻营销:2星 → 3星"
+  },
+  {
+    "label": "员工解雇",
+    "modalOpen": true,
+    "overflow": false,
+    "receipt": "本次实际变化士气 -5（50 → 45）老张已离职观音桥支行主任：空缺",
+    "title": "办理结果 · 送走"
+  },
+  {
+    "label": "长期项目",
+    "modalOpen": true,
+    "overflow": false,
+    "receipt": "本次实际变化现金 -120万（50000 → 49880）精力 -1（3 → 2）代发薪资平台开工 · 3个月后建成，次月计收支",
+    "title": "办理结果 · 经营项目"
+  },
+  {
+    "label": "月末结算与后续事件",
+    "modalClosed": true,
+    "month": "9",
+    "overflow": false,
+    "titles": [
+      "第7年8月 · 结算",
+      " 渝北的账崩了",
+      "办理结果 · 在会上补一刀,把量抢过来",
+      " 顾清越 · 一份没抬头的底稿",
+      "办理结果 · 照单整改,一处不留",
+      " 周末去钓鱼",
+      "办理结果 · 去,钓一天"
+    ]
+  },
+  {
+    "label": "重开六年完整流程",
+    "modalClosed": true,
+    "monthsLeft": "72",
+    "scrollUnlocked": true
+  },
+  {
+    "endClosed": true,
+    "guideShown": true,
+    "label": "结局重开",
+    "termChoices": [
+      "120",
+      "72",
+      "36"
+    ]
+  },
+  {
+    "front": "mask",
+    "guideHidden": true,
+    "label": "开屏进入挑战",
+    "title": "上任报到"
+  }
+]

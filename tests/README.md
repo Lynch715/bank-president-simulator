@@ -31,6 +31,9 @@ npm run quick            # 只跑不需要依赖的四组,几秒钟出结果
 | `06-balance.js` | 数值校准:同一套外部策略跑当前版和 `index.P0前备份.html`,比完赛局中位存款(要求 ≤±10%),并按周期统计不良发生率(收紧期要比宽松期高 ≥40%) | 否 |
 | `07-clicks.js` | 点击数:jsdom 里跑满 36 个月,数玩家一共点了几下。要求月均不高于原版 3.44、季末月均低于原版 5.4 | jsdom |
 | `08-bio.js` | 传记长图:用真 canvas 出一张 PNG 到 `tests/out/传记.png`,自己开来核对版式 | @napi-rs/canvas |
+| `14-mobile-interactions.js` | 首页/结局图鉴层级、单层滚动、天赋解锁返回、重开重选年限、挑战入口，含无 MutationObserver 的兼容分支 | jsdom |
+
+手机尺寸浏览器验收可先运行 `node tests/make-mobile-fixtures.js`，通过本地 HTTP 打开 `tests/out/mobile-interactions.html?mode=game`。`mode=home/end/fullteam` 分别生成开屏、结局、满员场景；追加 `&legacy` 可禁用 MutationObserver。所有场景均使用内存存储，不读取玩家存档。
 
 ## 几个坑,先说在前面
 
