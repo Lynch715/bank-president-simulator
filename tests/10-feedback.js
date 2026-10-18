@@ -1,6 +1,11 @@
 const fs=require('fs'),path=require('path'),{JSDOM}=require('jsdom'),{runner}=require('./lib');
 const {ok,done}=runner('决策即时反馈');
-const d=new JSDOM(fs.readFileSync(path.join(__dirname,'../index.html'),'utf8'),{url:'http://localhost/',runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){w.matchMedia=()=>({matches:false});}});
+const d=new JSDOM(fs.readFileSync(path.join(__dirname,'../index.html'),'utf8'),{url:'http://localhost/',runScripts:'dangerously',pretendToBeVisual:true,beforeParse(w){
+ w.matchMedia=()=>({matches:false});w.blockingTouchMoves=new Set();
+ const add=w.EventTarget.prototype.addEventListener,remove=w.EventTarget.prototype.removeEventListener;
+ w.EventTarget.prototype.addEventListener=function(type,fn,opts){if(this===w.document&&type==='touchmove'&&opts&&opts.passive===false)w.blockingTouchMoves.add(fn);return add.call(this,type,fn,opts);};
+ w.EventTarget.prototype.removeEventListener=function(type,fn,opts){if(this===w.document&&type==='touchmove')w.blockingTouchMoves.delete(fn);return remove.call(this,type,fn,opts);};
+}});
 const w=d.window,G=w.BankGame,$=s=>w.document.querySelector(s),errors=[];w.addEventListener('error',e=>errors.push(e.message));
 const init=()=>{const s=G.initialState();s.cash=3000;s.candidates=G.genCandidates();G.setState(s);$('#gameGuide').classList.remove('show');$('#app').inert=false;$('#mask').classList.remove('show');w.renderAll();return s;};
 const click=(i=0)=>$('#mOpts').children[i].click();const receipt=()=>$('.decision-receipt')?.textContent||'';
@@ -14,5 +19,18 @@ s=init();w.actLoan();click();ok('批贷款回执显示实际派生存款',receip
 s=init();w.actOpen();click();ok('开网点显示租金与开办费',receipt().includes('开业 · 月租')&&receipt().includes('现金 -'));click();w.fireEmp(s.emps[0].id);click();ok('解雇显示人员离开与岗位变化',receipt().includes('已离职')&&receipt().includes('主任：空缺'));click();
 s=init();s.month=48;G.careerBeat()();click();ok('年度经营选择有实际结果',receipt().includes('存款 +2')&&receipt().includes('现金 -100'));click();
 G.setMeta({exp:300});w.unlockTalent('shiren');ok('解锁天赋独立反馈费用', $('#mTitle').textContent==='天赋已解锁'&&$('#mBody').textContent.includes('剩余240'));click();ok('确认解锁返回图鉴',$('#mTitle').textContent.includes('图鉴'));click();
-for(const [type,touches,blocked] of [['gesturechange',null,true],['touchmove',[{},{}],true],['touchmove',[{}],false]]){const e=new w.Event(type,{cancelable:true});if(touches)Object.defineProperty(e,'touches',{value:touches});w.document.dispatchEvent(e);ok(type+' '+(touches?.length||'iOS')+'指处理',e.defaultPrevented===blocked);}
+const touch=(type,count)=>{const e=new w.Event(type,{cancelable:true});Object.defineProperty(e,'touches',{value:Array.from({length:count},()=>({}))});w.document.dispatchEvent(e);return e;};
+ok('日常单指滚动没有全局阻塞监听',w.blockingTouchMoves.size===0);
+touch('touchstart',1);ok('单指滑动不拦截且不添加阻塞监听',!touch('touchmove',1).defaultPrevented&&w.blockingTouchMoves.size===0);
+touch('touchstart',2);ok('双指期间拦截缩放',touch('touchmove',2).defaultPrevented&&w.blockingTouchMoves.size===1);
+touch('touchend',1);ok('回到单指立即恢复无阻塞滚动',!touch('touchmove',1).defaultPrevented&&w.blockingTouchMoves.size===0);
+touch('touchstart',2);touch('touchcancel',0);ok('取消手势也清除缩放监听',w.blockingTouchMoves.size===0);
+const gesture=new w.Event('gesturechange',{cancelable:true});w.document.dispatchEvent(gesture);ok('iOS 手势缩放仍拦截',gesture.defaultPrevented);
+const locked=()=>w.document.documentElement.classList.contains('bank-overlay-open');
+w.showGameGuide();ok('首页隔离背景滚动',locked()&&$('#app').inert);
+ok('首页底部联系与推广文字齐全',$('#gameGuide .creator-contact').textContent.includes('微信：lynchrrr')&&$('#gameGuide .creator-contact').textContent.includes('小红书、闲鱼搜索原创作者“模拟游戏大全”'));
+init();ok('回到经营页解除背景滚动锁定',!locked()&&!$('#app').inert);
+w.showSettings();ok('设置底部联系可见且锁定背景',!$('#mContact').hidden&&locked()&&$('#mContact').textContent.includes('模拟游戏大全'));
+click();ok('关闭设置后恢复页面滚动',!locked());
+w.actManage();ok('普通决策弹窗隐藏联系页脚',$('#mContact').hidden);click(6);
 setTimeout(()=>{ok('零运行错误',errors.length===0);done();process.exit(process.exitCode||0)},100);

@@ -534,6 +534,11 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
 .pm-ui .bank-boot-card details{margin:18px 0}
 .pm-ui .bank-storage-notice{padding:12px 16px;margin:12px 0;background:#eee6d6;border-left:3px solid #8b6434;line-height:1.7}
 .pm-ui #gameGuide,.pm-ui .mask,.pm-ui #endScreen{top:0;right:0;bottom:0;left:0}
+/* 浮层独立滚动，滑到边缘时不把手势交给背景页面。 */
+html.bank-overlay-open,html.bank-overlay-open body.pm-ui{overflow:hidden}
+.pm-ui #gameGuide,.pm-ui .modal,.pm-ui #endScreen{overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
+.pm-ui .creator-contact{margin-top:20px;padding-top:12px;border-top:1px solid var(--line);color:var(--dim);font-size:11px;line-height:1.8;overflow-wrap:anywhere}
+.pm-ui .creator-contact p{margin:0}
 .pm-ui .portrait-zoom{left:0;right:0;bottom:0}
 @media(max-width:760px){.pm-ui .bank-boot-status{padding:16px}.pm-ui .bank-boot-card{margin:5vh auto 20px;padding:18px}.pm-ui .bank-boot-card .cardbtns{display:flex;flex-wrap:wrap;gap:8px}.pm-ui .bank-boot-card .cardbtns button{flex:1;min-width:110px}}
 </style>
@@ -553,6 +558,10 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
     </div>
     <label class="term-choice">任期 <select id="termSelect"><option value="120">十年 · 完整经营</option><option value="72">六年 · 进阶经营</option><option value="36">三年 · 经典任期</option></select></label><p class="guide-lead">任期越长，可办的项目越多。第四年可做供应链服务，第七年可建区域协同中心。</p><button class="guide-start" onclick="startBankFromGuide()">报到上任</button>
     <button id="guideGallery" class="guide-gallery" style="display:none" onclick="showGallery()"><svg viewBox="0 0 24 24" class="bank-icon" aria-hidden="true"><path d="M4 4h6l2 2 2-2h6v15h-6l-2 2-2-2H4z M12 6v15"></path></svg> 图鉴 · 结局 / 成就 / 天赋</button>
+    <footer class="creator-contact">
+      <p>制作人 lynchrrr · 微信：lynchrrr</p>
+      <p>发现更多游戏，请在小红书、闲鱼搜索原创作者“模拟游戏大全”。</p>
+    </footer>
   </div></div>
 </section>
 <div id="app">
@@ -603,6 +612,10 @@ tr.me td{color:var(--gold);font-weight:700;background:#33301f}
     <h2 id="mTitle" tabindex="-1"></h2>
     <div class="body" id="mBody"></div>
     <div class="opts" id="mOpts"></div>
+    <footer class="creator-contact" id="mContact" hidden>
+      <p>制作人 lynchrrr · 微信：lynchrrr</p>
+      <p>发现更多游戏，请在小红书、闲鱼搜索原创作者“模拟游戏大全”。</p>
+    </footer>
     <div class="scrollhint" id="mHint">↓ 下面还有</div>
   </div>
 </div>
@@ -1643,6 +1656,7 @@ function syncScrollHint(){
   if(typeof document==="undefined") return;
   syncBankInert();
   const m = document.querySelector(".modal"); if(!m) return;
+  document.querySelector("#mContact").hidden = document.querySelector("#mTitle").textContent !== "设置与联系";
   refreshBankIcons(m);
   m.scrollTop = 0;
   const afterPaint=typeof requestAnimationFrame==="function"?requestAnimationFrame:fn=>setTimeout(fn,0);
@@ -4470,8 +4484,8 @@ ${rt?`你选的路是「${rt.name}」——${rt.goal.label} 做到 ${routeGoalNe
 这个月先看看网点有没有配齐主任，再决定去见谁、做哪笔业务。安排好后，点『结束本月』结算。\n\n现金要够周转，员工也要轮休。风险达到85会触发审计；没有顾清越的保护，就会被免职。`,
     [{t:"上任", s:"祝你官运亨通"}]);
 }
-function showGameGuide(){ $("#gameGuide").classList.add("show"); $("#app").inert=true; }
-function startBankFromGuide(){ const term=Number($("#termSelect").value); $("#gameGuide").classList.remove("show"); $("#app").inert=false; newGame(null,null,term); }
+function showGameGuide(){ $("#gameGuide").classList.add("show"); $("#gameGuide").scrollTop=0; syncBankInert(); }
+function startBankFromGuide(){ const term=Number($("#termSelect").value); $("#gameGuide").classList.remove("show"); syncBankInert(); newGame(null,null,term); }
 function save(){
   if(typeof document!=="undefined"&&document.documentElement.getAttribute("data-boot")==="error")return;
   try{if(S&&!S.over)localStorage.setItem("jbzh_save6",JSON.stringify(S));}
@@ -4660,7 +4674,7 @@ function showSettings(){
  const opts=[];
  if(S&&!S.over&&!S.chal&&endM()<120)opts.push({t:"延长为十年经营",s:"保留当前进度与资产，任期延至120个月",fn:()=>{S.maxMonth=120;careerState();log("good","任期延长为十年，继续经营江北支行。",true);renderAll();}});
  opts.push({t:"返回游戏"});
- showModal("设置与联系",`江北支行 · 行长生涯\n\n作者联系方式\nWeChat：Lynchrrr\n\n欢迎反馈玩法建议或遇到的问题。\n\n进度自动保存在当前浏览器。${S?"当前任期："+endM()/12+"年。":""}\n普通新局可选择三年、六年或十年；挑战模式保持原有规则。`,opts);
+  showModal("设置与联系",`江北支行 · 行长生涯\n\n欢迎反馈玩法建议或遇到的问题。\n\n进度自动保存在当前浏览器。${S?"当前任期："+endM()/12+"年。":""}\n普通新局可选择三年、六年或十年；挑战模式保持原有规则。`,opts);
 }
 
 /* ============ 无头测试接口 ============ */
@@ -4729,16 +4743,19 @@ function focusBankElement(el){
 }
 function syncBankInert(){
  const app=document.querySelector("#app");
- if(app)app.inert=document.querySelector("#mask").classList.contains("show")||document.querySelector("#gameGuide").classList.contains("show")||document.querySelector("#endScreen").classList.contains("show");
+ const blocked=["#mask","#gameGuide","#endScreen"].some(s=>document.querySelector(s).classList.contains("show"));
+ if(app)app.inert=blocked;
+ document.documentElement.classList.toggle("bank-overlay-open",blocked);
 }
 if(typeof document!=="undefined"){
  let returnFocus=null;
  const mask=document.querySelector("#mask");
  if(typeof MutationObserver==='function')try{new MutationObserver(()=>{
-  document.querySelector("#app").inert=mask.classList.contains("show")||document.querySelector("#gameGuide").classList.contains("show")||document.querySelector("#endScreen").classList.contains("show");
+  syncBankInert();
   if(mask.classList.contains("show")){if(!mask.contains(document.activeElement))returnFocus=document.activeElement;focusBankElement(document.querySelector("#mTitle"));}
   else if(returnFocus&&returnFocus.isConnected){focusBankElement(returnFocus);returnFocus=null;}
  }).observe(mask,{attributes:true,attributeFilter:["class"]});}catch(e){}
+ if(typeof MutationObserver==='function')try{const observer=new MutationObserver(syncBankInert);for(const s of ["#gameGuide","#endScreen"])observer.observe(document.querySelector(s),{attributes:true,attributeFilter:["class"]});}catch(e){}
  document.addEventListener("keydown",e=>{
   if(e.key!=="Tab"||!mask.classList.contains("show"))return;
   const list=Array.from(mask.querySelectorAll("button:not(:disabled),input,select,[tabindex='0']")).filter(x=>x.getClientRects().length);
@@ -4751,7 +4768,19 @@ if(typeof document!=="undefined"){
 
 if(typeof document!=="undefined"){
  for(const type of ["gesturestart","gesturechange","gestureend"]){document.addEventListener(type,e=>e.preventDefault(),{passive:false});}
- document.addEventListener("touchmove",e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+ // 单指滑动不挂阻塞监听；第二根手指落下时才临时拦截缩放。
+ let blockingPinch=false;
+ const stopPinch=e=>{if(e.touches.length>1)e.preventDefault();};
+ const syncPinch=e=>{
+  const active=e.touches.length>1;
+  if(active===blockingPinch)return;
+  blockingPinch=active;
+  if(active)document.addEventListener("touchmove",stopPinch,{passive:false});
+  else document.removeEventListener("touchmove",stopPinch);
+ };
+ document.addEventListener("touchstart",syncPinch,{passive:true});
+ document.addEventListener("touchend",syncPinch,{passive:true});
+ document.addEventListener("touchcancel",syncPinch,{passive:true});
 }
 
 /* ============ 启动 ============ */

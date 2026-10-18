@@ -229,5 +229,10 @@
 .pm-ui .bank-boot-card details{margin:18px 0}
 .pm-ui .bank-storage-notice{padding:12px 16px;margin:12px 0;background:#eee6d6;border-left:3px solid #8b6434;line-height:1.7}
 .pm-ui #gameGuide,.pm-ui .mask,.pm-ui #endScreen{top:0;right:0;bottom:0;left:0}
+/* 浮层独立滚动，滑到边缘时不把手势交给背景页面。 */
+html.bank-overlay-open,html.bank-overlay-open body.pm-ui{overflow:hidden}
+.pm-ui #gameGuide,.pm-ui .modal,.pm-ui #endScreen{overscroll-behavior-y:contain;-webkit-overflow-scrolling:touch}
+.pm-ui .creator-contact{margin-top:20px;padding-top:12px;border-top:1px solid var(--line);color:var(--dim);font-size:11px;line-height:1.8;overflow-wrap:anywhere}
+.pm-ui .creator-contact p{margin:0}
 .pm-ui .portrait-zoom{left:0;right:0;bottom:0}
 @media(max-width:760px){.pm-ui .bank-boot-status{padding:16px}.pm-ui .bank-boot-card{margin:5vh auto 20px;padding:18px}.pm-ui .bank-boot-card .cardbtns{display:flex;flex-wrap:wrap;gap:8px}.pm-ui .bank-boot-card .cardbtns button{flex:1;min-width:110px}}
