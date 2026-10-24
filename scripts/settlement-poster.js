@@ -10,14 +10,20 @@
     return `<section id="settlementPoster" class="settlement-poster" aria-label="本局结算海报">
       <div class="poster-heading"><b>把这一局，留作纪念</b><small>专属结算海报 · 竖版高清</small></div>
       <p id="posterStatus" class="poster-status" role="status" aria-live="polite">正在绘制本局海报…</p>
-      <div class="poster-actions"><button id="posterSave" class="main" disabled>保存海报图片</button><button id="posterShare" hidden>系统分享</button><button id="posterRetry" hidden>重新生成海报</button></div>
+      <div class="poster-actions"><button id="posterSave" class="main" disabled>保存海报图片</button><button id="posterOpen" disabled>长按保存原图</button><button id="posterShare" hidden>系统分享</button><button id="posterRetry" hidden>重新生成海报</button></div>
       <img id="posterPreview" class="poster-preview" width="1080" height="1440" alt="本局结算海报" hidden>
       <p class="poster-help">手机可长按海报保存图片，再发朋友圈或小红书。下载的图片也可能位于浏览器下载目录或「文件」中。</p>
     </section>`;
   }
   function dispose(){
     generation++;
-    if(current&&current.objectURL)URL.revokeObjectURL(current.url);
+    if(current&&current.objectURL)try{URL.revokeObjectURL(current.url);}catch(e){}
+    const preview=byId('posterPreview');if(preview){preview.onload=preview.onerror=null;preview.removeAttribute('src');preview.hidden=true;}
+    const sheet=byId('posterSaveSheet');if(sheet){
+      sheet.remove();
+      const mask=byId('mask');if(mask)mask.classList.remove('show');
+      if(typeof window.syncBankInert==='function')window.syncBankInert();
+    }
     current=null;
   }
   function loadImage(src){
@@ -82,10 +88,32 @@
   }
   function encode(cv){
     return new Promise((resolve,reject)=>{
-      if(!cv.toBlob){reject(new Error('encoder-unavailable'));return;}
-      const timer=setTimeout(()=>reject(new Error('encode-timeout')),8000);
-      try{cv.toBlob(blob=>{clearTimeout(timer);blob?resolve(blob):reject(new Error('encode-failed'));},'image/png');}
-      catch(e){clearTimeout(timer);reject(e);}
+      let finished=false,reading=false,timer;
+      const done=(blob,dataURL)=>{
+        if(finished)return;finished=true;clearTimeout(timer);
+        if(!/^data:image\/png;base64,[a-z\d+/]+=*$/i.test(dataURL||'')){reject(new Error('encode-failed'));return;}
+        resolve({blob,dataURL});
+      };
+      const fallback=()=>{
+        if(finished)return;
+        try{
+          const dataURL=cv.toDataURL('image/png');let blob=null;
+          try{
+            const bytes=atob(dataURL.split(',')[1]),array=new Uint8Array(bytes.length);
+            for(let i=0;i<bytes.length;i++)array[i]=bytes.charCodeAt(i);
+            blob=new Blob([array],{type:'image/png'});
+          }catch(e){}
+          done(blob,dataURL);
+        }catch(e){finished=true;clearTimeout(timer);reject(e);}
+      };
+      timer=setTimeout(fallback,2500);
+      if(typeof cv.toBlob!=='function'){fallback();return;}
+      try{cv.toBlob(blob=>{
+        if(finished||reading)return;
+        if(!blob||typeof FileReader!=='function'){fallback();return;}
+        reading=true;
+        try{const reader=new FileReader();reader.onload=()=>done(blob,reader.result);reader.onerror=fallback;reader.onabort=fallback;reader.readAsDataURL(blob);}catch(e){fallback();}
+      },'image/png');}catch(e){fallback();}
     });
   }
   function filename(data){return (clean(data.name)+'的行长结算·'+clean(data.title)).replace(/[\\/:*?"<>|]/g,'_').slice(0,72)+'.png';}
@@ -96,41 +124,68 @@
     if(document.fonts&&document.fonts.ready)await Promise.race([document.fonts.ready,new Promise(resolve=>setTimeout(resolve,1200))]);
     return draw(data,images[0],images[1]);
   }
-  function status(message){const el=byId('posterStatus');if(el)el.textContent=message;}
+  function status(message){for(const id of ['posterStatus','posterViewerStatus']){const el=byId(id);if(el)el.textContent=message;}}
+  function openSaveView(message){
+    if(!current||typeof window.showModal!=='function')return;
+    const item=current;
+    window.showModal('保存与分享海报','',[{t:'返回结算',feedback:false,fn:()=>{const old=byId('posterSaveSheet');if(old)old.remove();}}]);
+    const sheet=document.createElement('div');sheet.id='posterSaveSheet';sheet.className='poster-save-sheet';
+    const tip=document.createElement('p');tip.id='posterViewerStatus';tip.setAttribute('role','status');tip.setAttribute('aria-live','polite');
+    tip.textContent=message||'长按下方海报，选择保存图片。保存后，去朋友圈或小红书选择这张照片发布。';sheet.appendChild(tip);
+    const actions=document.createElement('div');actions.className='poster-viewer-actions';
+    if(item.canDownload){const download=document.createElement('button');download.textContent='下载图片';download.onclick=save;actions.appendChild(download);}
+    if(item.file){const button=document.createElement('button');button.textContent='系统分享';button.dataset.posterShare='true';button.disabled=!!item.sharing;button.onclick=()=>share(button);actions.appendChild(button);}
+    sheet.appendChild(actions);
+    const img=document.createElement('img');img.className='poster-save-image';img.width=W;img.height=H;img.alt=byId('posterPreview').alt;img.src=item.dataURL;
+    img.onerror=()=>{if(current===item)status('图片预览未能打开，请尝试下载图片，或返回结算重新生成。');};sheet.appendChild(img);
+    byId('mBody').appendChild(sheet);
+    if(typeof window.syncScrollHint==='function')window.syncScrollHint();
+  }
   function save(){
     if(!current)return;
+    if(!current.canDownload){openSaveView('请长按下方海报，选择保存图片。保存后可到朋友圈或小红书选择这张照片发布。');return;}
     try{
       const a=document.createElement('a');a.href=current.url;a.download=current.filename;a.hidden=true;
       document.body.appendChild(a);a.click();a.remove();
-      status('已发起图片下载。手机也可以长按下方海报保存。');
-    }catch(e){status('请长按下方海报保存图片。');}
+      status('已发起图片下载。若没有弹出下载，点“长按保存原图”后保存。');
+    }catch(e){openSaveView('当前浏览器未能发起下载，请长按下方海报保存图片。');}
   }
-  async function share(){
-    const item=current;if(!item||!item.file)return;
-    const token=generation,button=byId('posterShare');button.disabled=true;
+  function shareBusy(value){for(const button of document.querySelectorAll('#posterShare,[data-poster-share]'))button.disabled=value;}
+  async function share(button){
+    const item=current;if(!item)return;
+    if(!item.file){openSaveView('当前浏览器不支持直接分享图片。长按下方海报保存后，再到朋友圈或小红书选择照片发布。');return;}
+    if(item.sharing)return;
+    const token=generation;item.sharing=true;shareBusy(true);
     try{
       await navigator.share({title:'我的行长任期 · '+item.data.title,files:[item.file]});
       if(token===generation)status('已交给系统分享面板。');
     }catch(e){
-      if(token===generation)status(e&&e.name==='AbortError'?'已取消分享，仍可保存下方海报。':'系统分享暂时未能完成，请保存图片后分享。');
-    }finally{if(token===generation&&button.isConnected)button.disabled=false;}
+      if(token===generation){
+        if(e&&e.name==='AbortError')status('已取消分享，仍可保存下方海报。');
+        else openSaveView('系统分享未能完成。长按下方海报保存后，再到朋友圈或小红书选择照片发布。');
+      }
+    }finally{item.sharing=false;if(token===generation)shareBusy(false);}
   }
   async function show(data){
     dispose();const token=generation,box=byId('settlementPoster');if(!box)return;
-    const retry=byId('posterRetry'),saveButton=byId('posterSave'),shareButton=byId('posterShare'),preview=byId('posterPreview');
-    status('正在绘制本局海报…');retry.hidden=true;saveButton.disabled=true;shareButton.hidden=true;preview.hidden=true;
-    preview.removeAttribute('src');saveButton.onclick=save;shareButton.onclick=share;retry.onclick=()=>show(data);
+    const retry=byId('posterRetry'),saveButton=byId('posterSave'),openButton=byId('posterOpen'),shareButton=byId('posterShare'),preview=byId('posterPreview');
+    status('正在绘制本局海报…');retry.hidden=true;saveButton.disabled=true;saveButton.textContent='保存海报图片';openButton.disabled=true;openButton.hidden=false;shareButton.disabled=false;shareButton.hidden=true;preview.hidden=true;
+    preview.onload=preview.onerror=null;preview.removeAttribute('src');saveButton.onclick=save;openButton.onclick=()=>openSaveView();shareButton.onclick=()=>share(shareButton);retry.onclick=()=>show(data);
     try{
       const cv=await render(data);if(token!==generation||!box.isConnected)return;
-      const blob=await encode(cv);if(token!==generation||!box.isConnected)return;
-      const objectURL=!!(window.URL&&URL.createObjectURL),url=objectURL?URL.createObjectURL(blob):cv.toDataURL('image/png');
-      current={data,blob,url,objectURL,filename:filename(data),file:null};
-      preview.src=url;preview.alt=clean(data.name)+'的行长结算海报：'+clean(data.title)+'，最终存款'+data.deposits+'亿，全区第'+data.rank+'名';preview.hidden=false;
-      saveButton.disabled=false;status('海报已生成，点击保存，或长按海报保存图片。');
+      const encoded=await encode(cv);if(token!==generation||!box.isConnected)return;
+      const {blob,dataURL}=encoded;let objectURL=false,url=dataURL;
+      try{if(blob&&window.URL&&URL.createObjectURL){url=URL.createObjectURL(blob);objectURL=true;}}catch(e){}
+      const canDownload=objectURL&&'download' in document.createElement('a');
+      current={data,blob,url,dataURL,objectURL,canDownload,filename:filename(data),file:null,sharing:false};
+      // Preview and long-press image remain usable without a temporary blob: address.
+      preview.onerror=()=>{if(token===generation){status('图片预览未能打开，可尝试下载，或重新生成海报。');retry.hidden=false;}};
+      preview.alt=clean(data.name)+'的行长结算海报：'+clean(data.title)+'，最终存款'+data.deposits+'亿，全区第'+data.rank+'名';preview.src=dataURL;preview.hidden=false;
+      saveButton.disabled=false;saveButton.textContent=canDownload?'保存海报图片':'保存海报（长按）';openButton.disabled=false;openButton.hidden=!canDownload;shareButton.textContent='分享方法';shareButton.hidden=false;status('海报已生成，点击保存，或长按海报保存图片。');
       try{
-        if(typeof File==='function'&&typeof navigator.share==='function'&&typeof navigator.canShare==='function'){
+        if(blob&&typeof File==='function'&&typeof navigator.share==='function'&&typeof navigator.canShare==='function'){
           const file=new File([blob],current.filename,{type:'image/png'});
-          if(navigator.canShare({files:[file]})){current.file=file;shareButton.hidden=false;}
+          if(navigator.canShare({files:[file]})){current.file=file;shareButton.textContent='系统分享';}
         }
       }catch(e){}
     }catch(e){

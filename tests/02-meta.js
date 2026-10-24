@@ -27,7 +27,9 @@ r.ok("趋势数据有累积:" + S.track.depHistory.length + " 个月", S.track.d
 
 const META = G.getMeta();
 r.ok("结局图鉴点亮 " + Object.keys(META.endings).length + " 个", Object.keys(META.endings).length>=1);
-r.ok("成就解锁 " + Object.keys(META.achs).length + " 项", Object.keys(META.achs).length>=1);
+// 随机回放可能合法地不达成任何成就；明确满足条件来验证成就系统。
+const endDeposits=S.dep;S.dep=60;G.checkAch(false);S.dep=endDeposits;
+r.ok("满足六十亿条件后解锁对应成就", !!META.achs.a_dep60);
 r.ok("阅历点累计 " + META.exp, META.exp>0);
 r.ok("META 独立落盘、局内存档已清", !!store["jbzh_meta"] && !store["jbzh_save6"]);
 

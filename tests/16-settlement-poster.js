@@ -16,11 +16,23 @@ function boot(options={}){
       if(!this._native){this._native=createCanvas(this.width,this.height);const c=this._native.getContext('2d'),raw=c.fillText.bind(c);c.fillText=(s,...args)=>{texts.push(String(s));return raw(s,...args);};}
       return this._native.getContext('2d');
     };
-    w.HTMLCanvasElement.prototype.toBlob=function(callback){const blob=new w.Blob([this._native.toBuffer('image/png')],{type:'image/png'});w.setTimeout(()=>callback(blob),5);};
+    w.HTMLCanvasElement.prototype.toBlob=function(callback){
+      if(options.encoder==='throw')throw new Error('encoder unavailable');
+      if(options.encoder==='null'){callback(null);return;}
+      if(options.encoder==='hang')return;
+      const blob=new w.Blob([this._native.toBuffer('image/png')],{type:'image/png'});w.setTimeout(()=>callback(blob),5);
+    };
+    if(options.encoder==='missing')w.HTMLCanvasElement.prototype.toBlob=undefined;
     w.HTMLCanvasElement.prototype.toDataURL=function(){return this._native.toDataURL('image/png');};
-    w.URL.createObjectURL=blob=>{const id='blob:test-'+(++serial);blobs.set(id,blob);return id;};w.URL.revokeObjectURL=id=>revoked.push(id);
-    w.HTMLAnchorElement.prototype.click=function(){downloads.push({href:this.href,name:this.download});};
-    if(options.share){w.navigator.canShare=()=>options.share!=='unsupported';w.navigator.share=data=>{shares.push(data);return options.share==='abort'?Promise.reject({name:'AbortError'}):options.share==='error'?Promise.reject(new Error('share failed')):Promise.resolve();};}
+    w.URL.createObjectURL=blob=>{if(options.url==='throw')throw new Error('Object URL unavailable');const id='blob:test-'+(++serial);blobs.set(id,blob);return id;};w.URL.revokeObjectURL=id=>revoked.push(id);
+    if(options.url==='missing')w.URL.createObjectURL=undefined;
+    w.HTMLAnchorElement.prototype.click=function(){if(options.downloadThrows)throw new Error('download unavailable');downloads.push({href:this.href,name:this.download});};
+    if(options.noDownload)delete w.HTMLAnchorElement.prototype.download;
+    if(options.share){w.navigator.canShare=()=>{if(options.share==='capabilityThrows')throw new Error('not permitted');return options.share!=='unsupported';};w.navigator.share=data=>{shares.push(data);return options.share==='abort'?Promise.reject({name:'AbortError'}):options.share==='error'?Promise.reject(new Error('share failed')):Promise.resolve();};}
+    if(options.noFile)w.File=undefined;
+    if(options.noReader)w.FileReader=undefined;
+    if(options.noBlob)w.Blob=undefined;
+    if(options.fastTimeout){const set=w.setTimeout.bind(w);w.setTimeout=(fn,ms)=>set(fn,ms===2500?50:ms);}
     w.localStorage.setItem('jbzh_name','原名');w.localStorage.setItem('jbzh_theme','sapphire');
   }}),w=dom.window,d=w.document,G=w.BankGame;
   function end({months=120,term=120,title='北疆之王',failed=false,name='林知远'}={}){
@@ -31,8 +43,9 @@ function boot(options={}){
 }
 async function until(fn){for(let i=0;i<100;i++){if(fn())return;await new Promise(r=>setTimeout(r,25));}throw new Error('timed out waiting for poster');}
 const ready=b=>until(()=>!b.d.querySelector('#posterSave').disabled);
-async function saveBlob(b,file){const blob=b.blobs.get(b.d.querySelector('#posterPreview').src);const reader=new b.w.FileReader();const bytes=await new Promise((resolve,reject)=>{reader.onload=()=>resolve(Buffer.from(reader.result));reader.onerror=reject;reader.readAsArrayBuffer(blob);});fs.writeFileSync(path.join(out,file),bytes);return bytes;}
-(async()=>{
+async function saveBlob(b,file){const src=b.d.querySelector('#posterPreview').src,bytes=Buffer.from(src.split(',')[1],'base64');fs.writeFileSync(path.join(out,file),bytes);return bytes;}
+module.exports={boot,ready,until};
+if(require.main===module)(async()=>{
   ok('两个单文件入口同步',html===fs.readFileSync(path.join(root,'模拟银行.html'),'utf8'));
   ok('独立海报脚本与内嵌源同步',html.match(/<script id="bankSettlementCode">([\s\S]*?)<\/script>/)[1].trim()===fs.readFileSync(path.join(root,'scripts/settlement-poster.js'),'utf8').trim());
   const payload=JSON.parse(html.match(/<script type="application\/json" id="bankSettlementData">([\s\S]*?)<\/script>/)[1]);
@@ -44,7 +57,7 @@ async function saveBlob(b,file){const blob=b.blobs.get(b.d.querySelector('#poste
   await ready(b);
   ok('真正结局自动生成IMG预览和保存按钮',!b.d.querySelector('#posterPreview').hidden&&b.d.querySelector('#posterPreview').tagName==='IMG');
   ok('海报按本局真实结局、姓名、任期和成绩绘制',b.texts.includes('北疆之王')&&b.texts.includes('行长 林知远')&&b.texts.includes('88.8 亿')&&b.texts.includes('120个月')&&b.texts.includes('累计放贷 16.7 亿'));
-  ok('不支持图片分享时隐藏系统分享',b.d.querySelector('#posterShare').hidden);
+  ok('不支持图片分享时提供分享方法入口',!b.d.querySelector('#posterShare').hidden&&b.d.querySelector('#posterShare').textContent==='分享方法');
   const png=await saveBlob(b,'settlement-ten-year.png');
   ok('实际编码为1080×1440的PNG',png.subarray(1,4).toString()==='PNG'&&png.readUInt32BE(16)===1080&&png.readUInt32BE(20)===1440);
   b.d.querySelector('#posterSave').click();
@@ -68,7 +81,7 @@ async function saveBlob(b,file){const blob=b.blobs.get(b.d.querySelector('#poste
   const political=boot();political.end({months:36,term:36,title:'组织处理'});await ready(political);ok('组织处理即使到任期末也不写任期完成',!political.w.settlementSnapshot().completed);political.close();
   for(const share of ['ok','abort','error','unsupported']){
     const x=boot({share});x.end();await ready(x);const button=x.d.querySelector('#posterShare');
-    ok(share+'系统分享入口按能力显示',button.hidden===(share==='unsupported'));
+    ok(share+'分享入口按能力显示对应操作',!button.hidden&&button.textContent===(share==='unsupported'?'分享方法':'系统分享'));
     if(share!=='unsupported'){
       const before=x.w.localStorage.getItem('jbzh_meta');button.click();await until(()=>!button.disabled);
       ok(share+'分享传递真实PNG文件，取消和失败仍可保存',x.shares[0].files[0].type==='image/png'&&x.shares[0].files[0].size>10000&&!x.d.querySelector('#posterSave').disabled&&x.w.localStorage.getItem('jbzh_meta')===before);

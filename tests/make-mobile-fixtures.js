@@ -6,6 +6,18 @@ const storage=`<script id="mobile-fixture-storage">
  const values={jbzh_meta:JSON.stringify({runs:1,exp:600,endings:{},achs:{},talents:['laoling','beishui','jiubu'],routesDone:{},bioMade:0,chals:{}})};
  Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>Object.prototype.hasOwnProperty.call(values,k)?values[k]:null,setItem:(k,v)=>{values[k]=String(v);},removeItem:k=>{delete values[k];}}});
  if(location.search.includes('legacy'))window.MutationObserver=undefined;
+ const params=new URLSearchParams(location.search),posterEnv=params.get('posterEnv');
+ if(posterEnv){
+   Object.defineProperty(navigator,'canShare',{configurable:true,value:posterEnv==='manual'?undefined:()=>true});
+   Object.defineProperty(navigator,'share',{configurable:true,value:posterEnv==='manual'?undefined:data=>{
+     const file=data.files[0],root=document.documentElement;
+     root.dataset.qaShareCalls=String(Number(root.dataset.qaShareCalls||0)+1);root.dataset.qaShareFileType=file.type;root.dataset.qaShareFileBytes=String(file.size);
+     return posterEnv==='denied'?Promise.reject(Object.assign(new Error('Blocked by test profile'),{name:'NotAllowedError'})):posterEnv==='cancel'?Promise.reject(Object.assign(new Error('Cancelled by test profile'),{name:'AbortError'})):Promise.resolve();
+   }});
+ }
+ if(params.get('posterEncoder')==='missing')HTMLCanvasElement.prototype.toBlob=undefined;
+ if(params.get('posterURL')==='blocked')URL.createObjectURL=()=>{throw new Error('Object URL blocked by test profile');};
+ if(params.get('posterDownload')==='blocked'){const click=HTMLAnchorElement.prototype.click;HTMLAnchorElement.prototype.click=function(){if(this.download)throw new Error('Download blocked by test profile');return click.call(this);};}
 })();
 </script>`;
 const profile=`<script id="mobile-fixture-profile">
