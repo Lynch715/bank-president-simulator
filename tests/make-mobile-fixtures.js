@@ -11,9 +11,11 @@ const storage=`<script id="mobile-fixture-storage">
 const profile=`<script id="mobile-fixture-profile">
 (function(){
  const mode=new URLSearchParams(location.search).get('mode')||'game';
+ const theme=new URLSearchParams(location.search).get('theme');if(theme)setBankTheme(theme);
  if(mode==='home')return;
  const G=window.BankGame,s=G.initialState();G.setState(s);G.setSeed('mobile-audit');
  s.playerName='手机滚动按钮验收';s.month=80;s.maxMonth=120;s.cash=50000;s.dep=200;s.route='retail';
+ if(mode==='warning'){s.cash=-50;s.risk=88;s.morale=20;}
  s.cycle=G.makeCycle();s.rivalScripts=G.makeRivalScripts();
  const team=G.genCandidates().concat(G.genCandidates());
  for(const e of team.slice(0,mode==='fullteam'?6:4)){e.id=s.empSeq++;s.emps.push(e);}
@@ -24,7 +26,7 @@ const profile=`<script id="mobile-fixture-profile">
  if(mode==='end'){s.month=120;showEnd('稳字当头','十年任期结束，检查结局、图鉴、挑战与传记长图的滚动和按钮。',true);}
 })();
 </script>`;
-const html=source.replace('<head>','<head>\n<base href="/">').replace('<script id="bankBootGuard">',storage+'\n<script id="bankBootGuard">').replace('</body>',profile+'\n</body>');
+const html=source.replace('<head>','<head>\n<base href="/">'+storage).replace('</body>',profile+'\n</body>');
 fs.mkdirSync(path.join(__dirname,'out'),{recursive:true});
 fs.writeFileSync(path.join(__dirname,'out/mobile-interactions.html'),html);
 console.log('Generated mobile-interactions.html: ?mode=home / game / end / fullteam; add &legacy for no MutationObserver.');

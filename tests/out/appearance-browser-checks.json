@@ -1,0 +1,588 @@
+{
+  "desktop": [
+    {
+      "bodyBackground": "rgb(16, 31, 26)",
+      "modalTop": 0,
+      "selected": 1,
+      "status": "已使用「翡翠鎏金」，下次打开自动沿用。",
+      "theme": "emerald",
+      "viewport": [
+        1280,
+        900
+      ],
+      "width": 1280
+    },
+    {
+      "bodyBackground": "rgb(16, 27, 39)",
+      "modalTop": 0,
+      "selected": 1,
+      "status": "已使用「深海藏蓝」，下次打开自动沿用。",
+      "theme": "sapphire",
+      "viewport": [
+        1280,
+        900
+      ],
+      "width": 1280
+    },
+    {
+      "bodyBackground": "rgb(37, 19, 22)",
+      "modalTop": 12.5,
+      "selected": 1,
+      "status": "已使用「绯红典藏」，下次打开自动沿用。",
+      "theme": "burgundy",
+      "viewport": [
+        1280,
+        900
+      ],
+      "width": 1280
+    },
+    {
+      "bodyBackground": "rgb(28, 22, 35)",
+      "modalTop": 12.5,
+      "selected": 1,
+      "status": "已使用「紫檀夜宴」，下次打开自动沿用。",
+      "theme": "plum",
+      "viewport": [
+        1280,
+        900
+      ],
+      "width": 1280
+    },
+    {
+      "bodyBackground": "rgb(17, 18, 15)",
+      "modalTop": 12.5,
+      "selected": 1,
+      "status": "已使用「曜石黑金」，下次打开自动沿用。",
+      "theme": "obsidian",
+      "viewport": [
+        1280,
+        900
+      ],
+      "width": 1280
+    },
+    {
+      "bodyBackground": "rgb(242, 238, 229)",
+      "modalTop": 14.5,
+      "selected": 1,
+      "status": "已使用「经典纸墨」，下次打开自动沿用。",
+      "theme": "paper",
+      "viewport": [
+        1280,
+        900
+      ],
+      "width": 1280
+    },
+    {
+      "picker": {
+        "minTargetWidth": 250,
+        "overflow": false,
+        "pickerWidth": 510,
+        "theme": "emerald"
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 880,
+          "scrollMax": 1354,
+          "scrollTop": 1354.5,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "关系",
+          "panelWidth": 880,
+          "scrollMax": 1382,
+          "scrollTop": 1382,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "排行",
+          "panelWidth": 880,
+          "scrollMax": 596,
+          "scrollTop": 596,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "日志",
+          "panelWidth": 880,
+          "scrollMax": 2899,
+          "scrollTop": 2899,
+          "viewport": 1280,
+          "width": 1280
+        }
+      ]
+    },
+    {
+      "picker": {
+        "minTargetWidth": 250,
+        "overflow": false,
+        "pickerWidth": 510,
+        "theme": "sapphire"
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 880,
+          "scrollMax": 1354,
+          "scrollTop": 1354.5,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "关系",
+          "panelWidth": 880,
+          "scrollMax": 1382,
+          "scrollTop": 1382,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "排行",
+          "panelWidth": 880,
+          "scrollMax": 596,
+          "scrollTop": 596,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "日志",
+          "panelWidth": 880,
+          "scrollMax": 2899,
+          "scrollTop": 2899,
+          "viewport": 1280,
+          "width": 1280
+        }
+      ]
+    },
+    {
+      "picker": {
+        "minTargetWidth": 250,
+        "overflow": false,
+        "pickerWidth": 510,
+        "theme": "burgundy"
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 880,
+          "scrollMax": 1354,
+          "scrollTop": 1354.5,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "关系",
+          "panelWidth": 880,
+          "scrollMax": 1382,
+          "scrollTop": 1382,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "排行",
+          "panelWidth": 880,
+          "scrollMax": 596,
+          "scrollTop": 596,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "日志",
+          "panelWidth": 880,
+          "scrollMax": 2899,
+          "scrollTop": 2899,
+          "viewport": 1280,
+          "width": 1280
+        }
+      ]
+    },
+    {
+      "picker": {
+        "minTargetWidth": 250,
+        "overflow": false,
+        "pickerWidth": 510,
+        "theme": "plum"
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 880,
+          "scrollMax": 1354,
+          "scrollTop": 1354.5,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "关系",
+          "panelWidth": 880,
+          "scrollMax": 1382,
+          "scrollTop": 1382,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "排行",
+          "panelWidth": 880,
+          "scrollMax": 596,
+          "scrollTop": 596,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "日志",
+          "panelWidth": 880,
+          "scrollMax": 2899,
+          "scrollTop": 2899,
+          "viewport": 1280,
+          "width": 1280
+        }
+      ]
+    },
+    {
+      "picker": {
+        "minTargetWidth": 250,
+        "overflow": false,
+        "pickerWidth": 510,
+        "theme": "obsidian"
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 880,
+          "scrollMax": 1354,
+          "scrollTop": 1354.5,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "关系",
+          "panelWidth": 880,
+          "scrollMax": 1382,
+          "scrollTop": 1382,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "排行",
+          "panelWidth": 880,
+          "scrollMax": 596,
+          "scrollTop": 596,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "日志",
+          "panelWidth": 880,
+          "scrollMax": 2899,
+          "scrollTop": 2899,
+          "viewport": 1280,
+          "width": 1280
+        }
+      ]
+    },
+    {
+      "picker": {
+        "minTargetWidth": 250,
+        "overflow": false,
+        "pickerWidth": 510,
+        "theme": "paper"
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 838,
+          "scrollMax": 1235,
+          "scrollTop": 1235.5,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "关系",
+          "panelWidth": 838,
+          "scrollMax": 1263,
+          "scrollTop": 1263,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "排行",
+          "panelWidth": 838,
+          "scrollMax": 477,
+          "scrollTop": 477,
+          "viewport": 1280,
+          "width": 1280
+        },
+        {
+          "label": "日志",
+          "panelWidth": 838,
+          "scrollMax": 2780,
+          "scrollTop": 2780,
+          "viewport": 1280,
+          "width": 1280
+        }
+      ]
+    }
+  ],
+  "phone": [
+    {
+      "picker": {
+        "minTargetWidth": 127,
+        "overflow": false,
+        "pickerWidth": 262,
+        "theme": "emerald",
+        "viewport": 320
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 270,
+          "scrollMax": 3154,
+          "scrollTop": 3154,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "关系",
+          "panelWidth": 270,
+          "scrollMax": 3396,
+          "scrollTop": 3396.5,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "排行",
+          "panelWidth": 270,
+          "scrollMax": 1715,
+          "scrollTop": 1715,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "日志",
+          "panelWidth": 270,
+          "scrollMax": 6766,
+          "scrollTop": 6766.5,
+          "viewport": 320,
+          "width": 320
+        }
+      ]
+    },
+    {
+      "picker": {
+        "minTargetWidth": 127,
+        "overflow": false,
+        "pickerWidth": 262,
+        "theme": "sapphire",
+        "viewport": 320
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 270,
+          "scrollMax": 3154,
+          "scrollTop": 3154,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "关系",
+          "panelWidth": 270,
+          "scrollMax": 3396,
+          "scrollTop": 3396.5,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "排行",
+          "panelWidth": 270,
+          "scrollMax": 1715,
+          "scrollTop": 1715,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "日志",
+          "panelWidth": 270,
+          "scrollMax": 6766,
+          "scrollTop": 6766.5,
+          "viewport": 320,
+          "width": 320
+        }
+      ]
+    },
+    {
+      "picker": {
+        "minTargetWidth": 127,
+        "overflow": false,
+        "pickerWidth": 262,
+        "theme": "burgundy",
+        "viewport": 320
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 270,
+          "scrollMax": 3154,
+          "scrollTop": 3154,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "关系",
+          "panelWidth": 270,
+          "scrollMax": 3396,
+          "scrollTop": 3396.5,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "排行",
+          "panelWidth": 270,
+          "scrollMax": 1715,
+          "scrollTop": 1715,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "日志",
+          "panelWidth": 270,
+          "scrollMax": 6766,
+          "scrollTop": 6766.5,
+          "viewport": 320,
+          "width": 320
+        }
+      ]
+    },
+    {
+      "picker": {
+        "minTargetWidth": 127,
+        "overflow": false,
+        "pickerWidth": 262,
+        "theme": "plum",
+        "viewport": 320
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 270,
+          "scrollMax": 3154,
+          "scrollTop": 3154,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "关系",
+          "panelWidth": 270,
+          "scrollMax": 3396,
+          "scrollTop": 3396.5,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "排行",
+          "panelWidth": 270,
+          "scrollMax": 1715,
+          "scrollTop": 1715,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "日志",
+          "panelWidth": 270,
+          "scrollMax": 6766,
+          "scrollTop": 6766.5,
+          "viewport": 320,
+          "width": 320
+        }
+      ]
+    },
+    {
+      "picker": {
+        "minTargetWidth": 127,
+        "overflow": false,
+        "pickerWidth": 262,
+        "theme": "obsidian",
+        "viewport": 320
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 270,
+          "scrollMax": 3154,
+          "scrollTop": 3154,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "关系",
+          "panelWidth": 270,
+          "scrollMax": 3396,
+          "scrollTop": 3396.5,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "排行",
+          "panelWidth": 270,
+          "scrollMax": 1715,
+          "scrollTop": 1715,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "日志",
+          "panelWidth": 270,
+          "scrollMax": 6766,
+          "scrollTop": 6766.5,
+          "viewport": 320,
+          "width": 320
+        }
+      ]
+    },
+    {
+      "picker": {
+        "minTargetWidth": 127,
+        "overflow": false,
+        "pickerWidth": 262,
+        "theme": "paper",
+        "viewport": 320
+      },
+      "pages": [
+        {
+          "label": "团队",
+          "panelWidth": 296,
+          "scrollMax": 2967,
+          "scrollTop": 2967.5,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "关系",
+          "panelWidth": 296,
+          "scrollMax": 3098,
+          "scrollTop": 3098.5,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "排行",
+          "panelWidth": 296,
+          "scrollMax": 1509,
+          "scrollTop": 1509,
+          "viewport": 320,
+          "width": 320
+        },
+        {
+          "label": "日志",
+          "panelWidth": 296,
+          "scrollMax": 5174,
+          "scrollTop": 5174.5,
+          "viewport": 320,
+          "width": 320
+        }
+      ]
+    }
+  ]
+}
