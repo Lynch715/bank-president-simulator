@@ -23,7 +23,12 @@ const profile=`<script id="mobile-fixture-profile">
  s.loans=G.LOAN_POOL.slice(0,8).map((p,i)=>({...p,id:i+1,left:12,derive:0.2,bad:false,hidden:0}));s.loanSeq=9;
  s.candidates=G.genCandidates();s.log=Array.from({length:60},(_,i)=>({cls:i%2?'good':'month',txt:'第'+(80-i)+'月经营记录：客户走访、团队安排与月末结算，核对长列表滚动和底部按钮。'}));
  document.querySelector('#gameGuide').classList.remove('show');renderAll();
- if(mode==='end'){s.month=120;showEnd('稳字当头','十年任期结束，检查结局、图鉴、挑战与传记长图的滚动和按钮。',true);}
+ if(mode==='end'){
+   const early=new URLSearchParams(location.search).get('result')==='early';
+   if(early){s.month=7;s.failed=true;s.playerName='林知远和他的江北经营故事';}
+   else{s.month=120;s.playerName='林知远';s.track.loanTotal=16.7;}
+   showEnd(early?'现金断流':'北疆之王',early?'本局提前结束，仍可保存这段行长生涯。':'十年任期结束，检查结局、图鉴、挑战与传记长图的滚动和按钮。',!early);
+ }
 })();
 </script>`;
 const html=source.replace('<head>','<head>\n<base href="/">'+storage).replace('</body>',profile+'\n</body>');

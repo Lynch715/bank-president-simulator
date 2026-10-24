@@ -1,0 +1,17 @@
+{
+  "mode": "built-in image_gen",
+  "use_case": "stylized-concept",
+  "prompt": "Use case: stylized-concept. Asset type: pre-generated background artwork for a Chinese banking management game's final results sharing poster, portrait 3:4 aspect ratio. Premium Art Deco illustration with elegant deep emerald green and antique gold architectural frame, warm ivory paper, refined hand-painted realistic banking-city mood. A panoramic riverside Chinese mountain city at dusk with tasteful illuminated bank buildings and a distant bridge occupies only the top 28 percent, softly blending into pale ivory below. Decorative fine gold border and subtle emerald corner ornaments around the outer edges; keep the entire central and lower 65 percent very light warm ivory, quiet, smooth and nearly empty for programmatically drawn Chinese results text and statistics. Leave bottom right area empty for a real QR code added later. Rich but restrained cinematic light, polished collectible achievement-card quality, crisp ornamental details, no people. CRITICAL: absolutely no text, letters, numbers, logos, signatures, watermarks, fake QR codes, charts, trophies or victory symbols. No UI mockup, no device frame. Image itself is the finished blank poster background, full bleed, portrait 3:4.",
+  "source": "background-source.png",
+  "web": "background.jpg",
+  "source_dimensions": [
+    1086,
+    1448
+  ],
+  "poster_dimensions": [
+    1080,
+    1440
+  ],
+  "qr_url": "https://lynch715.github.io/bank-president-simulator/",
+  "note": "Generated artwork contains no text. All player results, Chinese copy and the real QR are composited by the ending renderer."
+}

@@ -174,3 +174,17 @@ html:not([data-bank-theme="paper"]) .pm-ui .bank-storage-notice{background:var(-
  html:not([data-bank-theme="paper"]) .pm-ui .guide-copy{padding:22px 16px}
  .pm-ui .theme-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.pm-ui .theme-name{flex-wrap:wrap}.pm-ui .theme-check{font-size:10px}
 }
+
+/* A real image preserves the phone browser's native long-press save menu. */
+.pm-ui .settlement-poster{margin:22px 0;padding:18px 14px;background:var(--paper2);border:1px solid var(--trim,var(--line));border-radius:4px;min-width:0}
+.pm-ui .poster-heading{display:flex;flex-direction:column;gap:4px;color:var(--ink)}
+.pm-ui .poster-heading b{font-family:"Songti SC","Noto Serif SC",serif;font-size:21px;letter-spacing:1px}
+.pm-ui .poster-heading small{font-size:12px;color:var(--dim)}
+.pm-ui .poster-status,.pm-ui .poster-help{font-size:12px;line-height:1.7;color:var(--dim);overflow-wrap:anywhere}
+.pm-ui .poster-status{min-height:21px;margin:12px 0 8px}
+.pm-ui .poster-actions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:10px 0 16px}
+.pm-ui .poster-actions button{min-height:44px;flex:1 1 150px;max-width:260px;font-size:14px}
+.pm-ui .poster-actions [hidden],.pm-ui .poster-preview[hidden]{display:none}
+.pm-ui .poster-preview{display:block;width:100%;height:auto;max-width:420px;margin:0 auto;border:1px solid #ad8b50;box-shadow:0 6px 20px #172d2426;-webkit-touch-callout:default;-webkit-user-select:auto;user-select:auto}
+.pm-ui .poster-help{margin:12px auto 0;max-width:420px;text-align:left}
+@media(max-width:360px){.pm-ui .settlement-poster{padding:15px 10px}.pm-ui .poster-heading b{font-size:19px}.pm-ui .poster-actions button{flex-basis:100%;max-width:none}}
