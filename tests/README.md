@@ -33,8 +33,14 @@ npm run quick            # 只跑不需要依赖的四组,几秒钟出结果
 | `08-bio.js` | 传记长图:用真 canvas 出一张 PNG 到 `tests/out/传记.png`,自己开来核对版式 | @napi-rs/canvas |
 | `14-mobile-interactions.js` | 首页/结局图鉴层级、单层滚动、天赋解锁返回、重开重选年限、挑战入口，含无 MutationObserver 的兼容分支 | jsdom |
 | `15-appearance.js` | 六套外观切换、刷新/重开保留、状态与存档不变、随机数不变、存储异常回退、基础文字配色对比度 | jsdom |
+| `18-staff-education.js` | 专项培训限次、进修报名和产能、月结与结业、专长收益、内训、旧档与中途读档、36/72/120月队列和真实按钮回执 | jsdom |
+| `19-team-tempo.js` | 主任/机动队倦怠、卷王/营销/进修叠加、士气自然回落、欠薪惩罚、轮休实际按钮与月报、旧档状态保留 | jsdom |
 
 手机尺寸浏览器验收可先运行 `node tests/make-mobile-fixtures.js`，通过本地 HTTP 打开 `tests/out/mobile-interactions.html?mode=game`。`mode=home/end/fullteam` 分别生成开屏、结局、满员场景；追加 `&legacy` 可禁用 MutationObserver。所有场景均使用内存存储，不读取玩家存档。
+
+员工培养从团队页进入。定向回归运行 `node tests/18-staff-education.js`。士气与倦怠调校回归运行 `node tests/19-team-tempo.js`；`node tests/audit-team-tempo.js /调整前HTML备份的绝对路径.html` 可输出固定工况下的半年变化。
+
+`compare-staff-baseline.js` 是首次增加培养功能时的固定种子状态对照工具；后续士气和倦怠平衡调整会有意改变经营结果，故最新版不再要求与调校前完整状态相同。
 
 外观预览可追加 `&theme=emerald/sapphire/burgundy/plum/obsidian/paper` 中的一个主题 ID；`mode=warning` 用于检查欠薪和高风险文字。修改样式源后执行 `python3 scripts/sync-styles.py`，再重新生成 fixture，确保两个独立 HTML 入口与两段内嵌样式同步。
 

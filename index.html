@@ -1155,6 +1155,14 @@ const BALANCE = {
   // quiet:中期(13~28月)按概率留一个真正没事发生的月份,给节奏留白;设 0 即恢复旧版
   modal: { maxPerMonth:3, quietChance:0.18, quietFrom:13, quietTo:28 },
   bio:   { w:750, pad:28, maxBeats:12 },
+  staff: { trainCost:100, noviceDiscount:0.5, trainSalary:0.3, trainRest:15,
+           studyCapacity:0.65, studyFatigue:2, studySalary:0.6, graduateRest:20, graduateMorale:2,
+           seminarCost:25, seminarFatigue:3, seminarDep:0.12, seminarRep:1, seminarRisk:4, seminarMorale:5,
+           certDep:0.03, certMorale:0.6, certRisk:0.6,
+           courses:{market:{cost:140,months:2},leader:{cost:160,months:3},risk:{cost:180,months:3}} },
+  team:  { managerFatigue:5, roamFatigue:3, overworkFatigue:3, marketingFatigue:2, restRelief:6, veteranRecovery:2,
+           moraleFloor:34, repWeight:0.24, fatigueWeight:0.22, managementWeight:4, traitWeight:3,
+           moraleRate:0.12, maxNaturalDrop:3 },
 };
 
 const OUTLET_POOL = [
@@ -1853,7 +1861,7 @@ function initialState(){
     chain:[],
     lastRivalMove:0,
     track:{social:0,hire:0,open:0,train:0,events:0,maxRisk:20,arcs:0,loanTotal:0,badLoans:0,rivalMoves:0,rest:0,
-           fired:0,pledgeWin:0,rank1M:0,hiFund:0,tightGain:0,keyEvents:[],depHistory:[10]},
+           fired:0,pledgeWin:0,rank1M:0,hiFund:0,tightGain:0,studyStarted:0,studyCompleted:0,seminars:0,keyEvents:[],depHistory:[10]},
     bs:{done:[], fired:{}},
     outlets:[
       {name:"观音桥支行", star:4, rent:8, dep:6, mgr:0, ramp:1, closed:0, desc:"江北门面,客流没得说"},
@@ -1977,6 +1985,7 @@ function decisionChanges(before){
   const old=a.emps.find(x=>x.id===e.id);
   if(!old){rows.push(`${e.name}入职 · 月薪${e.salary}万`);continue;}
   for(const [k,n,u] of [["mk","营销","星"],["mg","管理","星"],["rk","风控","星"],["salary","月薪","万"],["fatigue","倦怠",""]])delta(e.name+" · "+n,old[k]||0,e[k]||0,u);
+  if(!old.study&&e.study){const c=studyCourse(e.study.id);rows.push(`${e.name}开始${c.name} · ${e.study.left}个月 · 在岗贡献保留${Math.round(BALANCE.staff.studyCapacity*100)}%`);}
  }
  for(const e of a.emps)if(!b.emps.some(x=>x.id===e.id))rows.push(e.name+"已离职");
  for(const o of b.outlets){
@@ -2088,6 +2097,20 @@ function fatigueCoef(e){
   if(f>=50) return 0.9;
   return 1;
 }
+function fatigueChange(e){
+  const b=BALANCE.team;
+  let f=e.trait==="laoyoutiao"?-b.veteranRecovery:S.outlets.some(o=>o.mgr===e.id)?b.managerFatigue:b.roamFatigue;
+  if(e.trait!=="laoyoutiao"){
+    if(e.trait==="juanwang")f+=b.overworkFatigue;
+    if(S.marketing)f+=b.marketingFatigue;
+    if(S.restMonth)f-=b.restRelief;
+  }
+  if(e.study)f+=BALANCE.staff.studyFatigue;
+  return f;
+}
+function moraleDrift(base,current){
+  return +Math.max(-BALANCE.team.maxNaturalDrop,(base-current)*BALANCE.team.moraleRate).toFixed(2);
+}
 function traitOutMul(e){
   if(e.trait==="juanwang") return 1.15;
   if(e.trait==="laoyoutiao") return 0.9;
@@ -2097,7 +2120,7 @@ function rkPower(e){
   let m = 1;
   if(e.trait==="laoshi") m = 1.5;
   if(e.trait==="lengtouqing") m = 0.7;
-  return e.rk * m;
+  return e.rk * m * staffCapacity(e);
 }
 function fatigueTag(e){
   const f = e.fatigue||0;
@@ -2109,7 +2132,7 @@ function fatigueTag(e){
 function mgrCoef(o){
   const m = o.mgr!=null ? empById(o.mgr) : null;
   if(!m) return 0.5;
-  return (0.6 + m.mk*0.13) * fatigueCoef(m) * traitOutMul(m);   // 主任的营销星决定网点产出
+  return (0.6 + m.mk*0.13) * fatigueCoef(m) * traitOutMul(m) * staffCapacity(m);   // 主任的营销星决定网点产出
 }
 function seasonInfo(){
   const m = monOf(S.month);
@@ -2483,22 +2506,133 @@ function recallMgr(oi){
   log("", `${m.name}从${o.name}调回机动队。`);
   renderAll();
 }
-function trainCost(e){ return e.trait==="lengtouqing" ? 50 : 100; }
+/* ============ 员工培养 ============ */
+const STAFF_SKILLS = {mk:"营销", mg:"管理", rk:"风控"};
+const STUDY_COURSES = [
+  {id:"market", name:"客户经营研修班", cert:"客户经营专长", ...BALANCE.staff.courses.market, skills:["mk","mg"],
+   desc:"把散在各处的客户档案理成一张网。", benefit:`每月额外存款+${BALANCE.staff.certDep}亿`},
+  {id:"leader", name:"骨干管理进修班", cert:"团队管理专长", ...BALANCE.staff.courses.leader, skills:["mg","rk"],
+   desc:"带着排班、带教和考核里的老问题去上课。", benefit:`每月士气+${BALANCE.staff.certMorale}`},
+  {id:"risk", name:"信贷风控研修班", cert:"信贷风控专长", ...BALANCE.staff.courses.risk, skills:["rk","mk"],
+   desc:"拿真实业务案例做尽调，把风险认在放款前。", benefit:`每月风险-${BALANCE.staff.certRisk}`},
+];
+const STAFF_SEMINARS = [
+  {id:"service", name:"客户服务复盘", desc:"柜台把这月的投诉和客户需求摆上桌。", result:`存款+${BALANCE.staff.seminarDep}亿 · 口碑+${BALANCE.staff.seminarRep}`},
+  {id:"compliance", name:"合规案例内训", desc:"客户经理逐笔讲手续，风控同事当场挑问题。", result:`风险-${BALANCE.staff.seminarRisk}`},
+  {id:"team", name:"带教经验交流", desc:"老员工讲做法，新同事讲卡在哪里。", result:`士气+${BALANCE.staff.seminarMorale}`},
+];
+function studyCourse(id){ return STUDY_COURSES.find(c=>c.id===id); }
+function staffCapacity(e){ return e.study ? BALANCE.staff.studyCapacity : 1; }
+function staffCertificates(e){ return Array.isArray(e.certificates) ? e.certificates : []; }
+function studyCost(e,c){ return Math.round(c.cost*(e.trait==="lengtouqing"?BALANCE.staff.noviceDiscount:1)); }
+function trainCost(e){ return Math.round(BALANCE.staff.trainCost*(e.trait==="lengtouqing"?BALANCE.staff.noviceDiscount:1)); }
+function canTrain(e,k){
+  return !!(S&&!S.over&&e&&empById(e.id)===e&&!e.study&&e.trainedMonth!==S.month&&
+    Object.prototype.hasOwnProperty.call(STAFF_SKILLS,k)&&e[k]<5&&S.cash>=trainCost(e));
+}
+function trainSkill(id,k){
+  if(!S)return false;
+  const e=empById(id); if(!canTrain(e,k))return false;
+  gain("cash",-trainCost(e));e[k]++;e.salary=+(e.salary+BALANCE.staff.trainSalary).toFixed(1);
+  e.trainedMonth=S.month;e.fatigue=Math.max(0,(e.fatigue||0)-BALANCE.staff.trainRest);
+  S.track.train=(S.track.train||0)+1;
+  log("good",`<b>${e.name}</b>带着一叠笔记回到工位，${STAFF_SKILLS[k]}提升至${e[k]}星。`);
+  return true;
+}
 function trainEmp(id){
+  if(!S)return;
   const e = empById(id);
-  const NM = {mk:"营销", mg:"管理", rk:"风控"};
+  if(!e||!S||S.over)return;
   const c = trainCost(e);
-  showModal("送培训 · "+e.name, `花${c}万送去省行青干班,选个主攻方向升1星(月薪+0.3万,倦怠-15)。`+(c<100?`\n(愣头青学费减半,学得也快。)`:""),
+  showModal("专项培训 · "+e.name, `花${c}万参加专项培训，主攻能力立即升1星，月薪+${BALANCE.staff.trainSalary}万，倦怠-${BALANCE.staff.trainRest}。\n每人每月可参加一次，不花行长精力；进修期间不能叠加专项培训。`+(e.trait==="lengtouqing"?"\n愣头青学费减半。":""),
     ["mk","mg","rk"].map(k=>({
-      t:`主攻${NM[k]}:${e[k]}星 → ${Math.min(5,e[k]+1)}星`,
-      disabled: e[k]>=5 || S.cash<c,
-      fn:()=>{
-        gain("cash",-c); e[k]++; e.salary=+(e.salary+0.3).toFixed(1); S.track.train++;
-        e.fatigue = Math.max(0,(e.fatigue||0)-15);
-        log("good", `<b>${e.name}</b>完成培训，${NM[k]}提升至${e[k]}星。`);
-      }
+      t:`主攻${STAFF_SKILLS[k]}:${e[k]}星 → ${Math.min(5,e[k]+1)}星`,
+      disabled:!canTrain(e,k), fn:()=>trainSkill(id,k)
     })).concat([{t:"算了", fn:()=>{}}])
   );
+}
+function studyBlock(e,c){
+  if(!S||S.over||!e||empById(e.id)!==e||!c)return "无法报名";
+  if(e.study)return "正在进修";
+  if(e.trainedMonth===S.month)return "本月已参加专项培训";
+  if(staffCertificates(e).includes(c.id))return "已获得本项专长";
+  if(S.emps.some(x=>x.study))return "全行仅有1个进修名额";
+  if(S.month+c.months-1>endM())return "任期内来不及结业";
+  if(S.energy<1)return "精力不足";
+  if(S.cash<studyCost(e,c))return "现金不足";
+  return "";
+}
+function startStudy(id,courseId){
+  if(!S)return false;
+  const e=empById(id),c=studyCourse(courseId);if(studyBlock(e,c))return false;
+  gain("cash",-studyCost(e,c));S.energy--;
+  e.study={id:c.id,left:c.months,total:c.months,lastMonth:0};
+  S.track.studyStarted=(S.track.studyStarted||0)+1;
+  log("good",`<b>${e.name}</b>报了${c.name}。白天照常在岗，排班里给课程留了空。${c.months}个月后结业。`,true);
+  return true;
+}
+function studyEmp(id){
+  if(!S)return;
+  const e=empById(id);if(!e||!S||S.over)return;
+  showModal("在职进修 · "+e.name,`报名花1点精力，学费一次付清，工资照发，全行同时仅1人进修。\n从本月结算起计课时，期间网点主任系数、机动队产出、管理与风控贡献保留${Math.round(BALANCE.staff.studyCapacity*100)}%，每月额外倦怠+${BALANCE.staff.studyFatigue}；特质仍生效。\n结业后两项能力各+1星（最高5星），月薪+${BALANCE.staff.studySalary}万，倦怠-${BALANCE.staff.graduateRest}，全行士气+${BALANCE.staff.graduateMorale}，并获得长期专长。每项专长只可取得一次，离职后停止贡献；满星员工仍可进修。`,
+    STUDY_COURSES.map(c=>{const reason=studyBlock(e,c);return {
+      t:c.name+` · ${studyCost(e,c)}万 / ${c.months}个月`,
+      s:`${c.desc} ${c.skills.map(k=>STAFF_SKILLS[k]+"+1星").join("、")}；${c.benefit}，结业次月生效。${reason?"【"+reason+"】":""}`,
+      disabled:!!reason,fn:()=>startStudy(id,c.id)
+    };}).concat([{t:"先看看排班"}]));
+}
+function canSeminar(){ return !!(S&&!S.over&&S.emps.length&&S.energy>=1&&S.cash>=BALANCE.staff.seminarCost&&S.seminarMonth!==S.month); }
+function holdSeminar(id){
+  const c=STAFF_SEMINARS.find(x=>x.id===id);if(!c||!canSeminar())return false;
+  gain("cash",-BALANCE.staff.seminarCost);S.energy--;S.seminarMonth=S.month;
+  for(const e of S.emps)e.fatigue=clamp((e.fatigue||0)+BALANCE.staff.seminarFatigue,0,100);
+  if(id==="service"){gain("dep",BALANCE.staff.seminarDep);gain("rep",BALANCE.staff.seminarRep);}
+  if(id==="compliance")gain("risk",-BALANCE.staff.seminarRisk);
+  if(id==="team")gain("morale",BALANCE.staff.seminarMorale);
+  S.track.seminars=(S.track.seminars||0)+1;
+  log("good",`${c.desc}大家把做法记进了业务手册。${c.result}，倦怠+${BALANCE.staff.seminarFatigue}。`);
+  return true;
+}
+function staffSeminar(){
+  if(!S||S.over)return;
+  showModal("全员业务内训",`每月全行可举办一次，花${BALANCE.staff.seminarCost}万、1点精力，全员倦怠+${BALANCE.staff.seminarFatigue}。\n内训即时生效，不提升星级，也不替代进修课时；可以按本月经营需要选主题。`,
+    STAFF_SEMINARS.map(c=>({t:c.name,s:c.result,disabled:!canSeminar(),fn:()=>holdSeminar(c.id)})).concat([{t:"先忙业务"}]));
+}
+function settleStaffEducation(lines){
+  if(S.staffEducationMonth===S.month)return;
+  S.staffEducationMonth=S.month;
+  const b=BALANCE.staff;let dep=0,morale=0,risk=0;
+  for(const e of S.emps){
+    const cert=staffCertificates(e),capacity=staffCapacity(e);
+    if(cert.includes("market"))dep+=b.certDep*capacity;
+    if(cert.includes("leader"))morale+=b.certMorale*capacity;
+    if(cert.includes("risk"))risk+=b.certRisk*capacity;
+  }
+  if(dep){gain("dep",dep);lines.push(["客户经营专长",`+${Number(dep.toFixed(4))}亿`]);}
+  if(morale){gain("morale",morale);lines.push(["团队管理专长",`士气+${Number(morale.toFixed(2))}`]);}
+  if(risk){gain("risk",-risk);lines.push(["信贷风控专长",`风险-${Number(risk.toFixed(2))}`]);}
+  for(const e of S.emps){
+    const a=e.study;if(!a||a.lastMonth===S.month)continue;
+    const c=studyCourse(a.id);if(!c)continue;
+    a.lastMonth=S.month;a.left--;
+    if(a.left>0){lines.push([`${e.name} · ${c.name}`,`还剩${a.left}个月`]);continue;}
+    const improved=[];
+    for(const k of c.skills){const before=e[k];e[k]=Math.min(5,e[k]+1);if(e[k]>before)improved.push(STAFF_SKILLS[k]+"+1星");}
+    e.certificates=staffCertificates(e).concat(c.id);e.study=null;
+    e.salary=+(e.salary+b.studySalary).toFixed(1);e.fatigue=Math.max(0,(e.fatigue||0)-b.graduateRest);
+    gain("morale",b.graduateMorale);S.track.studyCompleted=(S.track.studyCompleted||0)+1;
+    log("good",`<b>${e.name}</b>结业了，把课堂上的案例带回晨会。${improved.join("、")||"课程对应能力已达上限"}，获得${c.cert}；月薪+${b.studySalary}万，倦怠-${b.graduateRest}，士气+${b.graduateMorale}。专长次月起生效。`,true);
+    lines.push([`${e.name}进修结业`,`${improved.join("、")||"能力已达上限"} · ${c.cert} · 月薪+${b.studySalary}万 · 倦怠-${b.graduateRest} · 士气+${b.graduateMorale}`]);
+  }
+}
+function renderStaffLearning(e){
+  const certificates=staffCertificates(e).map(id=>studyCourse(id)).filter(Boolean);
+  let html=certificates.length?`<div class="sub">${certificates.map(c=>`<span class="tag">[icon:medal] ${c.cert}</span>`).join(" ")}<br>${certificates.map(c=>c.benefit).join(" · ")}${e.study?`（进修期间按${Math.round(BALANCE.staff.studyCapacity*100)}%计）`:""}</div>`:"";
+  if(e.study){
+    const c=studyCourse(e.study.id);
+    if(c)html+=`<div class="sub"><b>[icon:book] ${c.name}</b> · 剩余${e.study.left}个月 · 结业后${c.skills.map(k=>STAFF_SKILLS[k]+"+1星").join("、")}，取得${c.cert}</div><div class="meter" role="progressbar" aria-label="${esc(e.name)}进修进度" aria-valuemin="0" aria-valuemax="${c.months}" aria-valuenow="${c.months-e.study.left}"><span class="mlb">进修</span><span class="bar"><i style="width:${Math.round((c.months-e.study.left)/c.months*100)}%;background:var(--gold)"></i></span><span class="mvl">${c.months-e.study.left}/${c.months}月</span></div><div class="sub">在岗贡献保留${Math.round(BALANCE.staff.studyCapacity*100)}% · 每月额外倦怠+${BALANCE.staff.studyFatigue}</div>`;
+  }
+  return html;
 }
 function fireEmp(id){
   const e = empById(id);
@@ -3670,6 +3804,7 @@ function settleCore(){
   const lines = [];
   S.lastDelta = {};
   const depAtStart = S.dep;
+  const avgFatAtStart=S.emps.length?S.emps.reduce((sum,e)=>sum+(e.fatigue||0),0)/S.emps.length:0;
   settleCareer(lines);
 
   // 1. 存款进项
@@ -3685,8 +3820,8 @@ function settleCore(){
   const natural = +(Math.min(S.dep,50)*(S.rep-50)*0.00015).toFixed(2);
   // 营销星:机动队员拉存款(主任的营销星已算进网点产出);管理星养士气、风控星压风险:全员生效
   let roamDep = 0, roamMorale = 0, roamRisk = 0;
-  for(const e of freeEmps()) roamDep += 0.025*e.mk;
-  for(const e of S.emps){ roamMorale += 0.1*e.mg; roamRisk -= 0.2*e.rk; }
+  for(const e of freeEmps()) roamDep += 0.025*e.mk*staffCapacity(e);
+  for(const e of S.emps){ roamMorale += 0.1*e.mg*staffCapacity(e); roamRisk -= 0.2*e.rk*staffCapacity(e); }
   gain("dep", prod + npcDep + natural + roamDep);
   lines.push(["网点产出", `+${fmt(prod)}亿`]);
   if(npcDep>0) lines.push(["关系户存款", `+${fmt(npcDep)}亿`]);
@@ -3718,12 +3853,7 @@ function settleCore(){
 
   // 2.6 倦怠累积
   for(const e of S.emps){
-    if(e.trait==="laoyoutiao"){ e.fatigue = Math.max(0,(e.fatigue||0)-2); continue; }
-    let f = S.outlets.some(o=>o.mgr===e.id) ? 8 : 5;
-    if(e.trait==="juanwang") f += 5;
-    if(S.marketing) f += 3;
-    if(S.restMonth) f -= 6;
-    e.fatigue = clamp((e.fatigue||0)+f, 0, 100);
+    e.fatigue = clamp((e.fatigue||0)+fatigueChange(e), 0, 100);
   }
   // 倦怠爆表:有概率不辞而别
   const burnt = S.emps.filter(e=>(e.fatigue||0)>=92 && !e.protectedEmp);
@@ -3753,9 +3883,12 @@ function settleCore(){
   // 士气不是线性衰减,而是向一个「结构性基准」回归:
   // 基准由口碑、全员倦怠、管理星和特质决定。团建/奖金是脉冲,基准才是地板。
   const avgFat = S.emps.length ? S.emps.reduce((a,e)=>a+(e.fatigue||0),0)/S.emps.length : 0;
-  const base = clamp(28 + S.rep*0.22 - avgFat*0.30 + roamMorale*4 + extraMorale*3, 0, 95);
+  const tb=BALANCE.team;
+  const base = clamp(tb.moraleFloor + S.rep*tb.repWeight - avgFat*tb.fatigueWeight + roamMorale*tb.managementWeight + extraMorale*tb.traitWeight, 0, 95);
   S.moraleBase = Math.round(base);
-  gain("morale", +((base - S.morale)*0.22).toFixed(2));
+  const naturalMorale=moraleDrift(base,S.morale);
+  gain("morale",naturalMorale);
+  lines.push(["士气自然调整",`${naturalMorale>=0?"+":""}${naturalMorale}（基准${S.moraleBase}）`]);
   gain("rep", -2 + (S.route==="guanxi" ? -1 : 0));
   if(roamRisk!==0) gain("risk", roamRisk);
   gain("risk", MOD("riskDrift"));
@@ -3763,6 +3896,11 @@ function settleCore(){
   if(gu.fav>=60) gain("risk",-3);
   const decay = S.route==="guanxi" ? 1 : 2;
   for(const n of S.npcs){ if(n.fav>40 && !S.socialed[n.id]) n.fav-=decay; }
+
+  // 本月先按进修状态工作、发工资，结业奖励和新专长从下月起参与经营。
+  settleStaffEducation(lines);
+  const avgFatNow=S.emps.length?S.emps.reduce((sum,e)=>sum+(e.fatigue||0),0)/S.emps.length:0;
+  lines.push(["在编平均倦怠",`${avgFatAtStart.toFixed(1)} → ${avgFatNow.toFixed(1)}（人员变动、结业已计入）`]);
 
   // 5. 对手成长
   for(const r of S.rivals){
@@ -4220,6 +4358,8 @@ const ACHIEVEMENTS = [
   {id:"a_dep100", nm:"百亿江北",     ic:"[icon:bank]", end:false, desc:"存款突破100亿",              chk:s=>s.dep>=100},
   {id:"a_legend", nm:"麾下有传奇",   ic:"[icon:star]", end:false, desc:"拥有一名营销、管理、风控均达5星的员工",     chk:s=>s.emps.some(e=>e.mk>=5&&e.mg>=5&&e.rk>=5)},
   {id:"a_train",  nm:"育人有方",     ic:"[icon:cap]", end:false, desc:"累计培训5次",                chk:s=>(s.track.train||0)>=5},
+  {id:"a_study", nm:"学成归来", ic:"[icon:cap]", end:false, desc:"培养一名完成在职进修的员工", chk:s=>(s.track.studyCompleted||0)>=1},
+  {id:"a_academy", nm:"江北人才梯队", ic:"[icon:people]", end:false, desc:"在职团队同时拥有客户、管理、风控三项进修专长", chk:s=>["market","leader","risk"].every(id=>s.emps.some(e=>staffCertificates(e).includes(id)))},
   {id:"a_nofire", nm:"一个都没辞",   ic:"[icon:leaf]", end:true,  desc:"任期内没开除过任何人",        chk:s=>s.month>=(s.maxMonth||36) && (s.track.fired||0)===0},
   {id:"a_fresh",  nm:"队伍不垮",     ic:"[icon:people]", end:true,  desc:"通关时全员倦怠都低于50",      chk:s=>s.month>=(s.maxMonth||36) && s.emps.length>0 && s.emps.every(e=>(e.fatigue||0)<50)},
   {id:"a_loan10", nm:"放贷十亿",     ic:"[icon:chart]", end:false, desc:"累计投放贷款≥10亿",          chk:s=>(s.track.loanTotal||0)>=10},
@@ -4633,7 +4773,7 @@ const STAT_DEFS = [
   {k:"cash", lb:"现金", unit:"万", tip:"发工资、交房租、送礼、开网点全靠它。负数=欠薪,士气暴跌;连负3个月直接出局。", f:v=>Math.round(v)},
   {k:"dep", lb:"存款", unit:"亿", tip:"你的成绩单,排名只看它。来源:网点产出、关系户、跑业务、贷款派生、随机事件。每亿存款每月带来2万经营收入。", f:v=>fmt(v)},
   {k:"rep", lb:"口碑", unit:"", tip:"高于50,存款自然上涨;低于50,客户悄悄流失。每月自然-1,得靠跑业务、办活动、处理好事件来养。", f:v=>Math.round(v)},
-  {k:"morale", lb:"士气", unit:"", tip:"士气影响网点产出。团建和奖金能暂时提振士气；长期还要靠口碑、员工状态和管理能力。士气降到10或以下，任期提前结束。", f:v=>Math.round(v)},
+  {k:"morale", lb:"士气", unit:"", tip:"士气影响网点产出。团建和奖金可提振士气；长期还要靠口碑、员工状态和管理能力。日常自然回落每月最多3点，欠薪和事件另计。士气降到10或以下，任期提前结束。", f:v=>Math.round(v)},
   {k:"risk", lb:"风险", unit:"", tip:"风险达到60会收到警告，达到85会触发审计；没有顾清越的保护，就会被免职。排查可降低15点风险，员工风控能力也能降低每月风险。", f:v=>Math.round(v)},
   {k:"rank", lb:"排名", unit:"/9", tip:"全区9家支行按存款排座次。季度点评、年度考核、最终结局都看它。", f:()=>myRank()},
 ];
@@ -4783,24 +4923,34 @@ function renderPanel(){
   }
   if(t==="team"){
     const head = document.createElement("div"); head.className="sub"; head.style.marginBottom="8px";
-    head.innerHTML = `在编 <b>${S.emps.length}/8</b> 人 · 月工资 <b>${totalSalary().toFixed(1)}万</b>。倦怠过高会影响工作，也可能留不住人。可在「抓内部」安排轮休。<details><summary>能力与岗位</summary>普通员工倦怠达到92后，每月有30%的概率离职。营销能力影响网点和机动队新增存款；管理能力帮助维持士气；风控能力降低风险，也帮助判断贷款客户。管理和风控能力在任何岗位都生效。</details>`;
+    head.innerHTML = `在编 <b>${S.emps.length}/8</b> 人 · 月工资 <b>${totalSalary().toFixed(1)}万</b>。倦怠过高会影响工作，也可能留不住人。可在「抓内部」安排轮休。<details><summary>能力与岗位</summary>普通主任每月倦怠+${BALANCE.team.managerFatigue}，机动队+${BALANCE.team.roamFatigue}；卷王额外+${BALANCE.team.overworkFatigue}，营销活动额外+${BALANCE.team.marketingFatigue}，在职进修额外+${BALANCE.staff.studyFatigue}，轮休月减少${BALANCE.team.restRelief}。老油条每月自然恢复${BALANCE.team.veteranRecovery}点，只额外计算进修负担。<br>普通员工倦怠达到92后，每月有30%的概率离职。营销能力影响网点和机动队新增存款；管理能力帮助维持士气；风控能力降低风险，也帮助判断贷款客户。管理和风控能力在任何岗位都生效。进修期间在岗贡献保留${Math.round(BALANCE.staff.studyCapacity*100)}%，特质仍生效。</details>`;
     el.appendChild(head);
+    const academy=document.createElement("div");academy.className="card staff-academy";
+    const activeStudy=S.emps.find(e=>e.study),studyName=activeStudy&&studyCourse(activeStudy.study.id);
+    academy.innerHTML=`<h3>[icon:cap] 人才培养</h3><div class="sub">专项培训补短板，在职进修养骨干，业务内训解眼前的问题。</div>
+      <div class="sub">累计专项培训 <b>${S.track.train||0}</b> 次 · 进修结业 <b>${S.track.studyCompleted||0}</b> 次 · 全员内训 <b>${S.track.seminars||0}</b> 次</div>
+      <div class="sub">${activeStudy&&studyName?`${esc(activeStudy.name)}正在${studyName.name} · 剩余${activeStudy.study.left}个月`:'进修名额 0/1 · 可从员工卡片选课'}</div>
+      <details><summary>培养怎么选</summary>专项培训：单项能力立即+1星，每人每月一次，不花精力。<br>在职进修：2—3个月，两项能力各+1星，并获得长期专长；报名花1点精力，学费一次支付。满星后也能学专长，工资照发，结业后月薪再加${BALANCE.staff.studySalary}万。<br>全员内训：每月一次，花${BALANCE.staff.seminarCost}万和1点精力，全员倦怠+${BALANCE.staff.seminarFatigue}，即时改善业务、风险或士气。<br>进修名额随人员离职释放，已付学费不退；专长随本人贡献，离职后停止生效。</details>
+      <div class="cardbtns"><button onclick="staffSeminar()" ${canSeminar()?"":"disabled"}>${S.seminarMonth===S.month?"本月内训已完成":`全员内训 ${BALANCE.staff.seminarCost}万 · 1精力`}</button></div>`;
+    el.appendChild(academy);
     S.emps.forEach(e=>{
       const post = S.outlets.find(o=>o.mgr===e.id);
       // 产出系数要把倦怠和特质算进去,否则面板上的数跟月结对不上
       const duty = post
-        ? `${post.name}主任(产出系数${mgrCoef(post).toFixed(2)}${((e.fatigue||0)>=50||traitOutMul(e)!==1)?",已含倦怠/特质折扣":""})`
-        : `机动队 · 每月拉存款+${fmt(0.025*e.mk)}亿`;
+        ? `${post.name}主任(产出系数${mgrCoef(post).toFixed(2)}${((e.fatigue||0)>=50||traitOutMul(e)!==1||e.study)?",已含"+[(e.fatigue||0)>=50?"倦怠":"",traitOutMul(e)!==1?"特质":"",e.study?"进修":""].filter(Boolean).join("/")+"折扣":""})`
+        : `机动队 · 每月拉存款+${Number((0.025*e.mk*staffCapacity(e)).toFixed(3))}亿`;
       const tr = traitOf(e);
       const c = document.createElement("div"); c.className="card";
       c.innerHTML = `<div class="row"><div><h3>${e.name}</h3>${attrTags(e)}${e.mk+e.mg+e.rk>=15?'<span class="tag" style="background:#f0e3ce;color:var(--gold)">[icon:star] 传奇</span>':''}${e.protectedEmp?'<span class="tag" style="background:#3a2a3a;color:#c8a0d0">关系户</span>':''}${fatigueTag(e)}</div><div class="num">月薪 <b>${e.salary}万</b></div></div>
         <div class="sub">${e.flavor}</div>
         ${tr?`<div class="sub"><b style="color:var(--gold)">${tr.ic} ${tr.nm}</b> · ${tr.desc}</div>`:""}
-        <div class="sub">岗位:<b style="color:var(--txt)">${duty}</b> · 管理星每月士气+${(0.15*e.mg).toFixed(1)},风控每月风险-${(0.2*rkPower(e)).toFixed(1)}</div>
+        <div class="sub">岗位:<b style="color:var(--txt)">${duty}</b> · 管理能力参与士气基准，风控每月风险-${Number((0.2*e.rk*staffCapacity(e)).toFixed(2))}</div>
+        ${renderStaffLearning(e)}
         <div class="meter"><span class="mlb">倦怠</span>
           <span class="bar"><i style="width:${Math.round(e.fatigue||0)}%;background:${(e.fatigue||0)>=70?"var(--red)":(e.fatigue||0)>=50?"var(--gold)":"#4a5568"}"></i></span>
           <span class="mvl" style="color:${(e.fatigue||0)>=70?"var(--red)":(e.fatigue||0)>=50?"var(--gold)":"var(--dim)"}">${Math.round(e.fatigue||0)}<small style="color:var(--dim)">/100</small></span></div>
-        <div class="cardbtns">${(e.mk<5||e.mg<5||e.rk<5)?`<button onclick="trainEmp(${e.id})">培训 ${trainCost(e)}万</button>`:""}<button onclick="fireEmp(${e.id})">解雇</button></div>`;
+        <div class="sub">本月工作倦怠预计 ${fatigueChange(e)>=0?"+":""}${fatigueChange(e)}（结业与临时事件另计，最低0）</div>
+        <div class="cardbtns">${(e.mk<5||e.mg<5||e.rk<5)?`<button onclick="trainEmp(${e.id})" ${e.study||e.trainedMonth===S.month||S.cash<trainCost(e)?"disabled":""}>${e.trainedMonth===S.month?"本月已培训":`专项培训 ${trainCost(e)}万`}</button>`:""}<button onclick="studyEmp(${e.id})" ${e.study?"disabled":""}>${e.study?"进修中":"在职进修"}</button><button onclick="fireEmp(${e.id})">解雇</button></div>`;
       c.classList.add("person-card");
       c.innerHTML = portraitFigure(employeePortrait(e),e.name) + `<div class="person-info">${c.innerHTML}</div>`;
       el.appendChild(c);
@@ -4953,6 +5103,15 @@ function migrate(s){
   if(!s.track.keyEvents) s.track.keyEvents = [];
   if(!s.track.depHistory) s.track.depHistory = [+(s.dep||10).toFixed(2)];
   s.career = s.career || {projects:{}, active:null, reviews:0};
+  for(const k of ["studyStarted","studyCompleted","seminars"])if(s.track[k]===undefined)s.track[k]=0;
+  for(const e of s.emps||[]){
+    e.certificates=staffCertificates(e).filter((id,i,a)=>studyCourse(id)&&a.indexOf(id)===i);
+    if(e.study){
+      const c=studyCourse(e.study.id);
+      if(!c||!Number.isInteger(e.study.left)||e.study.left<1||e.study.left>c.months)e.study=null;
+      else {e.study.total=c.months;if(!Number.isInteger(e.study.lastMonth))e.study.lastMonth=0;}
+    }
+  }
   s.ver = 6;
   return s;
 }
@@ -5158,11 +5317,13 @@ function showSettings(){
 
 /* ============ 无头测试接口 ============ */
 const API = {
+  STUDY_COURSES, STAFF_SEMINARS, trainCost, canTrain, trainSkill, studyCost, studyBlock, startStudy, staffCapacity,
+  staffCertificates, canSeminar, holdSeminar, settleStaffEducation,
   PROJECTS, startProject, settleCareer, projectReturn, careerBeat, initialState, settleCore, nextMonth, endMonth, finalEnding, routeGoalDone,
   outletOutput, mgrCoef, seasonInfo, npcMonthlyDep, totalSalary, totalRent,
   loanCapAmt, loanOutstanding, badChance, genOffers, settleLoans, nplRate, loanRiskCut, deriveOf, interestOf,
   genCandidates, pickEvent, fireEvent, fireChain, pickArcBeat, rivalMove, schedule,
-  myRank, warnings, gain, log, freeEmps, bestEmp, empById, fatigueCoef, rkPower,
+  myRank, warnings, gain, log, freeEmps, bestEmp, empById, fatigueCoef, fatigueChange, moraleDrift, rkPower,
   ROUTES, NPC_ARCS, TRAITS, LOAN_POOL, EVENTS, NPCS, RIVALS, OUTLET_POOL,
   BALANCE, ACHIEVEMENTS, ENDINGS, TALENTS, checkAch, recordEnding, endIdOf,
   makeCycle, cyclePhase, isTight, cycleNews, dirt, patrolBeat, factionBeat, factionEndText,
@@ -5286,7 +5447,8 @@ document.addEventListener("click", ()=>{ document.querySelectorAll(".stat.tipOn"
 const directRecall=recallMgr,directSocial=doSocial,directProject=startProject;
 window.assignMgr = assignMgr; window.recallMgr = (...args)=>withDecision("调回主任",()=>directRecall(...args));
 window.fireEmp = fireEmp; window.doSocial = (...args)=>withDecision("拜访",()=>directSocial(...args)); window.upgradeDeco = upgradeDeco;
-window.trainEmp = trainEmp; window.restartGame = restartGame; window.startBankFromGuide = startBankFromGuide;
+window.trainEmp = trainEmp; window.studyEmp=studyEmp; window.staffSeminar=staffSeminar;
+window.restartGame = restartGame; window.startBankFromGuide = startBankFromGuide;
 window.actLoan = actLoan; window.startProject=(...args)=>withDecision("经营项目",()=>directProject(...args)); window.showSettings=showSettings;
 window.showGallery = showGallery; window.galTab = galTab;
 window.unlockTalent = unlockTalent; window.makeBio = makeBio;
